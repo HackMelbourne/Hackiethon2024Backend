@@ -1,6 +1,6 @@
 import random
 from PlayerConfigs import Player_Controller
-from test import validMove
+from test import *
 
 
 #game settings
@@ -23,9 +23,9 @@ player2 = Player_Controller(4,0,50,GOLEFT)
 
 
 
-def move(player, action):
+def move(player, enemy, action):
     if (action[0] == "move"):
-        if validMove(action[1]) and not player.midair:
+        if validMove(action[1], player, enemy) and not player.midair:
             player.moves.append(action)
             player.xCoord += player.direction * action[1][0]
             player.yCoord += action[1][1]
@@ -53,24 +53,22 @@ def attack(player,target, action):
             #check for blocks
             if(target.blocking):
                 #parry if block is frame perfect
-                if target.moves[-2] != "block":
+                if target.moves[-1] != "block":
                     player.stun = 2
             else:
                 target.hp -=5
                 
-def flip_orientation(player1, player2):
-    if player1.xCoord > player2.xCoord:
-        # should flip orientations if they switch sides
-        return True
-    return False
+
 
 
 def startGame():
     
-    for tick in range(5):
+    for tick in range(timeLimit *movesPerSecond):
         
         print(f"P1 : {player1.xCoord, player1.yCoord}")
         print(f"P2 : {player2.xCoord, player2.yCoord}")
+
+        #flips orientation if player jumps over each other
         if flip_orientation(player1, player2):
             player1.direction = GOLEFT
             player2.direction = GORIGHT
@@ -82,7 +80,7 @@ def startGame():
         act2 = player2.action()
         
         if not player1.stun:
-            move(player1, act1)
+            move(player1, player2, act1)
             block(player1, act1)
             attack(player1, player2, act1)
             player1.moveNum += 1
@@ -90,10 +88,11 @@ def startGame():
             player1.stun -= 1
             
         if not player2.stun:
-            move(player2, act2)
+            move(player2, player1, act2)
             block(player2, act2)
             attack(player2, player1, act2)
             player2.moveNum += 1
         else:
             player2.stun -= 1
-        
+
+startGame()
