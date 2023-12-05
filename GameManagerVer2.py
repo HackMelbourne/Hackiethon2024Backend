@@ -48,15 +48,21 @@ def attack(player,target, action):
     if (action[0] == "attack"):
         player.moves.append(action)
         #TODO attack variations such as heavy and light
+
         # check if attack lands
-        if (abs(player.xCoord-target.xCoord) == 1 and player.yCoord == target.yCoord):
+        damage = action[1]
+        atk_range = action[2]
+        blockable = action[3]
+        
+        # This is fine if we only allow horizontal attacks
+        if (abs(player.xCoord-target.xCoord) == atk_range and player.yCoord == target.yCoord):
             #check for blocks
-            if(target.blocking):
+            if(target.blocking and blockable):
                 #parry if block is frame perfect
                 if target.moves[-1] != "block":
                     player.stun = 2
             else:
-                target.hp -=5
+                target.hp -= damage
                 
 
 
