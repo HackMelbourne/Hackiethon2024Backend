@@ -7,10 +7,15 @@ class Skill:
         self.startup = startup
         #skill is casted once currentStartup decreases to 0
         self.currentStartup = startup
-        self.cooldown = cooldown
+        
+        #cooldown after skill is used
+        self.maxCooldown = cooldown
+        #current skill cooldown
+        self.cooldown = 0
         
         #skillValue for "move" is (xcoord, ycoord), "attack" is damage, etc
         self.skillValue = skillValue
+        
     # To use with external functions that check and update cooldown
     def reduceCd(self, reduction):
         if self.cooldown > 0:
@@ -26,6 +31,7 @@ class Skill:
         if self.cooldown <= 0:
             if self.currentStartup == 0:
                 self.currentStartup = self.startup
+                self.cooldown = self.maxCooldown
                 return self.skillType, self.skillValue
             else:
                 self.currentStartup -= 1
@@ -55,18 +61,6 @@ class AttackSkill(Skill):
     def activateSkill(self):
         if self.cooldown > 0:
             return self.cooldown
-        return self.useSkill() + (self.attackRange, self.blockable)
-    
-    
-    
-# example for using startup frames
-"""
-charge = MoveSkill(2, 0, (1,0))
-
-state = charge.useSkill()
-while state == -1:
-    state = charge.useSkill()
-    print("Ticking down")
-print(state)
-
-"""
+        else:
+            # returns "attack", damage, range and blockability
+            return self.useSkill() + (self.attackRange, self.blockable)

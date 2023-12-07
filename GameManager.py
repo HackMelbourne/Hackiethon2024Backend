@@ -47,15 +47,35 @@ def block(player, action):
         if player.blocking:
             player.blocking =True
 
+#returns the action if not on cooldown or mid-startup.
+# if on cd, return current cd, or -1 if mid startup
+def fetchAttack(player, attackType):
+    if attackType == "light":
+        return player.lightAtk.activateSkill()
+    elif attackType == "heavy":
+        return player.heavyAtk.activateSkill()
+    else:
+        raise Exception("Invalid attack type!")
+
+
 def attack(player,target, action):
     if (action[0] == "attack"):
-        player.moves.append(action)
+
         #TODO attack variations such as heavy and light
+        # 2 types of attack, light and heavy
+        # action should be like ("attack", "light/heavy")
+        attack = fetchAttack(player, action[1])
+        
+        # no action if attack is on cooldown or previous attack is still in startup
+        if isinstance(attack, int):
+            return
+        
+        player.moves.append(action)
 
         # check if attack lands
-        damage = action[1]
-        atk_range = action[2]
-        blockable = action[3]
+        damage = attack[1]
+        atk_range = attack[2]
+        blockable = attack[3]
         
         # This is fine if we only allow horizontal attacks
         if (abs(player.xCoord-target.xCoord) == atk_range and player.yCoord == target.yCoord):
@@ -68,7 +88,12 @@ def attack(player,target, action):
                 target.hp -= damage
                 
 
-
+def updateCooldown(player):
+    #TODO : once primary and secondary skills complete, add reduceCd
+    
+    player.lightAtk.reduceCd(1)
+    player.heavyAtk.reduceCd(1)
+                
 
 def startGame(path1, path2):
     print(path1,path2)
@@ -112,6 +137,11 @@ def startGame(path1, path2):
             player2.moveNum += 1
         else:
             player2.stun -= 1
+
+        updateCooldown(player1)
+        updateCooldown(player2)
+        #TODO update current startup every tick
+
     if player1.hp == player2.hp:
         print('match won by: ', path1)
         return path1
