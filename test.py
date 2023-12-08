@@ -1,3 +1,4 @@
+#checks if a "move" is valid
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
@@ -7,12 +8,18 @@ def validMove(moveset, player, enemy):
     # *assuming the screen is 0-30
     elif (player.xCoord - moveset[0] <0 or player.xCoord + moveset[0] >30):
         return False
-    #check if position is taken
-    elif (player.xCoord + moveset[0]==enemy.xCoord and player.yCoord + moveset[1]== enemy.yCoord):
+    #UPDATE: invalid if next to each other and moving towards the other
+    elif (abs(player.xCoord - enemy.xCoord) == moveset[0]):
         return False
     return True
+
+#returns if player1 or player2 switch sides
 def flip_orientation(player1, player2):
     if player1.xCoord > player2.xCoord:
         # should flip orientations if they switch sides
         return True
     return False
+
+#for testing: prints player info
+def playerInfo(player, playerName, action):
+    print(f"{playerName}: {action}, {player.xCoord, player.yCoord}, {player.hp}, midair: {player.midair}")

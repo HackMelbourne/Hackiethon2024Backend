@@ -43,7 +43,6 @@ class Skill:
     def skillCancel(self):
         if self.currentStartup < self.startup:
             self.currentStartup = self.startup
-
        
 # Below are example/sample skills 
     
@@ -51,16 +50,17 @@ class MoveSkill(Skill):
     def __init__(self, startup, cooldown, distance):
         super().__init__("move", startup, cooldown, distance)
         
-
 class AttackSkill(Skill):
-    def __init__(self, startup, cooldown, damage, attackRange, blockable):
+    def __init__(self, startup, cooldown, damage, attackRange, blockable, knockback, stun):
         super().__init__("attack", startup, cooldown, damage)
         self.attackRange = attackRange
         self.blockable = blockable
+        self.knockback = knockback
+        self.stun = stun
         
     def activateSkill(self):
         if self.cooldown > 0:
             return self.cooldown
         else:
-            # returns "attack", damage, range and blockability
-            return self.useSkill() + (self.attackRange, self.blockable)
+            # returns "attack", damage, range, blockability, knockback, stun
+            return self.useSkill() + (self.attackRange, self.blockable, self.knockback, self.stun)
