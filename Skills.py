@@ -64,3 +64,23 @@ class AttackSkill(Skill):
         else:
             # returns "attack", damage, range, blockability, knockback, stun
             return self.useSkill() + (self.attackRange, self.blockable, self.knockback, self.stun)
+        
+class BlockSkill(Skill):
+    def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
+        super().__init__("block", startup, cooldown, shieldHp)
+        self.stunOnBreak = stunOnBreak
+        self.shieldHp = self.skillValue
+        self.maxShieldHp = shieldHp
+        
+    #regens shield hp to max
+    def regenShield(self):
+        if self.shieldHp < self.maxShieldHp:
+            self.shieldHp = self.maxShieldHp
+            
+    #block takes damage, returns self stun amount if shield break
+    def shieldDmg(self, damage):
+        self.shieldHp -= damage
+        if self.shieldHp <= 0:
+            self.shieldHp = self.maxShieldHp
+            return self.stunOnBreak
+        return 0

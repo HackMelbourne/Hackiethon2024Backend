@@ -22,4 +22,6 @@ def flip_orientation(player1, player2):
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):
-    print(f"{playerName}: {action}, {player.xCoord, player.yCoord}, {player.hp}, midair: {player.midair}")
+    print(f"{playerName}: {action}, {player.xCoord, player.yCoord}, {player.hp}, 
+          midair: {player.midair}, blocking: {player.blocking, player.block.shieldHp}, 
+          stun: {player.stun}")

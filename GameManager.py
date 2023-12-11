@@ -25,7 +25,15 @@ def setupGame(path1, path2):
     player2 = p2Import.Player_Controller(4,0,50,GOLEFT)
     return player1,player2
 
-#TODO additional checks for skill uses              
+#TODO additional checks for skill uses    
+
+#------------------Adding to player1 and player2 move scripts for test----
+def setMoves(player1, player2):    
+    p1movelist = ("move", (1,0)), ("move", (1,0)), ("attack", "light"), ("attack", "light"),("attack", "light"),
+    p2movelist = ("block"), ("block"), ("block"), ("block"), ("block")
+    
+    player1.moveList.extend(p1movelist)
+    player2.moveList.extend(p2movelist)          
 
 def updateCooldown(player):
     #TODO : once primary and secondary skills complete, add reduceCd
@@ -38,6 +46,34 @@ def updateMidair(player):
         player.yCoord -= 1
         if player.yCoord == 0: 
             player.midair = False
+
+#im not sure how to make this any more efficient
+def performActions(player1, player2, act1, act2, stun1, stun2):
+    knock1 = knock2 = 0
+    
+    if player1.stun:
+        player1.stun -= 1
+    else:
+        player1.moveNum += 1
+    if player2.stun:
+        player2.stun -= 1
+    else:
+        player2.moveNum += 1
+        
+    if not player1.stun:
+        move(player1, player2, act1)
+    if not player2.stun:
+        move(player2, player1, act2)
+    if not player1.stun:
+        block(player1, act1)
+    if not player2.stun:
+        block(player2, act2)
+    if not player1.stun:
+        knock1, stun1 = attack(player1, player2, act1)
+    if not player2.stun:
+        knock2, stun2 = attack(player2, player1, act2)
+
+    return knock1, stun1, knock2, stun2
                 
 def startGame(path1, path2):
     print(path1,path2)
@@ -73,21 +109,7 @@ def startGame(path1, path2):
         act1 = player1.action()
         act2 = player2.action()
             
-        if not player1.stun:
-            move(player1, player2, act1)
-            block(player1, act1)
-            knock1, stun1 = attack(player1, player2, act1)
-            player1.moveNum += 1
-        else:
-            player1.stun -= 1
-            
-        if not player2.stun:
-            move(player2, player1, act2)
-            block(player2, act2)
-            knock2, stun2 = attack(player2, player1, act2)
-            player2.moveNum += 1
-        else:
-            player2.stun -= 1
+        knock1, stun1, knock2, stun2 = performActions(player1, player2, act1, act2, stun1, stun2)
 
         #only determine knockback and stun after attacks hit
         if knock1:
