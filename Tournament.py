@@ -1,6 +1,7 @@
 import os
 import random
 from GameManager import startGame
+from validator import *
 
 dir_path = os.path.join(os.getcwd(), "Submissions")
 player = os.listdir(dir_path)
@@ -49,7 +50,8 @@ def findWinner(node):
     print("\n")
     left_winner = findWinner(node.left)
     right_winner = findWinner(node.right)
-
+    if pathInvalid(left_winner, right_winner) != False:
+        return pathInvalid(left_winner, right_winner)
     return startGame(left_winner, right_winner)
 
 def simulateTournament(players_list):

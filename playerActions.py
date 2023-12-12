@@ -1,4 +1,4 @@
-from test import validMove
+from validator import validMove
 def move(player, enemy, action):
     if (action[0] == "move"):
         if validMove(action[1], player, enemy) and not player.midair:
@@ -52,7 +52,10 @@ def attack(player,target, action):
         stun = attack[5]
         
         # This is fine if we only allow horizontal attacks
-        if (abs(player.xCoord-target.xCoord) == atk_range and player.yCoord == target.yCoord):
+        #! less than or equal to and player has a height of 2y 
+        if (abs(player.xCoord-target.xCoord) <= atk_range and 
+            (target.yCoord == player.yCoord or target.ycoord-1 == player.ycoord)):
+            
             # can be changed later : no knockback if block or stunned
             if target.blocking or target.stun:
                 knockback = 0

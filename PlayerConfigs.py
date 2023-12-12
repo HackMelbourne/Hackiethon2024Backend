@@ -25,8 +25,29 @@ class Player_Controller:
         self.moveList = [("move", (1,1)), ("attack","light"), 
         ("move", (1,0)), ("move", (1,0)), ("attack", "light"), 
         ("move", (1,0)), ("attack", "light")]
+
+    def updateGravity(self):
+        if self.midair:
+            self.yCoord -= 1
+            if self.yCoord == 0: 
+                self.midair = False
+
+    def updateCooldown(self):
+        self.lightAtk.reduceCd(1)
+        self.heavyAtk.reduceCd(1)
+
+    def updateStun(self):
+        if self.stun >0:
+            self.stun -=1
+
+    def update(self):
+        self.updateGravity(self)
+        self.updateCooldown(self)
+        self.updateStun(self)
+    
     def action(self):
         if self.moveNum < len(self.moveList):
             # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
             return self.moveList[self.moveNum]
         return ("NoMove")
+    

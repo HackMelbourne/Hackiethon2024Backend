@@ -1,5 +1,5 @@
 import random
-from test import *
+from validator import *
 import importlib
 from playerActions import *
 
@@ -35,30 +35,12 @@ def setMoves(player1, player2):
     player1.moveList.extend(p1movelist)
     player2.moveList.extend(p2movelist)          
 
-def updateCooldown(player):
-    #TODO : once primary and secondary skills complete, add reduceCd
     
-    player.lightAtk.reduceCd(1)
-    player.heavyAtk.reduceCd(1)
-
-def updateMidair(player):
-    if player.midair:
-        player.yCoord -= 1
-        if player.yCoord == 0: 
-            player.midair = False
 
 #im not sure how to make this any more efficient
 def performActions(player1, player2, act1, act2, stun1, stun2):
+    #? im assuming these are checks to see if the moves are valid
     knock1 = knock2 = 0
-    
-    if player1.stun:
-        player1.stun -= 1
-    else:
-        player1.moveNum += 1
-    if player2.stun:
-        player2.stun -= 1
-    else:
-        player2.moveNum += 1
         
     if not player1.stun:
         move(player1, player2, act1)
@@ -76,33 +58,23 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
     return knock1, stun1, knock2, stun2
                 
 def startGame(path1, path2):
-    print(path1,path2)
-    if not isinstance(path1, str) and isinstance(path2,str):
-        return path2
-    if isinstance(path1, str) and not isinstance(path2,str):
-        return path1
-    if not isinstance(path1, str) and not isinstance(path2,str):
-        return None
+    #setup the paths
     player1, player2 = setupGame(path1,path2)
 
     stun1 = stun2 = 0
     
     for tick in range(timeLimit *movesPerSecond):
-        #print(f"\nTURN {tick}\n")
-        #print(f"P1 : {player1.xCoord, player1.yCoord}")
-        #print(f"P2 : {player2.xCoord, player2.yCoord}")
-
+        #TODO test if this works lol
+        player1.update(player1)
+        player2.update(player2)
+        
         #flips orientation if player jumps over each other
-        if flip_orientation(player1, player2):
+        if checkOrientation(player1, player2):
             player1.direction = GOLEFT
             player2.direction = GORIGHT
         else:
             player1.direction = GORIGHT
             player2.direction = GOLEFT
-
-        #if midair, start falling
-        updateMidair(player1)
-        updateMidair(player2)
             
         knock1 = knock2 = 0
         
@@ -118,12 +90,10 @@ def startGame(path1, path2):
         if knock2:
             player1.xCoord += player2.direction * knock2
             player1.stun += stun2
-
-        updateCooldown(player1)
-        updateCooldown(player2)
         #TODO update current startup every tick
 
     if player1.hp == player2.hp:
+        #TODO tie breaker 
         print('match won by: ', path1)
         return path1
     return max(player1.hp, player2.hp)

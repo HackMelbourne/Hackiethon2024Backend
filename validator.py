@@ -14,7 +14,7 @@ def validMove(moveset, player, enemy):
     return True
 
 #returns if player1 or player2 switch sides
-def flip_orientation(player1, player2):
+def checkOrientation(player1, player2):
     if player1.xCoord > player2.xCoord:
         # should flip orientations if they switch sides
         return True
@@ -25,3 +25,12 @@ def playerInfo(player, playerName, action):
     print(f"{playerName}: {action}, {player.xCoord, player.yCoord}, {player.hp}, 
           midair: {player.midair}, blocking: {player.blocking, player.block.shieldHp}, 
           stun: {player.stun}")
+    
+def pathInvalid(path1, path2):
+    if not isinstance(path1, str) and isinstance(path2,str):
+        return path2
+    if isinstance(path1, str) and not isinstance(path2,str):
+        return path1
+    if not isinstance(path1, str) and not isinstance(path2,str):
+        return None
+    return False
