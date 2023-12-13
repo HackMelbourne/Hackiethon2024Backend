@@ -84,3 +84,9 @@ class BlockSkill(Skill):
             self.shieldHp = self.maxShieldHp
             return self.stunOnBreak
         return 0
+
+class DashAttackSkill(Skill):
+    def __init__(self, startup, cooldown, p):
+        super().__init__("dash_attack", 2, 10, 6)
+
+    

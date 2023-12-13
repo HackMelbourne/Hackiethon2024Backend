@@ -8,6 +8,8 @@ class Player_Controller:
         
         self.xCoord = xCoord
         self.yCoord = yCoord
+        self.width = 10
+        self.height = 20
         self.moves = []
         self.blocking = False
         self.hp = HP

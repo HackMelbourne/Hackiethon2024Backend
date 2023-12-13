@@ -51,7 +51,8 @@ def updateMidair(player):
 #im not sure how to make this any more efficient
 def performActions(player1, player2, act1, act2, stun1, stun2):
     knock1 = knock2 = 0
-    
+
+    # what does moveNum do
     if player1.stun:
         player1.stun -= 1
     else:
