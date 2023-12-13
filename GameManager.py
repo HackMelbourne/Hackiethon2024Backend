@@ -38,8 +38,9 @@ def setMoves(player1, player2):
 def updateCooldown(player):
     #TODO : once primary and secondary skills complete, add reduceCd
     
-    player.lightAtk.reduceCd(1)
-    player.heavyAtk.reduceCd(1)
+    # player.lightAtk.reduceCd(1)#TODO uncomment
+    # player.heavyAtk.reduceCd(1) #TODO uncomment
+    pass
 
 def updateMidair(player):
     if player.midair:

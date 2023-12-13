@@ -3,7 +3,7 @@ def move(player, enemy, action):
     if (action[0] == "move"):
         if validMove(action[1], player, enemy) and not player.midair:
             player.blocking = False
-            player.block.regenShield()
+            # player.block.regenShield() #TODO uncomment
             player.moves.append(action)
             player.xCoord += player.direction * action[1][0]
             player.yCoord += action[1][1]
@@ -32,7 +32,7 @@ def attack(player,target, action):
     knockback = stun = 0
     if (action[0] == "attack"):
         player.blocking = False
-        player.block.regenShield()
+        # player.block.regenShield() #TODO uncomment
 
         # 2 types of attack, light and heavy
         # action should be like ("attack", "light/heavy")
@@ -62,7 +62,8 @@ def attack(player,target, action):
                 if target.moves[-1] == "block" and target.moves[-2] != "block":
                     player.stun = 2
                 elif target.blocking:
-                    target.stun += target.block.shieldDmg(damage)
+                    # target.stun += target.block.shieldDmg(damage) #TODO uncomment
+                    pass
             else:
                 target.hp -= damage
     return knockback, stun
