@@ -38,8 +38,9 @@ def setMoves(player1, player2):
 def updateCooldown(player):
     #TODO : once primary and secondary skills complete, add reduceCd
     
-    player.lightAtk.reduceCd(1)
-    player.heavyAtk.reduceCd(1)
+    # player.lightAtk.reduceCd(1)#TODO uncomment
+    # player.heavyAtk.reduceCd(1) #TODO uncomment
+    pass
 
 def updateMidair(player):
     if player.midair:
@@ -50,7 +51,7 @@ def updateMidair(player):
 #im not sure how to make this any more efficient
 def performActions(player1, player2, act1, act2, stun1, stun2):
     knock1 = knock2 = 0
-    
+
     if player1.stun:
         player1.stun -= 1
     else:
@@ -60,18 +61,37 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
     else:
         player2.moveNum += 1
         
-    if not player1.stun:
-        move(player1, player2, act1)
-    if not player2.stun:
-        move(player2, player1, act2)
-    if not player1.stun:
-        block(player1, act1)
-    if not player2.stun:
-        block(player2, act2)
-    if not player1.stun:
-        knock1, stun1 = attack(player1, player2, act1)
-    if not player2.stun:
-        knock2, stun2 = attack(player2, player1, act2)
+    # if not player1.stun:
+    #     move(player1, player2, act1)
+    # if not player2.stun:
+    #     move(player2, player1, act2)
+    # if not player1.stun:
+    #     block(player1, act1)
+    # if not player2.stun:
+    #     block(player2, act2)
+    # if not player1.stun:
+    #     knock1, stun1 = attack(player1, player2, act1)
+    # if not player2.stun:
+    #     knock2, stun2 = attack(player2, player1, act2)
+
+    # all actions have the signature
+    # function(player1, player2, act1)
+    # and return (knock1, stun1)
+
+    # to specify an action,
+    # define an action inside playerActions with the signature above,
+    # and then add it to valid_actions (inside playerActions)
+
+    # works under assumption of only 1 action per turn
+
+    # for debug
+    # if (act1 != "NoMove"):
+    print(act1, act2)
+
+    if not player1.stun and not act1 == "NoMove":
+        knock1, stun1 = valid_actions[act1[0]](player1, player2, act1)
+    if not player2.stun and not act2 == "NoMove":
+        knock2, stun2 = valid_actions[act2[0]](player2, player1, act2)
 
     return knock1, stun1, knock2, stun2
                 
@@ -88,9 +108,9 @@ def startGame(path1, path2):
     stun1 = stun2 = 0
     
     for tick in range(timeLimit *movesPerSecond):
-        #print(f"\nTURN {tick}\n")
-        #print(f"P1 : {player1.xCoord, player1.yCoord}")
-        #print(f"P2 : {player2.xCoord, player2.yCoord}")
+        # print(f"\nTURN {tick}\n")
+        # print(f"P1 : {player1.xCoord, player1.yCoord}")
+        # print(f"P2 : {player2.xCoord, player2.yCoord}")
 
         #flips orientation if player jumps over each other
         if flip_orientation(player1, player2):

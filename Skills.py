@@ -63,7 +63,10 @@ class AttackSkill(Skill):
             return self.cooldown
         else:
             # returns "attack", damage, range, blockability, knockback, stun
-            return self.useSkill() + (self.attackRange, self.blockable, self.knockback, self.stun)
+            skill = self.useSkill()
+            if isinstance(skill, int):
+                return -1
+            return skill + (self.attackRange, self.blockable, self.knockback, self.stun)
         
 class BlockSkill(Skill):
     def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
@@ -84,3 +87,13 @@ class BlockSkill(Skill):
             self.shieldHp = self.maxShieldHp
             return self.stunOnBreak
         return 0
+
+class DashAttackSkill(Skill):
+    def __init__(self, startup, cooldown):
+        super().__init__("dash_attack", startup, cooldown, 6)
+
+    def activateSkill(self):
+        print("Used dash skill")
+
+
+    

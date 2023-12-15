@@ -1,13 +1,13 @@
-from Skills import AttackSkill
+from Skills import AttackSkill, DashAttackSkill
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
-        self.primarySkill =""
+        self.primarySkill = DashAttackSkill(3, 15)
         self.secondarySkill = ""
-        self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
-        self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
         
         self.xCoord = xCoord
         self.yCoord = yCoord
+        self.width = 10
+        self.height = 20
         self.moves = []
         self.blocking = False
         self.hp = HP
@@ -22,7 +22,7 @@ class Player_Controller:
         
         #for testing
         #player scripts will append moves to this
-        self.moveList = [("move", (1,1)), ("attack","light"), 
+        self.moveList = [("dash_attack", None), ("move", (1,1)), ("attack","light"), 
         ("move", (1,0)), ("move", (1,0)), ("attack", "light"), 
         ("move", (1,0)), ("attack", "light")]
     def action(self):
