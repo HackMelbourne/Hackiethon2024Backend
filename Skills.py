@@ -7,10 +7,15 @@ class Skill:
         self.startup = startup
         #skill is casted once currentStartup decreases to 0
         self.currentStartup = startup
-        self.cooldown = cooldown
+        
+        #cooldown after skill is used
+        self.maxCooldown = cooldown
+        #current skill cooldown
+        self.cooldown = 0
         
         #skillValue for "move" is (xcoord, ycoord), "attack" is damage, etc
         self.skillValue = skillValue
+        
     # To use with external functions that check and update cooldown
     def reduceCd(self, reduction):
         if self.cooldown > 0:
@@ -26,6 +31,7 @@ class Skill:
         if self.cooldown <= 0:
             if self.currentStartup == 0:
                 self.currentStartup = self.startup
+                self.cooldown = self.maxCooldown
                 return self.skillType, self.skillValue
             else:
                 self.currentStartup -= 1
@@ -37,7 +43,6 @@ class Skill:
     def skillCancel(self):
         if self.currentStartup < self.startup:
             self.currentStartup = self.startup
-
        
 # Below are example/sample skills 
     
@@ -45,28 +50,50 @@ class MoveSkill(Skill):
     def __init__(self, startup, cooldown, distance):
         super().__init__("move", startup, cooldown, distance)
         
-
 class AttackSkill(Skill):
-    def __init__(self, startup, cooldown, damage, attackRange, blockable):
+    def __init__(self, startup, cooldown, damage, attackRange, blockable, knockback, stun):
         super().__init__("attack", startup, cooldown, damage)
         self.attackRange = attackRange
         self.blockable = blockable
+        self.knockback = knockback
+        self.stun = stun
         
     def activateSkill(self):
         if self.cooldown > 0:
             return self.cooldown
-        return self.useSkill() + (self.attackRange, self.blockable)
-    
-    
-    
-# example for using startup frames
-"""
-charge = MoveSkill(2, 0, (1,0))
+        else:
+            # returns "attack", damage, range, blockability, knockback, stun
+            skill = self.useSkill()
+            if isinstance(skill, int):
+                return -1
+            return skill + (self.attackRange, self.blockable, self.knockback, self.stun)
+        
+class BlockSkill(Skill):
+    def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
+        super().__init__("block", startup, cooldown, shieldHp)
+        self.stunOnBreak = stunOnBreak
+        self.shieldHp = self.skillValue
+        self.maxShieldHp = shieldHp
+        
+    #regens shield hp to max
+    def regenShield(self):
+        if self.shieldHp < self.maxShieldHp:
+            self.shieldHp = self.maxShieldHp
+            
+    #block takes damage, returns self stun amount if shield break
+    def shieldDmg(self, damage):
+        self.shieldHp -= damage
+        if self.shieldHp <= 0:
+            self.shieldHp = self.maxShieldHp
+            return self.stunOnBreak
+        return 0
 
-state = charge.useSkill()
-while state == -1:
-    state = charge.useSkill()
-    print("Ticking down")
-print(state)
+class DashAttackSkill(Skill):
+    def __init__(self, startup, cooldown):
+        super().__init__("dash_attack", startup, cooldown, 6)
 
-"""
+    def activateSkill(self):
+        print("Used dash skill")
+
+
+    
