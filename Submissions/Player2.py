@@ -1,9 +1,13 @@
+from Skills import AttackSkill
+
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
         self.primarySkill =""
         self.secondarySkill = ""
         self.xCoord = xCoord
         self.yCoord = yCoord
+        self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
+        self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
         self.moves = []
         self.blocking = False
         self.hp = HP

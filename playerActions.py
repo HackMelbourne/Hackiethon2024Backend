@@ -41,10 +41,11 @@ def attack(player,target, action):
         
         # no action if attack is on cooldown or previous attack is still in startup
         if isinstance(attack, int):
-            return
+            return 0, 0
         
         player.moves.append(action)
 
+        print(attack)
         # fetch attack data
         damage = attack[1]
         atk_range = attack[2]

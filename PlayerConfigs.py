@@ -3,8 +3,6 @@ class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
         self.primarySkill = DashAttackSkill(3, 15)
         self.secondarySkill = ""
-        self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
-        self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
         
         self.xCoord = xCoord
         self.yCoord = yCoord
