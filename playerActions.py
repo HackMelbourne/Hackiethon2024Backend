@@ -11,6 +11,7 @@ def move(player, enemy, action):
                 player.midair = True
         else:    
             print("Invalid movement")
+    return None, None
 
 def block(player, action):
     if (isinstance(action, str) and action == "block"):
@@ -67,3 +68,10 @@ def attack(player,target, action):
             else:
                 target.hp -= damage
     return knockback, stun
+
+def dash_atk(player1, player2, action):
+    if (action[0] == dash_atk):
+        print("did dash atk")
+    return None, None
+
+valid_actions = {"attack": attack, "block": block, "move": move, "dash_attack": dash_atk}

@@ -86,7 +86,11 @@ class BlockSkill(Skill):
         return 0
 
 class DashAttackSkill(Skill):
-    def __init__(self, startup, cooldown, p):
-        super().__init__("dash_attack", 2, 10, 6)
+    def __init__(self, startup, cooldown):
+        super().__init__("dash_attack", startup, cooldown, 6)
+
+    def activateSkill(self):
+        print("Used dash skill")
+
 
     
