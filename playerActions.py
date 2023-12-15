@@ -69,9 +69,36 @@ def attack(player,target, action):
                 target.hp -= damage
     return knockback, stun
 
-def dash_atk(player1, player2, action):
-    if (action[0] == dash_atk):
+def dash_atk(player, target, action):
+    if not player.primarySkill == "dash_attack":
+        print("Player primary skill is not dash_attack - invalid move")
+        return 0, 0
+    
+    if (action[0] == "dash_attack"):
         print("did dash atk")
-    return None, None
+        player.xCoord += 30 * player.direction
+
+        blockable = True
+        atk_range = 5
+        damage = 5
+        knockback = stun =0
+
+        # copy from attack
+        if (abs(player.xCoord-target.xCoord) == atk_range and player.yCoord == target.yCoord):
+            # can be changed later : no knockback if block or stunned
+            if target.blocking or target.stun:
+                knockback = 0
+            # if target is blocking
+            if(target.blocking and blockable):
+                #parry if block is frame perfect: the target blocks as attack comes out
+                if target.moves[-1] == "block" and target.moves[-2] != "block":
+                    player.stun = 2
+                elif target.blocking:
+                    # target.stun += target.block.shieldDmg(damage) #TODO uncomment
+                    pass
+            else:
+                target.hp -= damage
+        
+        return knockback, stun
 
 valid_actions = {"attack": attack, "block": block, "move": move, "dash_attack": dash_atk}

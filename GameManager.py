@@ -85,10 +85,12 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
     # works under assumption of only 1 action per turn
 
     # for debug
-    if (act1 != "NoMove"):
-        print(act1, act2)
+    # if (act1 != "NoMove"):
+    print(act1, act2)
 
     if not player1.stun and not act1 == "NoMove":
+        x = valid_actions[act1[0]](player1, player2, act1)
+        print(x)
         knock1, stun1 = valid_actions[act1[0]](player1, player2, act1)
     if not player2.stun and not act2 == "NoMove":
         knock2, stun2 = valid_actions[act2[0]](player2, player1, act2)

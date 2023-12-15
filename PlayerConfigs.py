@@ -24,7 +24,7 @@ class Player_Controller:
         
         #for testing
         #player scripts will append moves to this
-        self.moveList = [("dash_attack", []), ("move", (1,1)), ("attack","light"), 
+        self.moveList = [("dash_attack", None), ("move", (1,1)), ("attack","light"), 
         ("move", (1,0)), ("move", (1,0)), ("attack", "light"), 
         ("move", (1,0)), ("attack", "light")]
     def action(self):

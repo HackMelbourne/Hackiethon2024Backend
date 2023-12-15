@@ -1,6 +1,6 @@
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
-        self.primarySkill =""
+        self.primarySkill ="dash_attack"
         self.secondarySkill = ""
         self.xCoord = xCoord
         self.yCoord = yCoord
