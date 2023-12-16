@@ -49,11 +49,14 @@ class Skill:
 class MoveSkill(Skill):
     def __init__(self, startup, cooldown, distance):
         super().__init__("move", startup, cooldown, distance)
+
+    def activateSkill(self):
+        return self.useSkill()
         
 class AttackSkill(Skill):
-    def __init__(self, startup, cooldown, damage, attackRange, blockable, knockback, stun):
+    def __init__(self, startup, cooldown, damage, range, blockable, knockback, stun):
         super().__init__("attack", startup, cooldown, damage)
-        self.attackRange = attackRange
+        self.attackRange = range
         self.blockable = blockable
         self.knockback = knockback
         self.stun = stun
@@ -87,13 +90,14 @@ class BlockSkill(Skill):
             self.shieldHp = self.maxShieldHp
             return self.stunOnBreak
         return 0
-
-class DashAttackSkill(Skill):
-    def __init__(self, startup, cooldown):
-        super().__init__("dash_attack", startup, cooldown, 6)
-
+    
     def activateSkill(self):
-        print("Used dash skill")
+        return self.useSkill()
+
+class DashAttackSkill(AttackSkill):
+    def __init__(self, startup, cooldown, damage, range, blockable, knockback, stun):
+        super().__init__(startup, cooldown, damage, range, blockable, knockback, stun)
+        self.skillType = "dash_attack"
 
 
     
