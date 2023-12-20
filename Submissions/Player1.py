@@ -2,10 +2,10 @@ from Skills import AttackSkill, DashAttackSkill, BlockSkill
 # use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
-        self.primarySkill = DashAttackSkill(0, 10, 15, 4, False, 0, 2)
+        self.primarySkill = DashAttackSkill(0, 10, 15, 4, 0, False, 0, 2)
         self.secondarySkill = ""
-        self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
-        self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
+        self.lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)
+        self.heavyAtk = AttackSkill(2, 4, 10, 2, 0, True, 1, 1)
         self.block = BlockSkill(0, 0, 15, 2)
         
         self.xCoord = xCoord

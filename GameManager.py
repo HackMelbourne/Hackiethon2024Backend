@@ -25,8 +25,6 @@ def setupGame(path1, path2):
     player2 = p2Import.Player_Controller(4,0,50,GOLEFT)
     return player1,player2
 
-#TODO additional checks for skill uses    
-
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
     p1movelist = ("move", (1,0)), ("attack", "light"), ("attack", "light"), ("attack", "light"),("attack", "light")
@@ -55,7 +53,6 @@ def updateMidair(player):
     if player.yCoord == 0: 
         player.midair = player.falling = False
 
-#im not sure how to make this any more efficient
 def performActions(player1, player2, act1, act2, stun1, stun2):
     knock1 = knock2 = 0
 

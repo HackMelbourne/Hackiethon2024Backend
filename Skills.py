@@ -54,9 +54,12 @@ class MoveSkill(Skill):
         return self.useSkill()
         
 class AttackSkill(Skill):
-    def __init__(self, startup, cooldown, damage, range, blockable, knockback, stun):
+    def __init__(self, startup, cooldown, damage, xRange, vertical, blockable, knockback, stun):
         super().__init__("attack", startup, cooldown, damage)
-        self.attackRange = range
+        # xRange : horizontal reach, vertical : 0 can only hit if same yCoord,
+        # vertical > 0 can hit same yCoord and above, vertical < 0 can hit below
+        self.xRange = xRange
+        self.vertical = vertical
         self.blockable = blockable
         self.knockback = knockback
         self.stun = stun
@@ -65,11 +68,12 @@ class AttackSkill(Skill):
         if self.cooldown > 0:
             return self.cooldown
         else:
-            # returns "attack", damage, range, blockability, knockback, stun
+            # returns "attack", damage, xRange, vertical, block, knockback, stun
             skill = self.useSkill()
             if isinstance(skill, int):
                 return -1
-            return skill + (self.attackRange, self.blockable, self.knockback, self.stun)
+            return skill + (self.xRange, self.vertical,
+                            self.blockable, self.knockback, self.stun)
         
 class BlockSkill(Skill):
     def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
@@ -95,9 +99,10 @@ class BlockSkill(Skill):
         return self.useSkill()
 
 class DashAttackSkill(AttackSkill):
-    def __init__(self, startup, cooldown, damage, range, blockable, knockback, stun):
-        super().__init__(startup, cooldown, damage, range, blockable, knockback, stun)
+    def __init__(self, startup, cooldown, damage, range, vertical, blockable, knockback, stun):
+        super().__init__(startup, cooldown, damage, range, vertical, blockable, knockback, stun)
         self.skillType = "dash_attack"
+
 
 
     
