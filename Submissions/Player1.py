@@ -1,23 +1,29 @@
-
-from Skills import AttackSkill
+from Skills import AttackSkill, DashAttackSkill, BlockSkill
+# use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
-        self.primarySkill ="dash_attack"
+        self.primarySkill = DashAttackSkill(0, 10, 15, 4, False, 0, 2)
         self.secondarySkill = ""
-        self.xCoord = xCoord
-        self.yCoord = yCoord
         self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
         self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
-        self.moves = []
-        self.blocking = False
-        self.hp = HP
+        self.block = BlockSkill(0, 0, 15, 2)
         
+        self.xCoord = xCoord
+        self.yCoord = yCoord
+
         #current stun duration
         self.stun = 0
+        self.blocking = False
+        self.hp = HP
+        #midair attributes
         self.midair = False
+        self.jumpHeight = 2
+        self.falling = False
+        
         #direction player is facing
         self.direction = direction
         
+        self.moves = []
         self.moveNum = 0
         
         #for testing

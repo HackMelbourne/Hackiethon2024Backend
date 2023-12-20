@@ -40,7 +40,6 @@ def updateCooldown(player):
     
     player.lightAtk.reduceCd(1)
     player.heavyAtk.reduceCd(1)
-    pass
 
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
@@ -90,9 +89,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
         valid_actions[act2[0]](player2, player1, act2)
 
     # then attacks and skills 
-    if not player1.stun and not act1 == "NoMove":
+    if not player1.stun and act1 != "NoMove":
         knock1, stun1 = valid_actions[act1[0]](player1, player2, act1)
-    if not player2.stun and not act2 == "NoMove":
+    if not player2.stun and act2 != "NoMove":
         knock2, stun2 = valid_actions[act2[0]](player2, player1, act2)
 
     return knock1, stun1, knock2, stun2
@@ -130,8 +129,8 @@ def startGame(path1, path2):
         act1 = player1.action()
         act2 = player2.action()
 
-        # playerInfo(player1, path1, act1)
-        # playerInfo(player2, path2, act2)
+        playerInfo(player1, path1, act1)
+        playerInfo(player2, path2, act2)
             
         knock1, stun1, knock2, stun2 = performActions(player1, player2, act1, act2, stun1, stun2)
 
@@ -151,3 +150,5 @@ def startGame(path1, path2):
         print('match won by: ', path1)
         return path1
     return max(player1.hp, player2.hp)
+
+startGame("Player1", "Player2")
