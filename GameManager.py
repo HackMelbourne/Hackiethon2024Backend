@@ -38,6 +38,8 @@ def updateCooldown(player):
     
     player.lightAtk.reduceCd(1)
     player.heavyAtk.reduceCd(1)
+    player.primarySkill.reduceCd(1)
+    player.secondarySkill.reduceCd(1)
 
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):

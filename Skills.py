@@ -99,10 +99,14 @@ class BlockSkill(Skill):
         return self.useSkill()
 
 class DashAttackSkill(AttackSkill):
-    def __init__(self, startup, cooldown, damage, range, vertical, blockable, knockback, stun):
-        super().__init__(startup, cooldown, damage, range, vertical, blockable, knockback, stun)
+    def __init__(self):
+        super().__init__(startup=0, cooldown=10, damage=10, xRange=4, 
+                         vertical=0, blockable=False, knockback=0, stun=2)
         self.skillType = "dash_attack"
 
 
-
-    
+class UppercutSkill(AttackSkill):
+    def __init__(self):
+        super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
+                         vertical=1, blockable=True, knockback=1, stun=2)
+        self.skillType = "uppercut"
