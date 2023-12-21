@@ -5,7 +5,7 @@ from playerActions import *
 
 #game settings
 timeLimit = 60
-movesPerSecond =2
+movesPerSecond = 1
 
 # number of y-units to move when falling
 gravity = 1
@@ -27,8 +27,9 @@ def setupGame(path1, path2):
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("move", (1,0)), ("attack", "light"), ("attack", "light"), ("attack", "light"),("attack", "light")
-    p2movelist = ("block",), ("block",), ("block",), ("block",), ("block",)
+    p1movelist = ("move", (1,0)), ("NoMove", None), ("uppercut", None)
+    
+    p2movelist = ("move", (1,0)), ("move", (0,1)), ("NoMove", None)
     
     player1.moveList += p1movelist
     player2.moveList += p2movelist          
@@ -73,7 +74,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
 
     # to specify an action,
     # define an action inside playerActions with the signature above,
-    # and then add it to valid_actions (inside playerActions)
+    # and then add it to attack_actions or defense_actions (inside playerActions)
 
     # works under assumption of only 1 action per turn
 
@@ -81,17 +82,16 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
     # if (act1 != "NoMove"):
     # print(act1, act2)
     
-    # movement and defensive actions take priority
-    if (act1[0] in ("move", "block") and not player1.stun):
-        valid_actions[act1[0]](player1, player2, act1)
-    if (act2[0] in ("move", "block") and not player2.stun):
-        valid_actions[act2[0]](player2, player1, act2)
+    # movement and defensive actions take priority then attacks and skills 
+    if (act1[0] in defense_actions and not player1.stun):
+        defense_actions[act1[0]](player1, player2, act1)
+    if (act2[0] in defense_actions and not player2.stun):
+        defense_actions[act2[0]](player2, player1, act2)
 
-    # then attacks and skills 
-    if not player1.stun and act1 != "NoMove":
-        knock1, stun1 = valid_actions[act1[0]](player1, player2, act1)
-    if not player2.stun and act2 != "NoMove":
-        knock2, stun2 = valid_actions[act2[0]](player2, player1, act2)
+    if not player1.stun and act1[0] in attack_actions:
+        knock1, stun1 = attack_actions[act1[0]](player1, player2, act1)
+    if not player2.stun and act2[0] in attack_actions:
+        knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
 
     return knock1, stun1, knock2, stun2
                 
@@ -107,8 +107,8 @@ def startGame(path1, path2):
 
     stun1 = stun2 = 0
     
-    #TODO uncomment 
-    # setMoves(player1, player2)
+    #TODO uncomment to set moves for both players
+    setMoves(player1, player2)
 
     for tick in range(timeLimit *movesPerSecond):
         #flips orientation if player jumps over each other

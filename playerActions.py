@@ -41,8 +41,9 @@ def fetchAttack(player, attackType):
 
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
-    # This is fine if we only allow horizontal attacks
-    if (abs(player.xCoord-target.xCoord) <= atk_range and player.yCoord + vertical >= target.yCoord):
+    # checks if target is within the horizontal and vertical attack range
+    if (abs(player.xCoord-target.xCoord) <= atk_range and 
+        player.yCoord + vertical >= target.yCoord):
         # can be changed later : no knockback if block or stunned
         if target.blocking or target.stun:
             knockback = 0
@@ -112,8 +113,22 @@ def dash_atk(player, target, action):
     return knockback, stun
 
 def uppercut(player, target, action):
-    pass
+    # attack hit copied from dash_attack
+    knockback = stun = 0
+    if (action[0] == "uppercut"):
+        skillInfo = fetchSkill(player, "uppercut")
+        # if skill on cooldown or in startup
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        # so now, skillInfo = damage, 
+        skillInfo = skillInfo[1:]
+        player.moves.append(action)
 
-valid_actions = {"attack": attack, "block": block, "move": move, 
-                 "dash_attack": dash_atk,
-                 "uppercut": uppercut}
+        knockback, stun = attackHit(player, target, *skillInfo)
+        correctPos(player)
+    return knockback, stun
+defense_actions = {"block": block, "move": move}
+
+attack_actions = {"attack": attack, "dash_attack": dash_atk,
+                  "uppercut": uppercut}
