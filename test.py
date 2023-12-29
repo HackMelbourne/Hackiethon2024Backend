@@ -11,7 +11,6 @@ def validMove(moveset, player, enemy):
         return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player.xCoord - enemy.xCoord) == moveset[0]):
-        print(f"Hitbox touching! {player.xCoord, enemy.xCoord}, {moveset[0]}")
         return False
     return True
 

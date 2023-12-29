@@ -128,7 +128,10 @@ def uppercut(player, target, action):
         knockback, stun = attackHit(player, target, *skillInfo)
         correctPos(player)
     return knockback, stun
+
+# for actions that do not deal damage
 defense_actions = {"block": block, "move": move}
 
+# for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   "uppercut": uppercut}

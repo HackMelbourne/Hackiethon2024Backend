@@ -111,8 +111,8 @@ class UppercutSkill(AttackSkill):
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
 
-class SummonProjectile:
-    def __init__(self, player, position, gravity, velocity, acceleration, range, size):
+class Projectile:
+    def __init__(self, player, target, position, gravity, velocity, acceleration, range, size):
         # position = (int, int), contains position of projectile relative to player
         # direction = (int, int), direction of travel in (x, y) grid
         # velocity = how fast the projectile moves horizontally
@@ -126,6 +126,7 @@ class SummonProjectile:
         self.distance = 0
         self.range = range
         self.size = size
+        self.target = target
 
     def travel(self):
         if self.distance != self.range:
@@ -134,8 +135,18 @@ class SummonProjectile:
             self.velocity *= (1 + self.acceleration)
         if self.position[1] <= 0:
             self.size = (0, 0)
-        #TODO add check for projectile going offscreen
+        # check for projectile moving offscreen
+        if self.position[0] < 0 or self.position[0] > 30:
+            self.size = (0, 0)
 
-
-    
-    
+    def checkCollision(self):
+        # checks if projectile has a size
+        if self.size[0] and self.size[1]:
+            # checks if projectile hits target
+            if (self.position[0] <= self.target.xCoord 
+                <= self.position[0] + self.size[0] - 1 and 
+                self.position[1] <= self.target.yCoord <= 
+                self.position[1] + self.size[1] - 1):
+                return True
+        return False
+            
