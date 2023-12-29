@@ -110,3 +110,32 @@ class UppercutSkill(AttackSkill):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
+
+class SummonProjectile:
+    def __init__(self, player, position, gravity, velocity, acceleration, range, size):
+        # position = (int, int), contains position of projectile relative to player
+        # direction = (int, int), direction of travel in (x, y) grid
+        # velocity = how fast the projectile moves horizontally
+        # gravity = how fast the projectile moves vertically
+        # size = (x, y) hitbox size of projectile
+        self.position = (player.xCoord + position[0], player.yCoord + position[1])
+        self.gravity = gravity
+        self.velocity = velocity * player.direction
+        self.initVelocity = velocity
+        self.acceleration = acceleration
+        self.distance = 0
+        self.range = range
+        self.size = size
+
+    def travel(self):
+        if self.distance != self.range:
+            self.position[0] += self.velocity
+            self.position[1] -= self.gravity
+            self.velocity *= (1 + self.acceleration)
+        if self.position[1] <= 0:
+            self.size = (0, 0)
+        #TODO add check for projectile going offscreen
+
+
+    
+    
