@@ -130,13 +130,14 @@ def uppercut(player, target, action):
     return knockback, stun
 
 # teleport skill, use ("teleport", 1) to teleport towards target, -1 to teleport away
-def teleport(player, action):
+def teleport(player, target, action):
+    print("Teleport")
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
             return 0, 0
-        
-        distance = skillInfo[1:]
+
+        distance = skillInfo[1]
         player.moves.append(action)
 
         player.xCoord += distance * action[1] * player.direction
@@ -145,7 +146,7 @@ def teleport(player, action):
 
 
 # for actions that do not deal damage
-defense_actions = {"block": block, "move": move}
+defense_actions = {"block": block, "move": move, "teleport": teleport}
 
 # for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,

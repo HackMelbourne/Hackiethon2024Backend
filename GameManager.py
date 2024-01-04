@@ -27,9 +27,9 @@ def setupGame(path1, path2):
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("move", (1,0)), ("NoMove", None), ("uppercut", None)
+    p1movelist = ("teleport", 1), ("NoMove", None), ("uppercut", None)
     
-    p2movelist = ("move", (1,0)), ("move", (0,1)), ("NoMove", None)
+    p2movelist = ("teleport", -1), ("move", (0,1)), ("NoMove", None)
     
     player1.moveList += p1movelist
     player2.moveList += p2movelist          
