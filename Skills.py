@@ -44,8 +44,7 @@ class Skill:
         if self.currentStartup < self.startup:
             self.currentStartup = self.startup
        
-# Below are example/sample skills 
-    
+#TODO this can be removed    
 class MoveSkill(Skill):
     def __init__(self, startup, cooldown, distance):
         super().__init__("move", startup, cooldown, distance)
@@ -104,12 +103,18 @@ class DashAttackSkill(AttackSkill):
                          vertical=0, blockable=False, knockback=0, stun=2)
         self.skillType = "dash_attack"
 
-
 class UppercutSkill(AttackSkill):
     def __init__(self):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
+
+class TeleportSkill(Skill):
+    def __init__(self):
+        super().__init__(skillType= "teleport", startup= 0, cooldown= 10, skillValue= 5)
+
+    def activateSkill(self):
+        return self.useSkill()
 
 class Projectile:
     def __init__(self, player, target, position, gravity, velocity, acceleration, range, size):
