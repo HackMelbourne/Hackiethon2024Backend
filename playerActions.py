@@ -10,12 +10,14 @@ def correctPos(player):
 
 def move(player, enemy, action):
     if (action[0] == "move"):
-        if validMove(action[1], player, enemy) and not player.midair:
+        moveAction = player.move.activateSkill(action[1])[1]
+        print(moveAction)
+        if validMove(moveAction, player, enemy) and not player.midair:
             player.blocking = False
             player.block.regenShield() 
             player.moves.append(action)
-            player.xCoord += player.direction * action[1][0]
-            player.yCoord += action[1][1]
+            player.xCoord += player.direction * moveAction[0]
+            player.yCoord += moveAction[1]
             if player.yCoord > 0:
                 player.midair = True
         else:    
@@ -94,6 +96,31 @@ def fetchSkill(player, skillClass):
     else:
         raise Exception("Player does not have this skill!")
     
+def changeSpeed(player, speed):
+    player.primarySkill.startup += speed
+    player.secondarySkill.startup += speed
+    player.lightAtk.startup += speed
+    player.heavyAtk.startup += speed
+    player.block.startup += speed
+    if player.primarySkill.startup < 0:
+        player.primarySkill.startup = 0
+    if player.secondarySkill.startup < 0:
+        player.secondarySkill.startup = 0
+    if player.lightAtk.startup < 0:
+        player.lightAtk.startup = 0
+    if player.heavyAtk.startup < 0:
+        player.heavyAtk.startup = 0
+    if player.block.startup < 0:
+        player.block.startup = 0
+
+def changeDamage(player, buffValue):
+    if player.primarySkill.skillType in attack_actions:
+        player.primarySkill.damageBuff(buffValue)
+    if player.secondarySkill.skillType in attack_actions:
+        player.secondarySkill.damageBuff(buffValue)
+    player.lightAtk.damageBuff(buffValue)
+    player.heavyAtk.damageBuff(buffValue)
+
 # dashes towards target, deals damage along the way
 def dash_atk(player, target, action):
     knockback = stun = 0
@@ -143,11 +170,20 @@ def teleport(player, target, action):
         player.xCoord += distance * action[1] * player.direction
         correctPos(player)
     return None
+#TODO add logic for below functions
+def super_saiyan(player, target, action):
+    return
 
+def meditate(player, target, action):
+    return
+
+def one_punch(player, target, action):
+    return
 
 # for actions that do not deal damage
-defense_actions = {"block": block, "move": move, "teleport": teleport}
+defense_actions = {"block": block, "move": move, "teleport": teleport, 
+                   "super_saiyan": super_saiyan, "meditate": meditate}
 
 # for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,
-                  "uppercut": uppercut}
+                  "uppercut": uppercut, "one_punch": one_punch}

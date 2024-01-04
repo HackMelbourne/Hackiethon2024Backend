@@ -7,6 +7,7 @@ class Player_Controller:
         self.lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)
         self.heavyAtk = AttackSkill(2, 4, 10, 2, 0, True, 1, 1)
         self.block = BlockSkill(0, 0, 15, 2)
+        self.move = MoveSkill(0, 0, (0,0))
         
         self.xCoord = xCoord
         self.yCoord = yCoord

@@ -44,12 +44,13 @@ class Skill:
         if self.currentStartup < self.startup:
             self.currentStartup = self.startup
        
-#TODO this can be removed    
+# when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):
     def __init__(self, startup, cooldown, distance):
         super().__init__("move", startup, cooldown, distance)
 
-    def activateSkill(self):
+    def activateSkill(self, direction):
+        self.skillValue = direction
         return self.useSkill()
         
 class AttackSkill(Skill):
@@ -73,6 +74,10 @@ class AttackSkill(Skill):
                 return -1
             return skill + (self.xRange, self.vertical,
                             self.blockable, self.knockback, self.stun)
+    def damageBuff(self, buffVal):
+        self.skillValue += buffVal
+        if self.skillValue < 0:
+            self.skillValue = 0
         
 class BlockSkill(Skill):
     def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
@@ -108,6 +113,29 @@ class UppercutSkill(AttackSkill):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
+
+#TODO add one_punch, super saiyan and meditate/heal playeractions
+#TODO add buff duration timer 
+
+class OnePunchSkill(AttackSkill):
+    def __init__(self):
+        super().__init__(startup=2, cooldown=10, damage=20, xRange=2,
+                         vertical=0, blockable=False, knockback=4, stun=3)
+        self.skillType = "one_punch"
+
+class BuffSkill(Skill):
+    def __init__(self, startup, cooldown, speedBuff, attackBuff, defenseBuff):
+        super.__init__(self, "buff", startup, cooldown, (speedBuff, attackBuff, defenseBuff))
+
+    def activateSkill(self):
+        return self.useSkill()
+    
+class HealSkill(Skill):
+    def __init__(self, startup, cooldown, healValue):
+        super.__init__(self, "heal", startup, cooldown, healValue)
+    
+    def activateSkill(self):
+        return self.useSkill()
 
 class TeleportSkill(Skill):
     def __init__(self):
