@@ -11,7 +11,6 @@ def correctPos(player):
 def move(player, enemy, action):
     if (action[0] == "move"):
         moveAction = player.move.activateSkill(action[1])[1]
-        print(moveAction)
         if validMove(moveAction, player, enemy) and not player.midair:
             player.blocking = False
             player.block.regenShield() 
@@ -158,7 +157,6 @@ def uppercut(player, target, action):
 
 # teleport skill, use ("teleport", 1) to teleport towards target, -1 to teleport away
 def teleport(player, target, action):
-    print("Teleport")
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
@@ -187,3 +185,21 @@ defense_actions = {"block": block, "move": move, "teleport": teleport,
 # for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   "uppercut": uppercut, "one_punch": one_punch}
+
+
+'''
+How to add a new skill
+- Add the skill class to skills.py
+Then use
+def skill(player, target, action):
+    -- this checks if the skill is on cooldown or startup, use it if not --
+    if (action[0] == "skill"):
+        skillInfo = fetchSkill(player, "skill")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        -- add skill logic here --
+    return None
+
+
+'''

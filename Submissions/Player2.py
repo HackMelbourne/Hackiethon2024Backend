@@ -38,8 +38,6 @@ class Player_Controller:
     
     def to_json(self):
         return {
-            'primary': self.primarySkill.skillType,
-            'secondary': self.secondarySkill.skillType,
             'hp': self.hp,
             'position': (self.xCoord, self.yCoord),
             'state': self.moves[-1],

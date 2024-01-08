@@ -96,7 +96,6 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
     return knock1, stun1, knock2, stun2
                 
 def startGame(path1, path2):
-    print(path1,path2)
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
     if isinstance(path1, str) and not isinstance(path2,str):
@@ -109,6 +108,11 @@ def startGame(path1, path2):
     
     #TODO uncomment to set moves for both players
     setMoves(player1, player2)
+
+    player1_json = open("jsonfiles\p1.json", "a")
+    player2_json = open("jsonfiles\p2.json", "a")
+    p1_json_dict = []
+    p2_json_dict = []
 
     for tick in range(timeLimit *movesPerSecond):
         #flips orientation if player jumps over each other
@@ -128,8 +132,8 @@ def startGame(path1, path2):
         act1 = player1.action()
         act2 = player2.action()
 
-        playerInfo(player1, path1, act1)
-        playerInfo(player2, path2, act2)
+        #playerInfo(player1, path1, act1)
+        #playerInfo(player2, path2, act2)
             
         knock1, stun1, knock2, stun2 = performActions(player1, player2, act1, act2, stun1, stun2)
 
@@ -145,13 +149,16 @@ def startGame(path1, path2):
         updateCooldown(player2)
         #TODO update current startup every tick
 
-    #json
-    jsonStr1 = json.dumps(player1.to_json())
-    jsonStr2 = json.dumps(player2.to_json())
+        p1_json_dict.append(player1.to_json())
+        p2_json_dict.append(player2.to_json())
 
-    print(jsonStr1)
-    print(jsonStr2)
-    
+    #TODO uncomment to dump data to json files
+    #json.dump(p1_json_dict, player1_json)
+    #json.dump(p2_json_dict, player2_json)
+
+    player1_json.close()
+    player2_json.close()
+
     if player1.hp == player2.hp:
         print('match won by: ', path1)
         return path1
