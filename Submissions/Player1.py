@@ -35,3 +35,15 @@ class Player_Controller:
             # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
             return self.moveList[self.moveNum]
         return ("NoMove")
+    
+    def to_json(self):
+        return {
+            'primary': self.primarySkill.skillType,
+            'secondary': self.secondarySkill.skillType,
+            'hp': self.hp,
+            'position': (self.xCoord, self.yCoord),
+            'state': self.moves[-1],
+            'stun': self.stun,
+            'midair': self.midair,
+            'falling': self.falling
+        }

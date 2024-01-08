@@ -2,7 +2,7 @@ import random
 from test import *
 import importlib
 from playerActions import *
-
+import json
 #game settings
 timeLimit = 60
 movesPerSecond = 1
@@ -145,6 +145,13 @@ def startGame(path1, path2):
         updateCooldown(player2)
         #TODO update current startup every tick
 
+    #json
+    jsonStr1 = json.dumps(player1.to_json())
+    jsonStr2 = json.dumps(player2.to_json())
+
+    print(jsonStr1)
+    print(jsonStr2)
+    
     if player1.hp == player2.hp:
         print('match won by: ', path1)
         return path1
