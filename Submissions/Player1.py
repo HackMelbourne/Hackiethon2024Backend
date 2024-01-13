@@ -27,6 +27,9 @@ class Player_Controller:
         self.moves = []
         self.moveNum = 0
         
+        # TODO add defense stat and defense check
+        # TODO add attack and speed stat
+        
         #for testing
         #player scripts will append moves to this
         self.moveList = []

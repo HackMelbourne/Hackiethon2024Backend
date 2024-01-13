@@ -168,15 +168,46 @@ def teleport(player, target, action):
         player.xCoord += distance * action[1] * player.direction
         correctPos(player)
     return None
-#TODO add logic for below functions
+
+# buffs damage and speed for player
 def super_saiyan(player, target, action):
-    return
+    if (action[0] == "super_saiyan"):
+        skillInfo = fetchSkill(player, "super_saiyan")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+    # todo add logic
+    return None
+    
 
+# heals player for given amount of hp
 def meditate(player, target, action):
-    return
-
+    if (action[0] == "heal"):
+        skillInfo = fetchSkill(player, "heal")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        healVal = skillInfo[1]
+        player.moves.append(action)
+        
+        player.hp += healVal
+    return None    
+    
+# similar layout to dash_atk
+# TODO : has startup, add function to manage startups
+# powerful punch that takes time to charge up
 def one_punch(player, target, action):
-    return
+    if (action[0] == "one_punch"):
+        skillInfo = fetchSkill(player, "one_punch")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        skillInfo = skillInfo[1:]
+        player.moves.append(action)
+
+        knockback, stun = attackHit(player, target, *skillInfo)
+    return knockback, stun
+        
 
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 

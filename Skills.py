@@ -144,6 +144,12 @@ class TeleportSkill(Skill):
     def activateSkill(self):
         return self.useSkill()
 
+class SuperSaiyanSkill(BuffSkill):
+    def __init__(self):
+        super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
+                         defenseBuff=0)
+        self.skillType = "super_saiyan"
+
 class Projectile:
     def __init__(self, player, target, position, gravity, velocity, acceleration, range, size):
         # position = (int, int), contains position of projectile relative to player
