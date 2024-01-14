@@ -16,6 +16,7 @@ class Player_Controller:
         self.stun = 0
         self.blocking = False
         self.hp = HP
+        self.defense = 0
         #midair attributes
         self.midair = False
         self.jumpHeight = 2
@@ -28,8 +29,7 @@ class Player_Controller:
         self.moveNum = 0
         
         # TODO add defense stat and defense check
-        # TODO add attack and speed stat
-        
+
         #for testing
         #player scripts will append moves to this
         self.moveList = []

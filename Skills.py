@@ -123,6 +123,7 @@ class OnePunchSkill(AttackSkill):
                          vertical=0, blockable=False, knockback=4, stun=3)
         self.skillType = "one_punch"
 
+# returns ("buff", (speedBuff, attackBuff, defenseBuff))
 class BuffSkill(Skill):
     def __init__(self, startup, cooldown, speedBuff, attackBuff, defenseBuff):
         super.__init__(self, "buff", startup, cooldown, (speedBuff, attackBuff, defenseBuff))
@@ -144,6 +145,7 @@ class TeleportSkill(Skill):
     def activateSkill(self):
         return self.useSkill()
 
+# returns ("super_saiyan", (speedBuff, attackBuff, defenseBuff))
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
@@ -189,3 +191,8 @@ class Projectile:
                 return True
         return False
             
+class Hadoken(Skill, Projectile):
+    def __init__(self, player, target, damage):
+        Skill.__init__(self, "hadoken", startup=2, cooldown=2, skillValue=damage)
+        Projectile.__init__(self, player, target, position=(1, 0), gravity=0, 
+                            velocity=1, acceleration=0, range=20, size=1)

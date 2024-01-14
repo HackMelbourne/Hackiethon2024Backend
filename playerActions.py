@@ -58,7 +58,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 target.stun += target.block.shieldDmg(damage)
             return 0, 0
         else:
-            target.hp -= damage
+            target.hp = target.hp + target.defense - damage
             return knockback, stun
     return 0, 0
 
@@ -96,11 +96,11 @@ def fetchSkill(player, skillClass):
         raise Exception("Player does not have this skill!")
     
 def changeSpeed(player, speed):
-    player.primarySkill.startup += speed
-    player.secondarySkill.startup += speed
-    player.lightAtk.startup += speed
-    player.heavyAtk.startup += speed
-    player.block.startup += speed
+    player.primarySkill.startup -= speed
+    player.secondarySkill.startup -= speed
+    player.lightAtk.startup -= speed
+    player.heavyAtk.startup -= speed
+    player.block.startup -= speed
     if player.primarySkill.startup < 0:
         player.primarySkill.startup = 0
     if player.secondarySkill.startup < 0:
@@ -176,7 +176,12 @@ def super_saiyan(player, target, action):
         if isinstance(skillInfo, int):
             return 0, 0
         
-    # todo add logic
+        speedBuff = skillInfo[1][0]
+        atkBuff = skillInfo[1][1]
+        player.moves.append(action)
+        changeSpeed(player, speedBuff)
+        changeDamage(player, atkBuff)
+        
     return None
     
 
@@ -231,6 +236,4 @@ def skill(player, target, action):
         
         -- add skill logic here --
     return None
-
-
 '''
