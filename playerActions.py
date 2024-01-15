@@ -11,7 +11,6 @@ def correctPos(player):
 def move(player, enemy, action):
     if (action[0] == "move"):
         moveAction = player.move.activateSkill(action[1])[1]
-        print(moveAction)
         if validMove(moveAction, player, enemy) and not player.midair:
             player.blocking = False
             player.block.regenShield() 
@@ -59,7 +58,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 target.stun += target.block.shieldDmg(damage)
             return 0, 0
         else:
-            target.hp -= damage
+            target.hp = target.hp + target.defense - damage
             return knockback, stun
     return 0, 0
 
@@ -97,11 +96,11 @@ def fetchSkill(player, skillClass):
         raise Exception("Player does not have this skill!")
     
 def changeSpeed(player, speed):
-    player.primarySkill.startup += speed
-    player.secondarySkill.startup += speed
-    player.lightAtk.startup += speed
-    player.heavyAtk.startup += speed
-    player.block.startup += speed
+    player.primarySkill.startup -= speed
+    player.secondarySkill.startup -= speed
+    player.lightAtk.startup -= speed
+    player.heavyAtk.startup -= speed
+    player.block.startup -= speed
     if player.primarySkill.startup < 0:
         player.primarySkill.startup = 0
     if player.secondarySkill.startup < 0:
@@ -158,7 +157,6 @@ def uppercut(player, target, action):
 
 # teleport skill, use ("teleport", 1) to teleport towards target, -1 to teleport away
 def teleport(player, target, action):
-    print("Teleport")
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
@@ -170,15 +168,51 @@ def teleport(player, target, action):
         player.xCoord += distance * action[1] * player.direction
         correctPos(player)
     return None
-#TODO add logic for below functions
+
+# buffs damage and speed for player
 def super_saiyan(player, target, action):
-    return
+    if (action[0] == "super_saiyan"):
+        skillInfo = fetchSkill(player, "super_saiyan")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        speedBuff = skillInfo[1][0]
+        atkBuff = skillInfo[1][1]
+        player.moves.append(action)
+        changeSpeed(player, speedBuff)
+        changeDamage(player, atkBuff)
+        
+    return None
+    
 
+# heals player for given amount of hp
 def meditate(player, target, action):
-    return
-
+    if (action[0] == "heal"):
+        skillInfo = fetchSkill(player, "heal")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        healVal = skillInfo[1]
+        player.moves.append(action)
+        
+        player.hp += healVal
+    return None    
+    
+# similar layout to dash_atk
+# TODO : has startup, add function to manage startups
+# powerful punch that takes time to charge up
 def one_punch(player, target, action):
-    return
+    if (action[0] == "one_punch"):
+        skillInfo = fetchSkill(player, "one_punch")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        skillInfo = skillInfo[1:]
+        player.moves.append(action)
+
+        knockback, stun = attackHit(player, target, *skillInfo)
+    return knockback, stun
+        
 
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
@@ -187,3 +221,19 @@ defense_actions = {"block": block, "move": move, "teleport": teleport,
 # for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   "uppercut": uppercut, "one_punch": one_punch}
+
+
+'''
+How to add a new skill
+- Add the skill class to skills.py
+Then use
+def skill(player, target, action):
+    -- this checks if the skill is on cooldown or startup, use it if not --
+    if (action[0] == "skill"):
+        skillInfo = fetchSkill(player, "skill")
+        if isinstance(skillInfo, int):
+            return 0, 0
+        
+        -- add skill logic here --
+    return None
+'''

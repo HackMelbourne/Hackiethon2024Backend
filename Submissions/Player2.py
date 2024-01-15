@@ -16,6 +16,7 @@ class Player_Controller:
         self.stun = 0
         self.blocking = False
         self.hp = HP
+        self.defense = 0
         #midair attributes
         self.midair = False
         self.jumpHeight = 2
@@ -35,3 +36,13 @@ class Player_Controller:
             # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
             return self.moveList[self.moveNum]
         return ("NoMove")
+    
+    def to_json(self):
+        return {
+            'hp': self.hp,
+            'position': (self.xCoord, self.yCoord),
+            'state': self.moves[-1],
+            'stun': self.stun,
+            'midair': self.midair,
+            'falling': self.falling
+        }
