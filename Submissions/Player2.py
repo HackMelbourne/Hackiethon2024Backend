@@ -37,12 +37,3 @@ class Player_Controller:
             return self.moveList[self.moveNum]
         return ("NoMove")
     
-    def to_json(self):
-        return {
-            'hp': self.hp,
-            'position': (self.xCoord, self.yCoord),
-            'state': self.moves[-1],
-            'stun': self.stun,
-            'midair': self.midair,
-            'falling': self.falling
-        }

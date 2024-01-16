@@ -3,6 +3,7 @@ from test import *
 import importlib
 from playerActions import *
 import json
+import os
 #game settings
 timeLimit = 60
 movesPerSecond = 1
@@ -55,6 +56,17 @@ def updateMidair(player):
             player.yCoord += 1
     if player.yCoord == 0: 
         player.midair = player.falling = False
+
+def playerToJson(player, jsonDict):
+    jsonDict['hp'].append(player.hp)
+    jsonDict['xCoord'].append(player.xCoord)
+    jsonDict['yCoord'].append(player.yCoord)
+    #TODO coordinates and such
+    jsonDict['state'].append(player.moves[-1][0])
+    jsonDict['stun'].append(player.stun)
+    jsonDict['midair'].append(player.midair)
+    jsonDict['falling'].append(player.falling)
+                
 
 def performActions(player1, player2, act1, act2, stun1, stun2):
     knock1 = knock2 = 0
@@ -109,10 +121,34 @@ def startGame(path1, path2):
     #TODO uncomment to set moves for both players
     setMoves(player1, player2)
 
+    #TODO dont hard code path use the player names and use os for current path
+    # * Check if file exists if so delete it 
+    if(os.path.isfile("jsonfiles\p1.json")):
+        os.remove("jsonfiles\p1.json")
+    if(os.path.isfile("jsonfiles\p2.json")):
+        os.remove("jsonfiles\p2.json")
+        
     player1_json = open("jsonfiles\p1.json", "a")
     player2_json = open("jsonfiles\p2.json", "a")
-    p1_json_dict = []
-    p2_json_dict = []
+    # structure the dict
+    p1_json_dict = {
+        'hp': [],
+        'xCoord': [],
+        'yCoord': [],
+        'state': [],
+        'stun': [],
+        'midair': [],
+        'falling':[]
+        }
+    p2_json_dict = {
+        'hp': [],
+        'xCoord': [],
+        'yCoord': [],
+        'state': [],
+        'stun': [],
+        'midair': [],
+        'falling':[]
+    }
 
     for tick in range(timeLimit *movesPerSecond):
         #flips orientation if player jumps over each other
@@ -147,15 +183,15 @@ def startGame(path1, path2):
 
         updateCooldown(player1)
         updateCooldown(player2)
-        #TODO update current startup every tick
+        #TODO update current startup every tick 
 
-        p1_json_dict.append(player1.to_json())
-        p2_json_dict.append(player2.to_json())
-
+        playerToJson(player1, p1_json_dict)
+        playerToJson(player2,p2_json_dict)
+    print(p1_json_dict)
     #TODO uncomment to dump data to json files
-    #json.dump(p1_json_dict, player1_json)
-    #json.dump(p2_json_dict, player2_json)
-
+    json.dump(p1_json_dict, player1_json)
+    json.dump(p2_json_dict, player2_json)
+    
     player1_json.close()
     player2_json.close()
 
