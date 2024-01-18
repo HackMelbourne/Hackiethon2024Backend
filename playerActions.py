@@ -58,7 +58,10 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 target.stun += target.block.shieldDmg(damage)
             return 0, 0
         else:
-            target.hp = target.hp + target.defense - damage
+            damage = damage - target.defense
+            if damage < 0:
+                damage = 0
+            target.hp = target.hp - damage
             return knockback, stun
     return 0, 0
 
@@ -213,6 +216,13 @@ def one_punch(player, target, action):
         knockback, stun = attackHit(player, target, *skillInfo)
     return knockback, stun
         
+def hadoken(player, target, action):
+    if (action[0] == "hadoken"):
+        skillInfo = fetchSkill(player, "hadoken")
+        if not isinstance(skillInfo, int):
+            skillInfo = skillInfo[1:]
+            return skillInfo
+
 
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
@@ -220,8 +230,11 @@ defense_actions = {"block": block, "move": move, "teleport": teleport,
 
 # for actions that deal damage
 attack_actions = {"attack": attack, "dash_attack": dash_atk,
-                  "uppercut": uppercut, "one_punch": one_punch}
+                  "uppercut": uppercut, "one_punch": one_punch
+                  }
 
+# for projectile actions
+projectile_actions = {"hadoken":hadoken, }
 
 '''
 How to add a new skill

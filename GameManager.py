@@ -68,7 +68,7 @@ def playerToJson(player, jsonDict):
     jsonDict['falling'].append(player.falling)
                 
 
-def performActions(player1, player2, act1, act2, stun1, stun2):
+def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
 
     if player1.stun:
@@ -104,6 +104,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2):
         knock1, stun1 = attack_actions[act1[0]](player1, player2, act1)
     if not player2.stun and act2[0] in attack_actions:
         knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
+        
+    if not player1.stun and act1[0] in projectile_actions:
+        projectiles.append(projectile_actions[act1[0]](player1, player2, act1))
+    if not player2.stun and act2[0] in projectile_actions:
+        projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
 
     return knock1, stun1, knock2, stun2
                 
@@ -163,6 +168,7 @@ def startGame(path1, path2):
         updateMidair(player1)
         updateMidair(player2)
             
+        
         knock1 = knock2 = 0
         
         act1 = player1.action()
@@ -170,8 +176,22 @@ def startGame(path1, path2):
 
         #playerInfo(player1, path1, act1)
         #playerInfo(player2, path2, act2)
-            
-        knock1, stun1, knock2, stun2 = performActions(player1, player2, act1, act2, stun1, stun2)
+        projectiles = []
+        knock1, stun1, knock2, stun2 = performActions(player1, player2, act1, act2, stun1, stun2, projectiles)
+        
+        # if there are projectiles, make them travel
+        
+        for projectileNum in range(len(projectiles)):
+            projectileObj = projectiles[projectileNum][-1]["projectile"]
+            projectileObj.travel()
+            # check for projectiles colliding with each other
+            for nextProjNum in range(len(projectiles)):
+                nextProjectileObj = projectile[nextProjNum][-1]["projectile"]
+                if nextProjNum != projectileNum:
+                    if projectileObj.checkProjCollision(nextProjectileObj):
+                        projectiles.pop(projectileNum)
+                        #del projectileObj
+                    
 
         #only determine knockback and stun after attacks hit
         if knock1:

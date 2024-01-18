@@ -27,8 +27,7 @@ class Player_Controller:
         
         self.moves = []
         self.moveNum = 0
-        
-        #for testing
+
         #player scripts will append moves to this
         self.moveList = []
     def action(self):

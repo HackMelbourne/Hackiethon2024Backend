@@ -153,26 +153,28 @@ class SuperSaiyanSkill(BuffSkill):
         self.skillType = "super_saiyan"
 
 class Projectile:
-    def __init__(self, player, target, position, gravity, velocity, acceleration, range, size):
+    def __init__(self, player, position, gravity, velocity, acceleration, range, size):
         # position = (int, int), contains position of projectile relative to player
         # direction = (int, int), direction of travel in (x, y) grid
         # velocity = how fast the projectile moves horizontally
         # gravity = how fast the projectile moves vertically
         # size = (x, y) hitbox size of projectile
-        self.position = (player.xCoord + position[0], player.yCoord + position[1])
+        self.xCoord = player.xCoord + position[0]
+        self.yCoord = player.yCoord + position[1]
         self.gravity = gravity
-        self.velocity = velocity * player.direction
+        self.direction = player.direction
+        self.velocity = velocity * self.direction
         self.initVelocity = velocity
         self.acceleration = acceleration
         self.distance = 0
         self.range = range
         self.size = size
-        self.target = target
+
 
     def travel(self):
         if self.distance != self.range:
-            self.position[0] += self.velocity
-            self.position[1] -= self.gravity
+            self.xCoord += self.velocity
+            self.yCoord -= self.gravity
             self.velocity *= (1 + self.acceleration)
         if self.position[1] <= 0:
             self.size = (0, 0)
@@ -180,19 +182,43 @@ class Projectile:
         if self.position[0] < 0 or self.position[0] > 30:
             self.size = (0, 0)
 
-    def checkCollision(self):
+    def checkCollision(self, target):
         # checks if projectile has a size
         if self.size[0] and self.size[1]:
             # checks if projectile hits target
-            if (self.position[0] <= self.target.xCoord 
-                <= self.position[0] + self.size[0] - 1 and 
-                self.position[1] <= self.target.yCoord <= 
-                self.position[1] + self.size[1] - 1):
+            if (abs(target.xCoord-self.xCoord) <= self.size[0] and
+                abs(target.yCoord-self.yCoord) <= self.size[1]):
                 return True
         return False
             
-class Hadoken(Skill, Projectile):
-    def __init__(self, player, target, damage):
-        Skill.__init__(self, "hadoken", startup=2, cooldown=2, skillValue=damage)
-        Projectile.__init__(self, player, target, position=(1, 0), gravity=0, 
+    def checkProjCollision(self, target):
+        if self.size[0] and self.size[1]:
+            if (abs(target.xCoord + target.size[0]*target.direction 
+                    - self.xCoord) <= self.size[0] and
+                abs(target.yCoord + target.size[1] - self.yCoord) 
+                <= self.size[1]):
+                return True
+        return False
+    
+    
+class Hadoken(AttackSkill):
+    def __init__(self, player):
+        super.__init__(self, startup=2, cooldown=5, damage=10, xRange=0, 
+                             vertical=0, blockable=True, knockback=False, 
+                             stun=2)
+        self.skillType = "hadoken"
+        
+    def summonProjectile(self):
+        projectile = Projectile(self.player, position=(1, 0), gravity=0, 
                             velocity=1, acceleration=0, range=20, size=1)
+        return projectile
+    
+    def activateSkill(self):
+        atkInfo = super().activateSkill()
+        if isinstance(atkInfo, int):
+            return atkInfo
+        projectile = self.summonProjectile()
+        return [self.skillType + {"damage":self.damage, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, 
+                "projectile": projectile}]
+    

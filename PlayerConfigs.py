@@ -2,11 +2,12 @@ from Skills import *
 # use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
-        self.primarySkill = DashAttackSkill(0, 10, 5, 4, False, 0, 2)
-        self.secondarySkill = UppercutSkill()
-        self.lightAtk = AttackSkill(0, 1, 5, 1, True, 1, 0)
-        self.heavyAtk = AttackSkill(2, 4, 10, 2, True, 1, 1)
+        self.primarySkill = None
+        self.secondarySkill = None
+        self.lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)
+        self.heavyAtk = AttackSkill(2, 4, 10, 2, 0, True, 1, 1)
         self.block = BlockSkill(0, 0, 15, 2)
+        self.move = MoveSkill(0, 0, (0,0))
         
         self.xCoord = xCoord
         self.yCoord = yCoord
@@ -34,3 +35,13 @@ class Player_Controller:
             # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
             return self.moveList[self.moveNum]
         return ("NoMove")
+    
+    def to_json(self):
+        return {
+            'hp': self.hp,
+            'position': (self.xCoord, self.yCoord),
+            'state': self.moves[-1],
+            'stun': self.stun,
+            'midair': self.midair,
+            'falling': self.falling
+        }

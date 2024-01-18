@@ -28,9 +28,6 @@ class Player_Controller:
         self.moves = []
         self.moveNum = 0
         
-        # TODO add defense stat and defense check
-
-        #for testing
         #player scripts will append moves to this
         self.moveList = []
     def action(self):
