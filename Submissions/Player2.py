@@ -2,6 +2,7 @@ from Skills import *
 # use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
+        self.playerID = 2
         self.primarySkill = TeleportSkill()
         self.secondarySkill = UppercutSkill()
         self.lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)

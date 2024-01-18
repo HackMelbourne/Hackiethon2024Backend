@@ -182,16 +182,40 @@ def startGame(path1, path2):
         # if there are projectiles, make them travel
         
         for projectileNum in range(len(projectiles)):
-            projectileObj = projectiles[projectileNum][-1]["projectile"]
-            projectileObj.travel()
+            proj_info = projectiles[projectileNum][-1]
+            proj_obj = proj_info["projectile"]
+            proj_obj.travel()
             # check for projectiles colliding with each other
             for nextProjNum in range(len(projectiles)):
-                nextProjectileObj = projectile[nextProjNum][-1]["projectile"]
+                nextproj_obj = projectiles[nextProjNum][-1]["projectile"]
                 if nextProjNum != projectileNum:
-                    if projectileObj.checkProjCollision(nextProjectileObj):
+                    if proj_obj.checkProjCollision(nextproj_obj):
                         projectiles.pop(projectileNum)
-                        #del projectileObj
-                    
+                        projectiles.pop(nextproj_obj)
+                        break
+            
+            # then if it still exists, check for collision with other player
+            if proj_obj in projectiles:
+                proj_info = projectiles[projectileNum][-1]
+                target = proj_info["target"]
+                if proj_obj.checkCollision(target):
+                    # damage player using 
+                    proj_knock, proj_stun = attackHit(proj_obj, target,
+                                                      proj_info["damage"],
+                                                      proj_obj.size[0],
+                                                      proj_obj.size[1],
+                                                      proj_info["blockable"],
+                                                      proj_info["knockback"],
+                                                      proj_info["stun"])
+                    # if attack and projectile hits target at same time, use
+                    # highest knockback and stun
+                    #TODO test projectiles in depth
+                    if target.playerID == 1:
+                        knock1 = max(knock1, proj_knock)
+                        stun1 = max(stun1, proj_stun)
+                    elif target.playerID == 2:
+                        knock2 = max(knock2, proj_knock)
+                        stun2 = max(stun2, proj_stun)
 
         #only determine knockback and stun after attacks hit
         if knock1:

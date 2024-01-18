@@ -202,11 +202,13 @@ class Projectile:
     
     
 class Hadoken(AttackSkill):
-    def __init__(self, player):
+    def __init__(self, player, target):
         super.__init__(self, startup=2, cooldown=5, damage=10, xRange=0, 
                              vertical=0, blockable=True, knockback=False, 
                              stun=2)
         self.skillType = "hadoken"
+        self.player = player
+        self.target = target
         
     def summonProjectile(self):
         projectile = Projectile(self.player, position=(1, 0), gravity=0, 
@@ -218,7 +220,7 @@ class Hadoken(AttackSkill):
         if isinstance(atkInfo, int):
             return atkInfo
         projectile = self.summonProjectile()
-        return [self.skillType + {"damage":self.damage, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, 
+        return [self.skillType + {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, "target":self.target, 
                 "projectile": projectile}]
     
