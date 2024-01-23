@@ -62,7 +62,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             if damage < 0:
                 damage = 0
             target.hp = target.hp - damage
-            return knockback, stun
+            return knockback * player.direction, stun
     return 0, 0
 
 # Light and heavy attacks
@@ -220,7 +220,8 @@ def hadoken(player, target, action):
     if (action[0] == "hadoken"):
         skillInfo = fetchSkill(player, "hadoken")
         if not isinstance(skillInfo, int):
-            skillInfo = skillInfo[1:]
+            # returns dictionary containing projectile info
+            skillInfo = skillInfo[-1]
             return skillInfo
 
 

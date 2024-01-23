@@ -1,4 +1,5 @@
 # Skill superclass
+import itertools
 class Skill:
     def __init__(self, skillType, startup, cooldown, skillValue):
         #skillType can be either "move", "attack" or "defend" (can add more)
@@ -153,12 +154,17 @@ class SuperSaiyanSkill(BuffSkill):
         self.skillType = "super_saiyan"
 
 class Projectile:
-    def __init__(self, player, position, gravity, velocity, acceleration, range, size):
+    
+    # auto increment projectile id whenever a new projectile is summoned
+    id = itertools.count()
+    
+    def __init__(self, player, position, gravity, velocity, acceleration, range, size, type):
         # position = (int, int), contains position of projectile relative to player
         # direction = (int, int), direction of travel in (x, y) grid
         # velocity = how fast the projectile moves horizontally
         # gravity = how fast the projectile moves vertically
         # size = (x, y) hitbox size of projectile
+        # type =  type of projectile eg hadoken
         self.xCoord = player.xCoord + position[0]
         self.yCoord = player.yCoord + position[1]
         self.gravity = gravity
@@ -169,6 +175,8 @@ class Projectile:
         self.distance = 0
         self.range = range
         self.size = size
+        self.type = type
+        self.id = next(self.id)
 
 
     def travel(self):
@@ -176,10 +184,10 @@ class Projectile:
             self.xCoord += self.velocity
             self.yCoord -= self.gravity
             self.velocity *= (1 + self.acceleration)
-        if self.position[1] <= 0:
+        if self.yCoord < 0:
             self.size = (0, 0)
         # check for projectile moving offscreen
-        if self.position[0] < 0 or self.position[0] > 30:
+        if self.xCoord < 0 or self.xCoord > 30:
             self.size = (0, 0)
 
     def checkCollision(self, target):
@@ -202,17 +210,17 @@ class Projectile:
     
     
 class Hadoken(AttackSkill):
-    def __init__(self, player, target):
-        super.__init__(self, startup=2, cooldown=5, damage=10, xRange=0, 
-                             vertical=0, blockable=True, knockback=False, 
+    def __init__(self, player):
+        AttackSkill.__init__(self, startup=0, cooldown=5, damage=10, xRange=0, 
+                             vertical=0, blockable=True, knockback=2, 
                              stun=2)
         self.skillType = "hadoken"
         self.player = player
-        self.target = target
         
     def summonProjectile(self):
         projectile = Projectile(self.player, position=(1, 0), gravity=0, 
-                            velocity=1, acceleration=0, range=20, size=1)
+                            velocity=1, acceleration=0, range=20, size=(1, 1), 
+                            type="hadoken")
         return projectile
     
     def activateSkill(self):
@@ -220,7 +228,7 @@ class Hadoken(AttackSkill):
         if isinstance(atkInfo, int):
             return atkInfo
         projectile = self.summonProjectile()
-        return [self.skillType + {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, "target":self.target, 
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
     

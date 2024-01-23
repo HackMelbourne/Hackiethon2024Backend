@@ -3,7 +3,7 @@ from Skills import *
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction):
         self.playerID = 1
-        self.primarySkill = TeleportSkill()
+        self.primarySkill = Hadoken(self)
         self.secondarySkill = UppercutSkill()
         self.lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)
         self.heavyAtk = AttackSkill(2, 4, 10, 2, 0, True, 1, 1)
