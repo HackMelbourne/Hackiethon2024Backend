@@ -158,13 +158,15 @@ class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
     
-    def __init__(self, player, position, gravity, velocity, acceleration, range, size, type):
+    def __init__(self, player, position, gravity, velocity, acceleration, 
+                 range, size, type, proj_return):
         # position = (int, int), contains position of projectile relative to player
         # direction = (int, int), direction of travel in (x, y) grid
         # velocity = how fast the projectile moves horizontally
         # gravity = how fast the projectile moves vertically
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
+        # proj_return = whether or not the projectile comes back to player
         self.xCoord = player.xCoord + position[0]
         self.yCoord = player.yCoord + position[1]
         self.gravity = gravity
@@ -176,19 +178,30 @@ class Projectile:
         self.range = range
         self.size = size
         self.type = type
+        self.proj_return = proj_return
         self.id = next(self.id)
 
 
     def travel(self):
-        if self.distance != self.range:
+        if self.distance < self.range :
             self.xCoord += self.velocity
             self.yCoord -= self.gravity
+            self.distance += self.velocity
             self.velocity *= (1 + self.acceleration)
-        if self.yCoord < 0:
-            self.size = (0, 0)
-        # check for projectile moving offscreen
-        if self.xCoord < 0 or self.xCoord > 30:
-            self.size = (0, 0)
+        elif self.proj_return:
+            # for returning projectiles, check if reach the max range
+            # if reached, flip horizontal direction and start moving back
+            self.direction *= -1
+            self.velocity = self.initVelocity * self.direction
+            self.xCoord += self.velocity
+            self.yCoord -= self.gravity
+            self.distance += self.velocity
+            self.velocity *= (1 + self.acceleration)
+        # check if off-screen or below ground or moves out of range
+        if ((self.yCoord < 0) or (self.xCoord < 0) or (self.xCoord > 30) or 
+            (self.distance >= self.range) or (self.distance <= 0)):
+            self.size = (0,0)
+            
 
     def checkCollision(self, target):
         # checks if projectile has a size
@@ -220,7 +233,7 @@ class Hadoken(AttackSkill):
     def summonProjectile(self):
         projectile = Projectile(self.player, position=(1, 0), gravity=0, 
                             velocity=1, acceleration=0, range=20, size=(1, 1), 
-                            type="hadoken")
+                            type="hadoken", proj_return=False)
         return projectile
     
     def activateSkill(self):
@@ -232,3 +245,7 @@ class Hadoken(AttackSkill):
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
     
+    
+class Lasso(AttackSkill):
+    def __init__(self, player):
+        AttackSkill.__init__(self, startup=0, cooldown=5, damage=2, xRange=5, )
