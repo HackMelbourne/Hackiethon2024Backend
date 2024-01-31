@@ -12,21 +12,14 @@ def move(player, enemy, action):
     if (action[0] == "move"):
         moveAction = player.move.activateSkill(action[1])[1]
         if validMove(moveAction, player, enemy) and not player.midair:
-            player.blocking = False
-            player.block.regenShield() 
-            player.moves.append(action)
-            player.xCoord += player.direction * moveAction[0]
-            player.yCoord += moveAction[1]
-            if player.yCoord > 0:
-                player.midair = True
+            player.move_self(moveAction)
         else:    
             print("Invalid movement")
     return None, None
 
 def block(player, target, action):
     if (action[0] == "block"):
-        player.moves.append(action)
-        player.blocking = True
+        player.block_self(action)
     return None, None
 
 #returns the action if not on cooldown or mid-startup.
@@ -43,10 +36,12 @@ def fetchAttack(player, attackType):
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
     # checks if target is within the horizontal and vertical attack range
-    if (abs(player.xCoord-target.xCoord) <= atk_range and 
-        player.yCoord + vertical >= target.yCoord):
+    player_x, player_y = player.get_pos()
+    target_x, target_y = target.get_pos()
+    if (abs(player_x-target_x) <= atk_range and 
+        player_y + vertical >= target_y):
         # can be changed later : no knockback if block or stunned
-        if target.blocking or target.stun:
+        if target._blocking or target._stun:
             knockback = 0
         # if target is blocking
         if(target.blocking and blockable):
@@ -61,7 +56,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             damage = damage - target.defense
             if damage < 0:
                 damage = 0
-            target.hp = target.hp - damage
+            target.take_damage(damage)
             return knockback * player.direction, stun
     return 0, 0
 

@@ -10,13 +10,13 @@ class Player_Controller:
         self.block = BlockSkill(0, 0, 15, 2)
         self.move = MoveSkill(0, 0, (0,0))
         
-        self.xCoord = xCoord
-        self.yCoord = yCoord
+        self._xCoord = xCoord
+        self._yCoord = yCoord
 
         #current stun duration
-        self.stun = 0
-        self.blocking = False
-        self.hp = HP
+        self._stun = 0
+        self._blocking = False
+        self._hp = HP
         self.defense = 0
         #midair attributes
         self.midair = False
@@ -36,4 +36,27 @@ class Player_Controller:
             # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
             return self.moveList[self.moveNum]
         return ("NoMove")
+    
+    def move_self(self, action):
+        self.blocking = False
+        self.block.regenShield() 
+        self.moves.append(action)
+        self.xCoord += self.direction * action[0]
+        self.yCoord += action[1]
+        if self.yCoord > 0:
+           self.midair = True
+           
+    def block_self(self, action):
+        self.moves.append(action)
+        self.blocking = True
+        
+    def get_pos(self):
+        return (self._xCoord, self._yCoord)
+    
+    def take_damage(self, damage):
+        self._hp -= damage
+    
+
+    
+    
     

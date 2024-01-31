@@ -28,7 +28,7 @@ def setupGame(path1, path2):
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("hadoken", None), ("NoMove", None)
+    p1movelist = ("hadoken", None), ("block", None)
     
     p2movelist = ("move", (-1, 0)), ("NoMove", None)
     
@@ -43,25 +43,25 @@ def updateCooldown(player):
     
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
-    if player.yCoord == player.jumpHeight:
+    if player._yCoord == player.jumpHeight:
         player.falling = True
-        player.yCoord -= gravity
+        player._yCoord -= gravity
     # not yet at apex of jump
     elif player.midair:
         if player.falling: 
-            player.yCoord -= gravity
+            player._yCoord -= gravity
         else:
-            player.yCoord += 1
-    if player.yCoord == 0: 
+            player._yCoord += 1
+    if player._yCoord == 0: 
         player.midair = player.falling = False
 
 def playerToJson(player, jsonDict):
-    jsonDict['hp'].append(player.hp)
-    jsonDict['xCoord'].append(player.xCoord)
-    jsonDict['yCoord'].append(player.yCoord)
+    jsonDict['hp'].append(player._hp)
+    jsonDict['xCoord'].append(player._xCoord)
+    jsonDict['yCoord'].append(player._yCoord)
     #TODO coordinates and such
     #jsonDict['state'].append(player.moves[-1][0])
-    jsonDict['stun'].append(player.stun)
+    jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player.midair)
     jsonDict['falling'].append(player.falling)
                 
@@ -69,12 +69,12 @@ def playerToJson(player, jsonDict):
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
 
-    if player1.stun:
-        player1.stun -= 1
+    if player1._stun:
+        player1._stun -= 1
     else:
         player1.moveNum += 1
-    if player2.stun:
-        player2.stun -= 1
+    if player2._stun:
+        player2._stun -= 1
     else:
         player2.moveNum += 1
         
@@ -93,19 +93,19 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # print(act1, act2)
     
     # movement and defensive actions take priority then attacks and skills 
-    if (act1[0] in defense_actions and not player1.stun):
+    if (act1[0] in defense_actions and not player1._stun):
         defense_actions[act1[0]](player1, player2, act1)
-    if (act2[0] in defense_actions and not player2.stun):
+    if (act2[0] in defense_actions and not player2._stun):
         defense_actions[act2[0]](player2, player1, act2)
 
-    if not player1.stun and act1[0] in attack_actions:
+    if not player1._stun and act1[0] in attack_actions:
         knock1, stun1 = attack_actions[act1[0]](player1, player2, act1)
-    if not player2.stun and act2[0] in attack_actions:
+    if not player2._stun and act2[0] in attack_actions:
         knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
         
-    if not player1.stun and act1[0] in projectile_actions:
+    if not player1._stun and act1[0] in projectile_actions:
         projectiles.append(projectile_actions[act1[0]](player1, player2, act1))
-    if not player2.stun and act2[0] in projectile_actions:
+    if not player2._stun and act2[0] in projectile_actions:
         projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
         
     if act1 == "NoMove":
@@ -118,11 +118,13 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
                 
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2):
     for projectileNum in range(len(projectiles)):
+        
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
+        #print(proj_obj.xCoord, proj_obj.yCoord)
         proj_obj.travel()
-        print(proj_obj.xCoord, proj_obj.yCoord)
         # check for projectiles colliding with each other
+
         for nextProjNum in range(len(projectiles)):
             nextproj_obj = projectiles[nextProjNum]["projectile"]
             if (nextProjNum != projectileNum and 
@@ -211,6 +213,7 @@ def startGame(path1, path2):
         'falling':[]
     }
     projectiles = []
+    
     for tick in range(timeLimit *movesPerSecond):
         #flips orientation if player jumps over each other
         if flip_orientation(player1, player2):
@@ -229,6 +232,8 @@ def startGame(path1, path2):
         
         act1 = player1.action()
         act2 = player2.action()
+        
+        
 
         playerInfo(player1, path1, act1)
         playerInfo(player2, path2, act2)
@@ -242,11 +247,11 @@ def startGame(path1, path2):
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1
         if knock1:
-            player2.xCoord += knock1
-            player2.stun += stun1
+            player2._xCoord += knock1
+            player2._stun += stun1
         if knock2:
-            player1.xCoord += knock2
-            player1.stun += stun2
+            player1._xCoord += knock2
+            player1._stun += stun2
 
         updateCooldown(player1)
         updateCooldown(player2)
@@ -262,9 +267,9 @@ def startGame(path1, path2):
     player1_json.close()
     player2_json.close()
 
-    if player1.hp == player2.hp:
+    if player1._hp == player2._hp:
         print('match won by: ', path1)
         return path1
-    return max(player1.hp, player2.hp)
+    return max(player1._hp, player2._hp)
 
 startGame("Player1", "Player2")

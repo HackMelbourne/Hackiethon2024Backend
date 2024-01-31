@@ -167,8 +167,8 @@ class Projectile:
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
         # proj_return = whether or not the projectile comes back to player
-        self.xCoord = player.xCoord + position[0]
-        self.yCoord = player.yCoord + position[1]
+        self.xCoord = player._xCoord + position[0]
+        self.yCoord = player._yCoord + position[1]
         self.gravity = gravity
         self.direction = player.direction
         self.velocity = velocity * self.direction
@@ -202,13 +202,16 @@ class Projectile:
             (self.distance >= self.range) or (self.distance <= 0)):
             self.size = (0,0)
             
+    def get_pos(self):
+        return (self.xCoord, self.yCoord)
+            
 
     def checkCollision(self, target):
         # checks if projectile has a size
         if self.size[0] and self.size[1]:
             # checks if projectile hits target
-            if (abs(target.xCoord-self.xCoord) <= self.size[0] and
-                abs(target.yCoord-self.yCoord) <= self.size[1]):
+            if (abs(target._xCoord-self.xCoord) <= self.size[0] and
+                abs(target._yCoord-self.yCoord) <= self.size[1]):
                 return True
         return False
             
