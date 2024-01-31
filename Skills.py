@@ -104,13 +104,13 @@ class BlockSkill(Skill):
         return self.useSkill()
 
 class DashAttackSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=10, xRange=4, 
                          vertical=0, blockable=False, knockback=0, stun=2)
         self.skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
@@ -119,7 +119,7 @@ class UppercutSkill(AttackSkill):
 #TODO add buff duration timer 
 
 class OnePunchSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=2, cooldown=10, damage=20, xRange=2,
                          vertical=0, blockable=False, knockback=4, stun=3)
         self.skillType = "one_punch"
@@ -140,7 +140,7 @@ class HealSkill(Skill):
         return self.useSkill()
 
 class TeleportSkill(Skill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(skillType= "teleport", startup= 0, cooldown= 10, skillValue= 5)
 
     def activateSkill(self):
@@ -170,8 +170,8 @@ class Projectile:
         self.xCoord = player._xCoord + position[0]
         self.yCoord = player._yCoord + position[1]
         self.gravity = gravity
-        self.direction = player.direction
-        self.velocity = velocity * self.direction
+        self._direction = player._direction
+        self.velocity = velocity * self._direction
         self.initVelocity = velocity
         self.acceleration = acceleration
         self.distance = 0
@@ -192,7 +192,7 @@ class Projectile:
             # for returning projectiles, check if reach the max range
             # if reached, flip horizontal direction and start moving back
             self.direction *= -1
-            self.velocity = self.initVelocity * self.direction
+            self.velocity = self.initVelocity * self._direction
             self.xCoord += self.velocity
             self.yCoord -= self.gravity
             self.distance += self.velocity
@@ -217,7 +217,7 @@ class Projectile:
             
     def checkProjCollision(self, target):
         if self.size[0] and self.size[1]:
-            if (abs(target.xCoord + target.size[0]*target.direction 
+            if (abs(target.xCoord + target.size[0]*target._direction 
                     - self.xCoord) <= self.size[0] and
                 abs(target.yCoord + target.size[1] - self.yCoord) 
                 <= self.size[1]):

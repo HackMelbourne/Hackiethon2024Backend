@@ -2,6 +2,7 @@ import random
 from test import *
 import importlib
 from playerActions import *
+from Skills import *
 import json
 import os
 #game settings
@@ -18,12 +19,12 @@ GOLEFT = -1
 
 #player variables
 
-def setupGame(path1, path2):
+def setupGame():
     
-    p1Import = importlib.import_module("Submissions." + path1)
-    p2Import = importlib.import_module("Submissions." + path2)
-    player1 = p1Import.Player_Controller(1,0,50,GORIGHT)
-    player2 = p2Import.Player_Controller(4,0,50,GOLEFT)
+    p1Import = importlib.import_module("Submissions.PlayerConfigs")
+    p2Import = importlib.import_module("Submissions.PlayerConfigs")
+    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Hadoken, UppercutSkill)
+    player2 = p2Import.Player_Controller(4,0,50,GOLEFT, TeleportSkill, UppercutSkill)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
@@ -32,22 +33,22 @@ def setMoves(player1, player2):
     
     p2movelist = ("move", (-1, 0)), ("NoMove", None)
     
-    player1.moveList += p1movelist
-    player2.moveList += p2movelist          
+    player1._moves += p1movelist
+    player2._moves += p2movelist          
 
 def updateCooldown(player):
-    player.lightAtk.reduceCd(1)
-    player.heavyAtk.reduceCd(1)
-    player.primarySkill.reduceCd(1)
-    player.secondarySkill.reduceCd(1)
+    player._lightAtk.reduceCd(1)
+    player._heavyAtk.reduceCd(1)
+    player._primarySkill.reduceCd(1)
+    player._secondarySkill.reduceCd(1)
     
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
-    if player._yCoord == player.jumpHeight:
-        player.falling = True
+    if player._yCoord == player._jumpHeight:
+        player._falling = True
         player._yCoord -= gravity
     # not yet at apex of jump
-    elif player.midair:
+    elif player._midair:
         if player.falling: 
             player._yCoord -= gravity
         else:
@@ -72,11 +73,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if player1._stun:
         player1._stun -= 1
     else:
-        player1.moveNum += 1
+        player1._moveNum += 1
     if player2._stun:
         player2._stun -= 1
     else:
-        player2.moveNum += 1
+        player2._moveNum += 1
         
     # all actions have the signature
     # function(player1, player2, act1)
@@ -109,9 +110,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
         
     if act1 == "NoMove":
-        player1.moves.append(("NoMove", None))
+        player1._moves.append(("NoMove", None))
     if act2 == "NoMove":
-        player2.moves.append(("NoMove", None))
+        player2._moves.append(("NoMove", None))
         
     return knock1, stun1, knock2, stun2
                 
@@ -177,7 +178,7 @@ def startGame(path1, path2):
         return path1
     if not isinstance(path1, str) and not isinstance(path2,str):
         return None
-    player1, player2 = setupGame(path1,path2)
+    player1, player2 = setupGame()
 
     stun1 = stun2 = 0
     
@@ -230,8 +231,8 @@ def startGame(path1, path2):
         
         knock1 = knock2 = 0
         
-        act1 = player1.action()
-        act2 = player2.action()
+        act1 = player1._action()
+        act2 = player2._action()
         
         
 
@@ -272,4 +273,4 @@ def startGame(path1, path2):
         return path1
     return max(player1._hp, player2._hp)
 
-startGame("Player1", "Player2")
+startGame("a", "b")

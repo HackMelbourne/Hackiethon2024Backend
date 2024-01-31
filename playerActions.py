@@ -2,33 +2,40 @@ from test import validMove
 
 # used to correct position of player if they move offscreen
 def correctPos(player):
-    if player.xCoord < 0:
-        player.xCoord = 0
-    elif player.xCoord > 30:
-        player.xCoord = 30
+    if player._xCoord < 0:
+        player._xCoord = 0
+    elif player._xCoord > 30:
+        player._xCoord = 30
     return
 
 def move(player, enemy, action):
     if (action[0] == "move"):
-        moveAction = player.move.activateSkill(action[1])[1]
-        if validMove(moveAction, player, enemy) and not player.midair:
-            player.move_self(moveAction)
+        moveAction = player._move.activateSkill(action[1])[1]
+        if validMove(moveAction, player, enemy) and not player._midair:
+            player._blocking = False
+            player._block.regenShield() 
+            player._moves.append(action)
+            player._xCoord += player._direction * moveAction[0]
+            player._yCoord += moveAction[1]
+            if player._yCoord > 0:
+                player._midair = True
         else:    
             print("Invalid movement")
     return None, None
 
 def block(player, target, action):
     if (action[0] == "block"):
-        player.block_self(action)
+        player._moves.append(action)
+        player._blocking = True
     return None, None
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
 def fetchAttack(player, attackType):
     if attackType == "light":
-        return player.lightAtk.activateSkill()
+        return player._lightAtk.activateSkill()
     elif attackType == "heavy":
-        return player.heavyAtk.activateSkill()
+        return player._heavyAtk.activateSkill()
     else:
         raise Exception("Invalid attack type!")
 
@@ -44,27 +51,27 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
         if target._blocking or target._stun:
             knockback = 0
         # if target is blocking
-        if(target.blocking and blockable):
+        if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
-            if target.moves[-1] == "block" and target.moves[-2] != "block":
-                player.stun = 2
-            elif target.blocking:
+            if target._moves[-1] == "block" and target._moves[-2] != "block":
+                player._stun = 2
+            elif target._blocking:
                 #target is stunned if their shield breaks from damage taken
-                target.stun += target.block.shieldDmg(damage)
+                target._stun += target._block.shieldDmg(damage)
             return 0, 0
         else:
-            damage = damage - target.defense
+            damage = damage - target._defense
             if damage < 0:
                 damage = 0
-            target.take_damage(damage)
-            return knockback * player.direction, stun
+            target._hp -= damage
+            return knockback * player._direction, stun
     return 0, 0
 
 # Light and heavy attacks
 def attack(player,target, action):
     if (action[0] == "attack"):
-        player.blocking = False
-        player.block.regenShield() 
+        player._blocking = False
+        player._block.regenShield() 
 
         # 2 types of attack, light and heavy
         # action should be like ("attack", "light/heavy")
@@ -76,7 +83,7 @@ def attack(player,target, action):
             return 0, 0
         # gets only the attack info, doesn't include "light"/"heavy"
         attack = attack[1:]
-        player.moves.append(action)
+        player._moves.append(action)
         
         # performs the actual attack using fetched attack info
         return attackHit(player, target, *attack)
@@ -86,37 +93,37 @@ def attack(player,target, action):
 # return cooldown/startup if on cooldown/startup
 # else return skill type and related attributes
 def fetchSkill(player, skillClass):
-    if player.primarySkill.skillType == skillClass:
-        return player.primarySkill.activateSkill()
-    elif player.secondarySkill.skillType == skillClass:
-        return player.secondarySkill.activateSkill()
+    if player._primarySkill.skillType == skillClass:
+        return player._primarySkill.activateSkill()
+    elif player._secondarySkill.skillType == skillClass:
+        return player._secondarySkill.activateSkill()
     else:
         raise Exception("Player does not have this skill!")
     
 def changeSpeed(player, speed):
-    player.primarySkill.startup -= speed
-    player.secondarySkill.startup -= speed
-    player.lightAtk.startup -= speed
-    player.heavyAtk.startup -= speed
-    player.block.startup -= speed
-    if player.primarySkill.startup < 0:
-        player.primarySkill.startup = 0
-    if player.secondarySkill.startup < 0:
-        player.secondarySkill.startup = 0
-    if player.lightAtk.startup < 0:
-        player.lightAtk.startup = 0
-    if player.heavyAtk.startup < 0:
-        player.heavyAtk.startup = 0
-    if player.block.startup < 0:
-        player.block.startup = 0
+    player._primarySkill.startup -= speed
+    player._secondarySkill.startup -= speed
+    player._lightAtk.startup -= speed
+    player._heavyAtk.startup -= speed
+    player._block.startup -= speed
+    if player._primarySkill.startup < 0:
+        player._primarySkill.startup = 0
+    if player._secondarySkill.startup < 0:
+        player._secondarySkill.startup = 0
+    if player._lightAtk.startup < 0:
+        player._lightAtk.startup = 0
+    if player._heavyAtk.startup < 0:
+        player._heavyAtk.startup = 0
+    if player._block.startup < 0:
+        player._block.startup = 0
 
 def changeDamage(player, buffValue):
-    if player.primarySkill.skillType in attack_actions:
-        player.primarySkill.damageBuff(buffValue)
-    if player.secondarySkill.skillType in attack_actions:
-        player.secondarySkill.damageBuff(buffValue)
-    player.lightAtk.damageBuff(buffValue)
-    player.heavyAtk.damageBuff(buffValue)
+    if player._primarySkill.skillType in attack_actions:
+        player._primarySkill.damageBuff(buffValue)
+    if player._secondarySkill.skillType in attack_actions:
+        player._secondarySkill.damageBuff(buffValue)
+    player._lightAtk.damageBuff(buffValue)
+    player._heavyAtk.damageBuff(buffValue)
 
 # dashes towards target, deals damage along the way
 def dash_atk(player, target, action):
@@ -129,10 +136,10 @@ def dash_atk(player, target, action):
         
         # so now, skillInfo = damage, 
         skillInfo = skillInfo[1:]
-        player.moves.append(action)
+        player._moves.append(action)
 
         knockback, stun = attackHit(player, target, *skillInfo)
-        player.xCoord += player.direction * skillInfo[1]
+        player._xCoord += player._direction * skillInfo[1]
         correctPos(player)
     return knockback, stun
 
@@ -147,7 +154,7 @@ def uppercut(player, target, action):
         
         # so now, skillInfo = damage, 
         skillInfo = skillInfo[1:]
-        player.moves.append(action)
+        player._moves.append(action)
 
         knockback, stun = attackHit(player, target, *skillInfo)
         correctPos(player)
@@ -161,9 +168,9 @@ def teleport(player, target, action):
             return 0, 0
 
         distance = skillInfo[1]
-        player.moves.append(action)
+        player._moves.append(action)
 
-        player.xCoord += distance * action[1] * player.direction
+        player._xCoord += distance * action[1] * player._direction
         correctPos(player)
     return None
 
@@ -176,7 +183,7 @@ def super_saiyan(player, target, action):
         
         speedBuff = skillInfo[1][0]
         atkBuff = skillInfo[1][1]
-        player.moves.append(action)
+        player._moves.append(action)
         changeSpeed(player, speedBuff)
         changeDamage(player, atkBuff)
         
@@ -191,9 +198,9 @@ def meditate(player, target, action):
             return 0, 0
         
         healVal = skillInfo[1]
-        player.moves.append(action)
+        player._moves.append(action)
         
-        player.hp += healVal
+        player._hp += healVal
     return None    
     
 # similar layout to dash_atk
@@ -206,7 +213,7 @@ def one_punch(player, target, action):
             return 0, 0
         
         skillInfo = skillInfo[1:]
-        player.moves.append(action)
+        player._moves.append(action)
 
         knockback, stun = attackHit(player, target, *skillInfo)
     return knockback, stun
