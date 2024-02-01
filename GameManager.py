@@ -61,7 +61,7 @@ def playerToJson(player, jsonDict):
     jsonDict['xCoord'].append(player._xCoord)
     jsonDict['yCoord'].append(player._yCoord)
     #TODO coordinates and such
-    #jsonDict['state'].append(player.moves[-1][0])
+    jsonDict['state'].append(player._inputs[-1][0])
     jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player.midair)
     jsonDict['falling'].append(player.falling)
