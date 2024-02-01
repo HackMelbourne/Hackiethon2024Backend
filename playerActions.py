@@ -19,6 +19,9 @@ def move(player, enemy, action):
             player._yCoord += moveAction[1]
             if player._yCoord > 0:
                 player._midair = True
+            if moveAction[0] and moveAction[1]:
+                # this is diagonal jump
+                player._velocity += player._direction * moveAction[0]
         else:    
             print("Invalid movement")
     return None, None
@@ -64,6 +67,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             if damage < 0:
                 damage = 0
             target._hp -= damage
+            target._velocity -= knockback
             return knockback * player._direction, stun
     return 0, 0
 

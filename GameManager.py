@@ -29,7 +29,7 @@ def setupGame():
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("hadoken", None), ("block", None)
+    p1movelist = ("move", (1,1)), ("move", (0,1))
     
     p2movelist = ("move", (-1, 0)), ("NoMove", None)
     
@@ -47,24 +47,27 @@ def updateMidair(player):
     if player._yCoord == player._jumpHeight:
         player._falling = True
         player._yCoord -= gravity
+        player._xCoord += player._velocity
     # not yet at apex of jump
     elif player._midair:
-        if player.falling: 
+        if player._falling: 
             player._yCoord -= gravity
         else:
             player._yCoord += 1
+        player._xCoord += player._velocity
     if player._yCoord == 0: 
-        player.midair = player.falling = False
+        player._midair = player._falling = False
+        player._velocity = 0
 
 def playerToJson(player, jsonDict):
     jsonDict['hp'].append(player._hp)
     jsonDict['xCoord'].append(player._xCoord)
     jsonDict['yCoord'].append(player._yCoord)
     #TODO coordinates and such
-    jsonDict['state'].append(player._inputs[-1][0])
+    jsonDict['state'].append(player._moves[-1][0])
     jsonDict['stun'].append(player._stun)
-    jsonDict['midair'].append(player.midair)
-    jsonDict['falling'].append(player.falling)
+    jsonDict['midair'].append(player._midair)
+    jsonDict['falling'].append(player._falling)
                 
 
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
@@ -94,6 +97,12 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # print(act1, act2)
     
     # movement and defensive actions take priority then attacks and skills 
+    
+    if act1 == "NoMove":
+        player1._moves.append(("NoMove", None))
+    if act2 == "NoMove":
+        player2._moves.append(("NoMove", None))
+        
     if (act1[0] in defense_actions and not player1._stun):
         defense_actions[act1[0]](player1, player2, act1)
     if (act2[0] in defense_actions and not player2._stun):
@@ -109,10 +118,6 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if not player2._stun and act2[0] in projectile_actions:
         projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
         
-    if act1 == "NoMove":
-        player1._moves.append(("NoMove", None))
-    if act2 == "NoMove":
-        player2._moves.append(("NoMove", None))
         
     return knock1, stun1, knock2, stun2
                 
@@ -235,11 +240,6 @@ def startGame(path1, path2):
         act1 = player1._action()
         act2 = player2._action()
         
-        
-
-        playerInfo(player1, path1, act1)
-        playerInfo(player2, path2, act2)
-        
         # if there are projectiles, make them travel
         projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                                 knock1, stun1, knock2, stun2, player1, player2)
@@ -256,10 +256,17 @@ def startGame(path1, path2):
         if knock2:
             player1._xCoord += knock2
             player1._stun += stun2
+            
+        #if midair, start falling/rising
+        updateMidair(player1)
+        updateMidair(player2)
 
         updateCooldown(player1)
         updateCooldown(player2)
         #TODO update current startup every tick 
+        
+        playerInfo(player1, path1, act1)
+        playerInfo(player2, path2, act2)
 
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)
