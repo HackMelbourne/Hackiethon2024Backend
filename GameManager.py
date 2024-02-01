@@ -202,7 +202,8 @@ def startGame(path1, path2):
         'state': [],
         'stun': [],
         'midair': [],
-        'falling':[]
+        'falling':[],
+        
         }
     p2_json_dict = {
         'hp': [],
@@ -211,7 +212,7 @@ def startGame(path1, path2):
         'state': [],
         'stun': [],
         'midair': [],
-        'falling':[]
+        'falling':[],
     }
     projectiles = []
     

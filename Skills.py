@@ -154,7 +154,7 @@ class SuperSaiyanSkill(BuffSkill):
         self.skillType = "super_saiyan"
 
 class Projectile:
-    
+    #TODO change max distance to timer/time to live
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
     
