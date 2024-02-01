@@ -133,8 +133,8 @@ class BuffSkill(Skill):
         return self.useSkill()
     
 class HealSkill(Skill):
-    def __init__(self, startup, cooldown, healValue):
-        super.__init__(self, "heal", startup, cooldown, healValue)
+    def __init__(self, player=None):
+        super.__init__(self, skillType="heal", startup=0, cooldown=20, skillValue=10)
     
     def activateSkill(self):
         return self.useSkill()
@@ -148,7 +148,7 @@ class TeleportSkill(Skill):
 
 # returns ("super_saiyan", (speedBuff, attackBuff, defenseBuff))
 class SuperSaiyanSkill(BuffSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
                          defenseBuff=0)
         self.skillType = "super_saiyan"
@@ -210,7 +210,7 @@ class Projectile:
         # checks if projectile has a size
         if self.size[0] and self.size[1]:
             # checks if projectile hits target
-            if (abs(target._xCoord-self.xCoord) <= self.size[0] and
+            if (abs(target._xCoord-self.xCoord) < self.size[0] and
                 abs(target._yCoord-self.yCoord) <= self.size[1]):
                 return True
         return False
@@ -225,25 +225,38 @@ class Projectile:
         return False
     
     
-class Hadoken(AttackSkill):
-    def __init__(self, player):
-        AttackSkill.__init__(self, startup=0, cooldown=5, damage=10, xRange=0, 
-                             vertical=0, blockable=True, knockback=2, 
-                             stun=2)
-        self.skillType = "hadoken"
+class ProjectileSkill(AttackSkill):
+    def __init__(self, player, startup, cooldown, damage, blockable, knockback,
+                 stun, skillName):
+        AttackSkill.__init__(self, startup=startup, cooldown=cooldown, 
+                            damage=damage, xRange=0, vertical=0, 
+                            blockable=blockable, knockback=knockback, 
+                            stun=stun)
         self.player = player
+        self.skillType = skillName
         
-    def summonProjectile(self):
-        projectile = Projectile(self.player, position=(1, 0), gravity=0, 
-                            velocity=1, acceleration=0, range=20, size=(1, 1), 
-                            type="hadoken", proj_return=False)
+    def summonProjectile(self, position, gravity, velocity, accel, range, size, 
+                         proj_return):
+        projectile = Projectile(self.player, position, gravity, velocity, accel, 
+                                range, size, self.skillType, proj_return)
         return projectile
     
+
+class Hadoken(ProjectileSkill):
+    def __init__(self, player):
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
+                                 blockable=True, knockback=2, stun=2, 
+                                 skillName="hadoken")
+        
+    
     def activateSkill(self):
-        atkInfo = super().activateSkill()
-        if isinstance(atkInfo, int):
-            return atkInfo
-        projectile = self.summonProjectile()
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(position=(1, 0), gravity=0, velocity=1,
+                                           accel=0, range=20, size=(1,1), 
+                                           proj_return=False)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
@@ -251,4 +264,19 @@ class Hadoken(AttackSkill):
     
 class Lasso(AttackSkill):
     def __init__(self, player):
-        AttackSkill.__init__(self, startup=0, cooldown=5, damage=2, xRange=5, )
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+                                 blockable=True, knockback=-2, stun=0, 
+                                 skillName="lasso")
+        
+    
+    def activateSkill(self):
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(position=(1, 0), gravity=0, velocity=1,
+                                           accel=0, range=5, size=(1,1), 
+                                           proj_return=False)
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, 
+                "projectile": projectile}]

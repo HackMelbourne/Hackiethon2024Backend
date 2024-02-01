@@ -33,8 +33,8 @@ def setMoves(player1, player2):
     
     p2movelist = ("move", (-1, 0)), ("NoMove", None)
     
-    player1._moves += p1movelist
-    player2._moves += p2movelist          
+    player1._inputs += p1movelist
+    player2._inputs += p2movelist          
 
 def updateCooldown(player):
     player._lightAtk.reduceCd(1)
@@ -122,7 +122,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2)
         
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
-        #print(proj_obj.xCoord, proj_obj.yCoord)
+        print(proj_obj.xCoord, proj_obj.yCoord)
         proj_obj.travel()
         # check for projectiles colliding with each other
 
@@ -238,13 +238,15 @@ def startGame(path1, path2):
 
         playerInfo(player1, path1, act1)
         playerInfo(player2, path2, act2)
-        knock1, stun1, knock2, stun2 = performActions(player1, player2, 
-                                                      act1, act2, stun1, stun2, 
-                                                      projectiles)
         
         # if there are projectiles, make them travel
         projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                                 knock1, stun1, knock2, stun2, player1, player2)
+        
+        knock1, stun1, knock2, stun2 = performActions(player1, player2, 
+                                                      act1, act2, stun1, stun2, 
+                                                      projectiles)
+        
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1
         if knock1:
@@ -268,6 +270,8 @@ def startGame(path1, path2):
     player1_json.close()
     player2_json.close()
 
+    print(player1._moves)
+    print(player1._inputs)
     if player1._hp == player2._hp:
         print('match won by: ', path1)
         return path1

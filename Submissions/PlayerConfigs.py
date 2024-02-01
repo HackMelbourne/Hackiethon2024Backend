@@ -29,10 +29,11 @@ class Player_Controller:
         self._moves = []
         self._moveNum = 0
         
+        # moves input by player
+        self._inputs = []
     def _action(self):
-        if self._moveNum < len(self._moves):
-            # print(f"{self.moveNum} , {self.moveList[self.moveNum]}")
-            return self._moves[self._moveNum]
+        if self._moveNum < len(self._inputs):
+            return self._inputs[self._moveNum]
         return ("NoMove")
            
     def get_pos(self):

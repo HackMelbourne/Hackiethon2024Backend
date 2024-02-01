@@ -219,13 +219,19 @@ def one_punch(player, target, action):
     return knockback, stun
         
 def hadoken(player, target, action):
+    return fetchProjectileSkill(player, "hadoken", action)
+        
+def lasso(player, target, action):
+    return fetchProjectileSkill(player, "lasso", action)
+
+def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == "hadoken"):
-        skillInfo = fetchSkill(player, "hadoken")
+        skillInfo = fetchSkill(player, projectileName)
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]
             return skillInfo
-
+    return None
 
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
@@ -237,7 +243,7 @@ attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   }
 
 # for projectile actions
-projectile_actions = {"hadoken":hadoken, }
+projectile_actions = {"hadoken":hadoken, "lasso":lasso}
 
 '''
 How to add a new skill
