@@ -23,13 +23,13 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Hadoken, UppercutSkill)
+    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Lasso, UppercutSkill)
     player2 = p2Import.Player_Controller(4,0,50,GOLEFT, TeleportSkill, UppercutSkill)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("move", (1,1)), ("move", (0,1))
+    p1movelist = ("NoMove", None), ("lasso", )
     
     p2movelist = ("move", (-1, 0)), ("NoMove", None)
     
@@ -55,9 +55,12 @@ def updateMidair(player):
         else:
             player._yCoord += 1
         player._xCoord += player._velocity
-    if player._yCoord == 0: 
+        
+    if player._yCoord == 0 and player._falling: 
         player._midair = player._falling = False
         player._velocity = 0
+        
+    correctPos(player)
 
 def playerToJson(player, jsonDict):
     jsonDict['hp'].append(player._hp)
@@ -75,12 +78,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
 
     if player1._stun:
         player1._stun -= 1
-    else:
-        player1._moveNum += 1
     if player2._stun:
         player2._stun -= 1
-    else:
-        player2._moveNum += 1
+
         
     # all actions have the signature
     # function(player1, player2, act1)
@@ -97,10 +97,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # print(act1, act2)
     
     # movement and defensive actions take priority then attacks and skills 
-    
-    if act1 == "NoMove":
+    if act1 in ("NoMove", ("NoMove", None)):
         player1._moves.append(("NoMove", None))
-    if act2 == "NoMove":
+    if act2 == ("NoMove", ("NoMove", None)):
         player2._moves.append(("NoMove", None))
         
     if (act1[0] in defense_actions and not player1._stun):
@@ -118,7 +117,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if not player2._stun and act2[0] in projectile_actions:
         projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
         
-        
+    player1._moveNum += 1
+    player2._moveNum += 1
+    
     return knock1, stun1, knock2, stun2
                 
                 
@@ -165,10 +166,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2)
                                                 proj_info["knockback"],
                                                 proj_info["stun"])
                 # if attack and projectile hits target at same time, use
-                # highest knockback and stun
-                knock1 = max(knock1, proj_knock1)
+                # total knockback and highest stun
+                knock1 += proj_knock1
                 stun1 = max(stun1, proj_stun1)
-                knock2 = max(knock2, proj_knock2)
+                knock2 += proj_knock2
                 stun2 = max(stun2, proj_stun2)
                 
                 # then pop the projectile
@@ -229,24 +230,21 @@ def startGame(path1, path2):
         else:
             player1.direction = GORIGHT
             player2.direction = GOLEFT
-
-        #if midair, start falling
-        updateMidair(player1)
-        updateMidair(player2)
-            
         
         knock1 = knock2 = 0
         
         act1 = player1._action()
         act2 = player2._action()
         
-        # if there are projectiles, make them travel
-        projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
-                                knock1, stun1, knock2, stun2, player1, player2)
+        playerInfo(player1, path1, act1)
+        playerInfo(player2, path2, act2)
         
         knock1, stun1, knock2, stun2 = performActions(player1, player2, 
                                                       act1, act2, stun1, stun2, 
                                                       projectiles)
+        # if there are projectiles, make them travel
+        projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
+                                knock1, stun1, knock2, stun2, player1, player2)
         
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1
@@ -263,10 +261,8 @@ def startGame(path1, path2):
 
         updateCooldown(player1)
         updateCooldown(player2)
-        #TODO update current startup every tick 
         
-        playerInfo(player1, path1, act1)
-        playerInfo(player2, path2, act2)
+        #TODO update current startup every tick 
 
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)

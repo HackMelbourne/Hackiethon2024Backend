@@ -262,7 +262,7 @@ class Hadoken(ProjectileSkill):
                 "projectile": projectile}]
     
     
-class Lasso(AttackSkill):
+class Lasso(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=-2, stun=0, 

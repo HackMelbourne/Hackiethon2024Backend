@@ -1,29 +1,24 @@
-from test import validMove
+from test import validMove, correctPos
 
-# used to correct position of player if they move offscreen
-def correctPos(player):
-    if player._xCoord < 0:
-        player._xCoord = 0
-    elif player._xCoord > 30:
-        player._xCoord = 30
-    return
 
 def move(player, enemy, action):
     if (action[0] == "move"):
         moveAction = player._move.activateSkill(action[1])[1]
         if validMove(moveAction, player, enemy) and not player._midair:
-            player._blocking = False
-            player._block.regenShield() 
-            player._moves.append(action)
-            player._xCoord += player._direction * moveAction[0]
-            player._yCoord += moveAction[1]
-            if player._yCoord > 0:
+            # has vertical logic
+            if moveAction[1]:
                 player._midair = True
-            if moveAction[0] and moveAction[1]:
-                # this is diagonal jump
-                player._velocity += player._direction * moveAction[0]
-        else:    
-            print("Invalid movement")
+                if moveAction[0]:
+                    # this is diagonal jump
+                    player._velocity += player._direction * moveAction[0]
+            else:
+                # no vertical logic
+                player._blocking = False
+                player._block.regenShield() 
+                player._moves.append(action)
+                player._xCoord += player._direction * moveAction[0]
+                
+            player._moves.append(action)    
     return None, None
 
 def block(player, target, action):
@@ -48,6 +43,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     # checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
+    print(f"Knockback: {knockback}")
     if (abs(player_x-target_x) <= atk_range and 
         player_y + vertical >= target_y):
         # can be changed later : no knockback if block or stunned
@@ -68,6 +64,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity -= knockback
+            print(f"Knockback: {knockback * player._direction}")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -136,6 +133,7 @@ def dash_atk(player, target, action):
         skillInfo = fetchSkill(player, "dash_attack")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -154,6 +152,7 @@ def uppercut(player, target, action):
         skillInfo = fetchSkill(player, "uppercut")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -169,6 +168,7 @@ def teleport(player, target, action):
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
 
         distance = skillInfo[1]
@@ -183,6 +183,7 @@ def super_saiyan(player, target, action):
     if (action[0] == "super_saiyan"):
         skillInfo = fetchSkill(player, "super_saiyan")
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
         
         speedBuff = skillInfo[1][0]
@@ -199,6 +200,7 @@ def meditate(player, target, action):
     if (action[0] == "heal"):
         skillInfo = fetchSkill(player, "heal")
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
         
         healVal = skillInfo[1]
@@ -214,6 +216,7 @@ def one_punch(player, target, action):
     if (action[0] == "one_punch"):
         skillInfo = fetchSkill(player, "one_punch")
         if isinstance(skillInfo, int):
+            player._moves.append("NoMove", None)
             return 0, 0
         
         skillInfo = skillInfo[1:]
@@ -229,12 +232,14 @@ def lasso(player, target, action):
     return fetchProjectileSkill(player, "lasso", action)
 
 def fetchProjectileSkill(player, projectileName, action):
-    if (action[0] == "hadoken"):
+    if (action[0] == projectileName):
         skillInfo = fetchSkill(player, projectileName)
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]
+            player._moves.append(action)
             return skillInfo
+    player._moves.append("NoMove", None)
     return None
 
 # for actions that do not deal damage

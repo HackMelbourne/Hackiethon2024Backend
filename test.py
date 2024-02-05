@@ -23,6 +23,14 @@ def flip_orientation(player1, player2):
         return True
     return False
 
+# used to correct position of player if they move offscreen
+def correctPos(player):
+    if player._xCoord < 0:
+        player._xCoord = 0
+    elif player._xCoord > 30:
+        player._xCoord = 30
+    return None
+
 #for testing: prints player info
 def playerInfo(player, playerName, action):
     print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block.shieldHp}, stun: {player._stun}, facing: {player.direction}, airvelo:{player._velocity}")
