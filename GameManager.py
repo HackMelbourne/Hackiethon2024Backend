@@ -77,8 +77,8 @@ def projectileToJson(projectile, jsonDict, travelling):
         jsonDict['projXCoord'].append(projectile.xCoord)
         jsonDict['projYCoord'].append(projectile.yCoord)
     else:
-        jsonDict['projXCoord'].append(-1)
-        jsonDict['projYCoord'].append(-1)    
+        jsonDict['projXCoord'].append(None)
+        jsonDict['projYCoord'].append(None)    
                 
 
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
