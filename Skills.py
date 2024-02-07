@@ -180,10 +180,11 @@ class Projectile:
         self.type = type
         self.proj_return = proj_return
         self.id = next(self.id)
+        self.player = player
 
 
     def travel(self):
-        if self.distance < self.range :
+        if self.distance < self.range:
             self.xCoord += self.velocity
             self.yCoord -= self.gravity
             self.distance += self.velocity
@@ -191,15 +192,17 @@ class Projectile:
         elif self.proj_return:
             # for returning projectiles, check if reach the max range
             # if reached, flip horizontal direction and start moving back
-            self.direction *= -1
+            self._direction *= -1
             self.velocity = self.initVelocity * self._direction
             self.xCoord += self.velocity
             self.yCoord -= self.gravity
             self.distance += self.velocity
             self.velocity *= (1 + self.acceleration)
+            
         # check if off-screen or below ground or moves out of range
         if ((self.yCoord < 0) or (self.xCoord < 0) or (self.xCoord > 30) or 
-            (self.distance >= self.range) or (self.distance <= 0)):
+            (self.distance >= self.range and not self.proj_return)
+            or (self.distance < 0)):
             self.size = (0,0)
             
     def get_pos(self):
@@ -211,19 +214,17 @@ class Projectile:
         if self.size[0] and self.size[1]:
             # checks if projectile hits target
             if (abs(target._xCoord-self.xCoord) < self.size[0] and
-                abs(target._yCoord-self.yCoord) <= self.size[1]):
+                abs(target._yCoord-self.yCoord) < self.size[1]):
                 return True
         return False
             
     def checkProjCollision(self, target):
         if self.size[0] and self.size[1]:
             if (abs(target.xCoord + target.size[0]*target._direction 
-                    - self.xCoord) <= self.size[0] and
-                abs(target.yCoord + target.size[1] - self.yCoord) 
-                <= self.size[1]):
+                    - self.xCoord) < self.size[0] and
+                abs(target.yCoord + target.size[1]-self.yCoord) < self.size[1]):
                 return True
         return False
-    
     
 class ProjectileSkill(AttackSkill):
     def __init__(self, player, startup, cooldown, damage, blockable, knockback,
@@ -277,6 +278,25 @@ class Lasso(ProjectileSkill):
         projectile = self.summonProjectile(position=(1, 0), gravity=0, velocity=1,
                                            accel=0, range=5, size=(1,1), 
                                            proj_return=False)
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, 
+                "projectile": projectile}]
+        
+class Boomerang(ProjectileSkill):
+    def __init__(self, player):
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+                                 blockable=True, knockback=2, stun=2, 
+                                 skillName="boomerang")
+        
+    
+    def activateSkill(self):
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(position=(1, 0), gravity=0, velocity=1,
+                                           accel=0, range=3, size=(1,1), 
+                                           proj_return=True)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]

@@ -64,7 +64,6 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity -= knockback
-            print(f"Knockback: {knockback * player._direction}")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -231,6 +230,9 @@ def hadoken(player, target, action):
 def lasso(player, target, action):
     return fetchProjectileSkill(player, "lasso", action)
 
+def boomerang(player, target, action):
+    return fetchProjectileSkill(player, "boomerang", action)
+
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
         skillInfo = fetchSkill(player, projectileName)
@@ -252,7 +254,7 @@ attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   }
 
 # for projectile actions
-projectile_actions = {"hadoken":hadoken, "lasso":lasso}
+projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang}
 
 '''
 How to add a new skill
