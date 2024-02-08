@@ -233,6 +233,9 @@ def lasso(player, target, action):
 def boomerang(player, target, action):
     return fetchProjectileSkill(player, "boomerang", action)
 
+def grenade(player, target, action):
+    return fetchProjectileSkill(player, "grenade", action)
+
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
         skillInfo = fetchSkill(player, projectileName)
@@ -254,7 +257,8 @@ attack_actions = {"attack": attack, "dash_attack": dash_atk,
                   }
 
 # for projectile actions
-projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang}
+projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang,
+                      "grenade":grenade}
 
 '''
 How to add a new skill

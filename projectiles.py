@@ -5,16 +5,15 @@ class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
     
-    def __init__(self, player, path, size, type, trait, collision):
+    def __init__(self, player, path, size, type, trait, collision, timer):
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
-        self.xCoord = player._xCoord + path[0][0]
-        self.yCoord = player._yCoord + path[0][1]
         self._direction = player._direction
         self.initdirection = self._direction
         self.distance = 0
-        self.size = size
+        self.size = list(size)
         self.type = type
+        self.timer = timer
         
         # True if projectile damages on hit during travel eg hadoken, lasso
         # False if prpojectile damages after travel eg ice wall, landmine
@@ -32,23 +31,28 @@ class Projectile:
         # initialize path acording to player direction, only change xCoord
         for i in range(len(self.path)):
             self.path[i][0] *= self._direction
-
+            
+        self.xCoord = player._xCoord + path[0][0]
+        self.yCoord = player._yCoord + path[0][1]
 
     def travel(self):
-        self.pathIndex += 1
-        if self.pathIndex < len(self.path):
+        print("TRAVEL")
+        if 0 < self.pathIndex < len(self.path):
             pos = self.path[self.pathIndex]
             self.xCoord += pos[0] - self.path[self.pathIndex - 1][0]
             self.yCoord += pos[1] - self.path[self.pathIndex - 1][1]
-        else:
+        elif self.pathIndex >= len(self.path):
             # has reached end of path, so do effects based on trait
+            print("do trait")
             self.do_trait()
-            
+        print(self.pathIndex)
+        self.pathIndex += 1
       
     def do_trait(self):
         if not self.trait:
             # pop
             self.size = (0, 0)
+            
         elif self.trait == "return":
             # dynamically return towards player
             self._direction = -1 * self.initdirection
@@ -66,27 +70,38 @@ class Projectile:
                     self.yCoord -= 1
             else:
                 self.size = (0,0)
-            pass
+                
         elif self.trait == "timer":
             # stay at current position for given time to live
             pass
+            
         elif self.trait == "timer_explode":
             # similar to timer, but does aoe damage after timer
-            pass
-        
-           
+            if self.timer:
+                self.timer -= 1
+            else:
+                # explode
+                print("boom")
+                self.size = (self.size[0] + 1, self.size[1] + 1)
+                self.collision = True
+                self.trait = None
+              
     def get_pos(self):
         return (self.xCoord, self.yCoord)
             
-
     def checkCollision(self, target):
+        hit_target = False
         # checks if projectile has a size
+        print("Checking target...")
         if self.size[0] and self.size[1] and self.collision:
+            print(f"CHECK ON {target._id}")
             # checks if projectile hits target
+            print(target._xCoord, self.xCoord)
+            print(target._yCoord, self.yCoord)
             if (abs(target._xCoord-self.xCoord) < self.size[0] and
                 abs(target._yCoord-self.yCoord) < self.size[1]):
-                return target != self.player
-        return False
+                hit_target = target != self.player
+        return hit_target
             
     def checkProjCollision(self, target):
         if self.size[0] and self.size[1]:
@@ -106,8 +121,9 @@ class ProjectileSkill(AttackSkill):
         self.player = player
         self.skillType = skillName
         
-    def summonProjectile(self, path, size, trait, collision):
-        projectile = Projectile(self.player, path, size, self.skillType, trait, collision)
+    def summonProjectile(self, path, size, trait, collision, timer):
+        projectile = Projectile(self.player, path, size, self.skillType, trait, 
+                                collision, timer)
         return projectile
     
 
@@ -124,7 +140,7 @@ class Hadoken(ProjectileSkill):
             return atk_info
         
         projectile = self.summonProjectile(path = self.path, size=(1,1), 
-                                           trait=None, collision=True)
+                                           trait=None, collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
@@ -143,7 +159,7 @@ class Lasso(ProjectileSkill):
             return atk_info
         
         projectile = self.summonProjectile(path=self.path, size=(1,1), 
-                                           trait=None, collision=True)
+                                           trait=None, collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
@@ -161,7 +177,27 @@ class Boomerang(ProjectileSkill):
             return atk_info
         
         projectile = self.summonProjectile(path = self.path, size=(1,1), 
-                                           trait="return", collision=True)
+                                           trait="return", collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
                 "knockback":self.knockback, "stun":self.stun, 
                 "projectile": projectile}]
+        
+class Grenade(ProjectileSkill):
+    def __init__(self, player):
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
+                                 blockable=False, knockback=3, stun=3, 
+                                 skillName="grenade")
+        self.path = [[1,1], [2,2], [3,1]]
+    
+    def activateSkill(self):
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+                                           trait="timer_explode", 
+                                           collision=False, timer=0)
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, 
+                "projectile": projectile}]
+        

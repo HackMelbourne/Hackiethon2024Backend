@@ -24,15 +24,14 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Boomerang, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(2,0,50,GOLEFT, TeleportSkill, UppercutSkill, 2)
+    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Grenade, UppercutSkill, 1)
+    player2 = p2Import.Player_Controller(5,0,50,GOLEFT, Grenade, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("NoMove", None), ("boomerang", ), None, None , None, ("move", (0,1))
-    
-    p2movelist = ("NoMove", None),
+    p1movelist = ("move", (1,0)), ("move", (1,0))
+    p2movelist = ("grenade",),
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -131,13 +130,27 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     
     return knock1, stun1, knock2, stun2
                 
-                
+def proj_knockback(proj, player):
+    print(proj.xCoord)
+    print(player._xCoord)
+    if proj.xCoord < player._xCoord:
+        return -1
+    elif proj.xCoord > player._xCoord:
+        return 1
+    return 0
+                        
+
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
     for projectileNum in range(len(projectiles)):
         
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
+        
+        if proj_obj.player._id == 1:
+            proj_json_dict = p1_dict
+        else:
+            proj_json_dict = p2_dict
 
         # first check if the projectile already travelled its range or offscreen
         if proj_obj.size == (0,0):
@@ -145,6 +158,9 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             projectiles.pop(projectileNum)
             continue
         
+        # if exists, then travel and log
+        proj_obj.travel()
+        projectileToJson(proj_obj, proj_json_dict, True)
         print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
         
         # check for projectiles colliding with each other
@@ -163,43 +179,47 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # get projectile info and initialise
             proj_info = projectiles[projectileNum]
             proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
-            
             # collision checks and attack checks
             if proj_obj.checkCollision(player1):
+                # if explosive, the knockback depends on where the enemy was
+                knockback = proj_info["knockback"] * proj_knockback(proj_obj, player1)
+                print(knockback, player1.get_pos())
                 proj_knock2, proj_stun2 = attackHit(proj_obj, player1,
                                                 proj_info["damage"],
                                                 proj_obj.size[0],
                                                 proj_obj.size[1],
                                                 proj_info["blockable"],
-                                                proj_info["knockback"],
+                                                knockback,
                                                 proj_info["stun"])
             if proj_obj.checkCollision(player2):
+                knockback = proj_info["knockback"] * proj_knockback(proj_obj, player2)
+                print(knockback)
                 proj_knock1, proj_stun1 = attackHit(proj_obj, player2,
                                                 proj_info["damage"],
                                                 proj_obj.size[0],
                                                 proj_obj.size[1],
                                                 proj_info["blockable"],
-                                                proj_info["knockback"],
+                                                knockback,
                                                 proj_info["stun"])
             # if attack and projectile hits target at same time, use
             # total knockback and highest stun
+            
+            # this is if the projectile explodes
+            if proj_obj.trait == None:
+                proj_obj.size = (0,0)
+                
             knock1 += proj_knock1
             stun1 = max(stun1, proj_stun1)
             knock2 += proj_knock2
             stun2 = max(stun2, proj_stun2)
-                
-            if proj_obj.player._id == 1:
-                proj_json_dict = p1_dict
-            else:
-                proj_json_dict = p2_dict
             
-            # then pop the projectile if it hit anyone, else continue travel
-            if proj_knock1 or proj_knock2:
+            # for explosive projectiles
+                            
+            # then pop the projectile if it hit or expires, else continue travel
+            if proj_knock1 or proj_knock2 or proj_obj.size == (0,0):
                 projectileToJson(proj_obj, proj_json_dict, False)
                 projectiles.pop(projectileNum)
-            else:
-                projectileToJson(proj_obj, proj_json_dict, True)
-                proj_obj.travel()
+
                     
     return projectiles, knock1, stun1, knock2, stun2    
 
@@ -268,8 +288,8 @@ def startGame(path1, path2):
         act1 = player1._action()
         act2 = player2._action()
         
-        playerInfo(player1, path1, act1)
-        playerInfo(player2, path2, act2)
+        #playerInfo(player1, path1, act1)
+        #playerInfo(player2, path2, act2)
         
         knock1, stun1, knock2, stun2 = performActions(player1, player2, 
                                                       act1, act2, stun1, stun2, 
@@ -307,9 +327,8 @@ def startGame(path1, path2):
     player1_json.close()
     player2_json.close()
 
-    print(player1._moves)
-    print(player1._inputs)
     print(p1_json_dict)
+    print(p2_json_dict)
     if player1._hp == player2._hp:
         print('match won by: ', path1)
         return path1
