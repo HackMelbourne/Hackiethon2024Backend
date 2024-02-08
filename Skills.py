@@ -103,13 +103,13 @@ class BlockSkill(Skill):
         return self.useSkill()
 
 class DashAttackSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=10, xRange=4, 
                          vertical=0, blockable=False, knockback=0, stun=2)
         self.skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=3)
         self.skillType = "uppercut"
@@ -118,7 +118,7 @@ class UppercutSkill(AttackSkill):
 #TODO add buff duration timer 
 
 class OnePunchSkill(AttackSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=2, cooldown=10, damage=20, xRange=2,
                          vertical=0, blockable=False, knockback=4, stun=3)
         self.skillType = "one_punch"
@@ -132,14 +132,14 @@ class BuffSkill(Skill):
         return self.useSkill()
     
 class HealSkill(Skill):
-    def __init__(self, startup, cooldown, healValue):
-        super.__init__(self, "heal", startup, cooldown, healValue)
+    def __init__(self, player=None):
+        super.__init__(self, skillType="heal", startup=0, cooldown=20, skillValue=10)
     
     def activateSkill(self):
         return self.useSkill()
 
 class TeleportSkill(Skill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(skillType= "teleport", startup= 0, cooldown= 10, skillValue= 5)
 
     def activateSkill(self):
@@ -147,52 +147,7 @@ class TeleportSkill(Skill):
 
 # returns ("super_saiyan", (speedBuff, attackBuff, defenseBuff))
 class SuperSaiyanSkill(BuffSkill):
-    def __init__(self):
+    def __init__(self, player=None):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
                          defenseBuff=0)
         self.skillType = "super_saiyan"
-
-class Projectile:
-    def __init__(self, player, target, position, gravity, velocity, acceleration, range, size):
-        # position = (int, int), contains position of projectile relative to player
-        # direction = (int, int), direction of travel in (x, y) grid
-        # velocity = how fast the projectile moves horizontally
-        # gravity = how fast the projectile moves vertically
-        # size = (x, y) hitbox size of projectile
-        self.position = (player.xCoord + position[0], player.yCoord + position[1])
-        self.gravity = gravity
-        self.velocity = velocity * player.direction
-        self.initVelocity = velocity
-        self.acceleration = acceleration
-        self.distance = 0
-        self.range = range
-        self.size = size
-        self.target = target
-
-    def travel(self):
-        if self.distance != self.range:
-            self.position[0] += self.velocity
-            self.position[1] -= self.gravity
-            self.velocity *= (1 + self.acceleration)
-        if self.position[1] <= 0:
-            self.size = (0, 0)
-        # check for projectile moving offscreen
-        if self.position[0] < 0 or self.position[0] > 30:
-            self.size = (0, 0)
-
-    def checkCollision(self):
-        # checks if projectile has a size
-        if self.size[0] and self.size[1]:
-            # checks if projectile hits target
-            if (self.position[0] <= self.target.xCoord 
-                <= self.position[0] + self.size[0] - 1 and 
-                self.position[1] <= self.target.yCoord <= 
-                self.position[1] + self.size[1] - 1):
-                return True
-        return False
-            
-class Hadoken(Skill, Projectile):
-    def __init__(self, player, target, damage):
-        Skill.__init__(self, "hadoken", startup=2, cooldown=2, skillValue=damage)
-        Projectile.__init__(self, player, target, position=(1, 0), gravity=0, 
-                            velocity=1, acceleration=0, range=20, size=1)
