@@ -3,10 +3,11 @@ from test import *
 import importlib
 from playerActions import *
 from Skills import *
+from projectiles import *
 import json
 import os
 #game settings
-timeLimit = 10
+timeLimit = 15
 movesPerSecond = 1
 
 # number of y-units to move when falling
@@ -24,14 +25,14 @@ def setupGame():
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
     player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Boomerang, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(4,0,50,GOLEFT, TeleportSkill, UppercutSkill, 2)
+    player2 = p2Import.Player_Controller(2,0,50,GOLEFT, TeleportSkill, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("NoMove", None), ("boomerang", )
+    p1movelist = ("NoMove", None), ("boomerang", ), None, None , None, ("move", (0,1))
     
-    p2movelist = ("NoMove", None), ("move", (0, 1))
+    p2movelist = ("NoMove", None),
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -105,24 +106,24 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # print(act1, act2)
     
     # movement and defensive actions take priority then attacks and skills 
-    if act1 in ("NoMove", ("NoMove", None)):
+    if act1 in ("NoMove", ("NoMove", None), None):
         player1._moves.append(("NoMove", None))
-    if act2 in ("NoMove", ("NoMove", None)):
+    if act2 in ("NoMove", ("NoMove", None), None):
         player2._moves.append(("NoMove", None))
         
-    if (act1[0] in defense_actions and not player1._stun):
+    if (act1 and act1[0] in defense_actions and not player1._stun):
         defense_actions[act1[0]](player1, player2, act1)
-    if (act2[0] in defense_actions and not player2._stun):
+    if (act2 and act2[0] in defense_actions and not player2._stun):
         defense_actions[act2[0]](player2, player1, act2)
 
-    if not player1._stun and act1[0] in attack_actions:
+    if act1 and not player1._stun and act1[0] in attack_actions:
         knock1, stun1 = attack_actions[act1[0]](player1, player2, act1)
-    if not player2._stun and act2[0] in attack_actions:
+    if act2 and not player2._stun and act2[0] in attack_actions:
         knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
         
-    if not player1._stun and act1[0] in projectile_actions:
+    if act1 and not player1._stun and act1[0] in projectile_actions:
         projectiles.append(projectile_actions[act1[0]](player1, player2, act1))
-    if not player2._stun and act2[0] in projectile_actions:
+    if act2 and not player2._stun and act2[0] in projectile_actions:
         projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
         
     player1._moveNum += 1
@@ -137,13 +138,14 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
-        print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
 
         # first check if the projectile already travelled its range or offscreen
         if proj_obj.size == (0,0):
             # remove projectile from array
             projectiles.pop(projectileNum)
             continue
+        
+        print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
         
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
