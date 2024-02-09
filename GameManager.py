@@ -7,7 +7,7 @@ from projectiles import *
 import json
 import os
 #game settings
-timeLimit = 15
+timeLimit = 10
 movesPerSecond = 1
 
 # number of y-units to move when falling
@@ -25,13 +25,13 @@ def setupGame():
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
     player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Grenade, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(5,0,50,GOLEFT, Grenade, UppercutSkill, 2)
+    player2 = p2Import.Player_Controller(10,0,50,GOLEFT, Boomerang, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("move", (1,0)), ("move", (1,0))
-    p2movelist = ("grenade",),
+    p1movelist = ("move", (1,0)),
+    p2movelist = ("boomerang",), None, None, None, None, None, ("move", (1,1))
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -131,13 +131,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     return knock1, stun1, knock2, stun2
                 
 def proj_knockback(proj, player):
-    print(proj.xCoord)
-    print(player._xCoord)
     if proj.xCoord < player._xCoord:
         return -1
-    elif proj.xCoord > player._xCoord:
-        return 1
-    return 0
+    return 1
                         
 
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
@@ -151,15 +147,17 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             proj_json_dict = p1_dict
         else:
             proj_json_dict = p2_dict
-
+        
+        # if exists, then travel and log
+        proj_obj.travel()
+        
         # first check if the projectile already travelled its range or offscreen
         if proj_obj.size == (0,0):
             # remove projectile from array
             projectiles.pop(projectileNum)
+            projectileToJson(proj_obj, proj_json_dict, False)
             continue
         
-        # if exists, then travel and log
-        proj_obj.travel()
         projectileToJson(proj_obj, proj_json_dict, True)
         print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
         
@@ -183,7 +181,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             if proj_obj.checkCollision(player1):
                 # if explosive, the knockback depends on where the enemy was
                 knockback = proj_info["knockback"] * proj_knockback(proj_obj, player1)
-                print(knockback, player1.get_pos())
                 proj_knock2, proj_stun2 = attackHit(proj_obj, player1,
                                                 proj_info["damage"],
                                                 proj_obj.size[0],
@@ -193,7 +190,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                                                 proj_info["stun"])
             if proj_obj.checkCollision(player2):
                 knockback = proj_info["knockback"] * proj_knockback(proj_obj, player2)
-                print(knockback)
                 proj_knock1, proj_stun1 = attackHit(proj_obj, player2,
                                                 proj_info["damage"],
                                                 proj_obj.size[0],
@@ -205,7 +201,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # total knockback and highest stun
             
             # this is if the projectile explodes
-            if proj_obj.trait == None:
+            if proj_obj.trait == "explode":
                 proj_obj.size = (0,0)
                 
             knock1 += proj_knock1
@@ -288,8 +284,8 @@ def startGame(path1, path2):
         act1 = player1._action()
         act2 = player2._action()
         
-        #playerInfo(player1, path1, act1)
-        #playerInfo(player2, path2, act2)
+        playerInfo(player1, path1, act1)
+        playerInfo(player2, path2, act2)
         
         knock1, stun1, knock2, stun2 = performActions(player1, player2, 
                                                       act1, act2, stun1, stun2, 
@@ -312,6 +308,15 @@ def startGame(path1, path2):
         updateMidair(player1)
         updateMidair(player2)
 
+        # if players are in the same position, move them away from each other
+        if (player1.get_pos() == player2.get_pos()):
+            if knock2:
+                # p2 causes knockback such that p1 and p2 in same position
+                player1._xCoord -= player1._direction
+            elif knock1:
+                # p1 causes knockback such that p1 and p2 in same position
+                player2._xCoord -= player2._direction
+            
         updateCooldown(player1)
         updateCooldown(player2)
         

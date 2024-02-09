@@ -36,16 +36,13 @@ class Projectile:
         self.yCoord = player._yCoord + path[0][1]
 
     def travel(self):
-        print("TRAVEL")
         if 0 < self.pathIndex < len(self.path):
             pos = self.path[self.pathIndex]
             self.xCoord += pos[0] - self.path[self.pathIndex - 1][0]
             self.yCoord += pos[1] - self.path[self.pathIndex - 1][1]
         elif self.pathIndex >= len(self.path):
             # has reached end of path, so do effects based on trait
-            print("do trait")
             self.do_trait()
-        print(self.pathIndex)
         self.pathIndex += 1
       
     def do_trait(self):
@@ -81,10 +78,9 @@ class Projectile:
                 self.timer -= 1
             else:
                 # explode
-                print("boom")
                 self.size = (self.size[0] + 1, self.size[1] + 1)
                 self.collision = True
-                self.trait = None
+                self.trait = "explode"
               
     def get_pos(self):
         return (self.xCoord, self.yCoord)
@@ -92,15 +88,12 @@ class Projectile:
     def checkCollision(self, target):
         hit_target = False
         # checks if projectile has a size
-        print("Checking target...")
         if self.size[0] and self.size[1] and self.collision:
-            print(f"CHECK ON {target._id}")
             # checks if projectile hits target
-            print(target._xCoord, self.xCoord)
-            print(target._yCoord, self.yCoord)
             if (abs(target._xCoord-self.xCoord) < self.size[0] and
                 abs(target._yCoord-self.yCoord) < self.size[1]):
-                hit_target = target != self.player
+                hit_target = (target != self.player)
+                self.size = (0,0)
         return hit_target
             
     def checkProjCollision(self, target):
