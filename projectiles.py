@@ -126,6 +126,7 @@ class Hadoken(ProjectileSkill):
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
         self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self.stunself = False
     
     def activateSkill(self):
         atk_info = super().activateSkill()
@@ -135,16 +136,17 @@ class Hadoken(ProjectileSkill):
         projectile = self.summonProjectile(path = self.path, size=(1,1), 
                                            trait=None, collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, 
+                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
                 "projectile": projectile}]
     
-    
+# TODO while lasso projecile is up, caster cannot move
 class Lasso(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=-2, stun=0, 
                                  skillName="lasso")
         self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self.stunself = True
     
     def activateSkill(self):
         atk_info = super().activateSkill()
@@ -154,7 +156,7 @@ class Lasso(ProjectileSkill):
         projectile = self.summonProjectile(path=self.path, size=(1,1), 
                                            trait=None, collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, 
+                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
                 "projectile": projectile}]
         
 class Boomerang(ProjectileSkill):
@@ -163,6 +165,7 @@ class Boomerang(ProjectileSkill):
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self.stunself = False
     
     def activateSkill(self):
         atk_info = super().activateSkill()
@@ -172,7 +175,7 @@ class Boomerang(ProjectileSkill):
         projectile = self.summonProjectile(path = self.path, size=(1,1), 
                                            trait="return", collision=True, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, 
+                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
                 "projectile": projectile}]
         
 class Grenade(ProjectileSkill):
@@ -181,6 +184,7 @@ class Grenade(ProjectileSkill):
                                  blockable=False, knockback=3, stun=3, 
                                  skillName="grenade")
         self.path = [[1,1], [2,2], [3,1]]
+        self.stunself = False
     
     def activateSkill(self):
         atk_info = super().activateSkill()
@@ -191,6 +195,6 @@ class Grenade(ProjectileSkill):
                                            trait="timer_explode", 
                                            collision=False, timer=0)
         return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, 
+                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
                 "projectile": projectile}]
         

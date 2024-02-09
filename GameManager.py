@@ -7,7 +7,7 @@ from projectiles import *
 import json
 import os
 #game settings
-timeLimit = 10
+timeLimit = 6
 movesPerSecond = 1
 
 # number of y-units to move when falling
@@ -25,13 +25,13 @@ def setupGame():
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
     player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Grenade, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(10,0,50,GOLEFT, Boomerang, UppercutSkill, 2)
+    player2 = p2Import.Player_Controller(5,0,50,GOLEFT, Lasso, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("move", (1,0)),
-    p2movelist = ("boomerang",), None, None, None, None, None, ("move", (1,1))
+    p1movelist = None,
+    p2movelist = ("lasso", None), ("skill_cancel",), ("move", (1,1)), ("move", (1,1)), ("move", (1,1)), ("move", (1,1)), ("move", (1,1))
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -44,23 +44,24 @@ def updateCooldown(player):
     
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
-    if player._yCoord == player._jumpHeight:
-        player._falling = True
-        player._yCoord -= gravity
-        player._xCoord += player._velocity
+    # check if player should be falling
+    player._falling = (player._yCoord >= player._jumpHeight)
     # not yet at apex of jump
-    elif player._midair:
+    if player._midair:
         if player._falling: 
-            player._yCoord -= gravity
+            # specifically to check for diagonal jumps, ensure jump arc
+            # like _ - - _
+            if player._moves[-2] != ("move",(1,1)):
+                player._yCoord -= gravity
         else:
             player._yCoord += 1
         player._xCoord += player._velocity
-        
-    if player._yCoord == 0 and player._falling: 
+
+    # player has landed, reset midair attributes
+    if player._yCoord <= 0 and player._falling: 
         player._midair = player._falling = False
         player._velocity = 0
-        
-    correctPos(player)
+        player._jumpheight = 2
 
 def playerToJson(player, jsonDict):
     jsonDict['hp'].append(player._hp)
@@ -158,6 +159,12 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             projectileToJson(proj_obj, proj_json_dict, False)
             continue
         
+        # also check if projectile can be and has been cancelled
+        if proj_info["self_stun"] and proj_obj.player._moves[-1][0] == "skill_cancel":
+            projectiles.pop(projectileNum)
+            projectileToJson(proj_obj, proj_json_dict, False)
+            continue   
+           
         projectileToJson(proj_obj, proj_json_dict, True)
         print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
         
@@ -203,6 +210,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # this is if the projectile explodes
             if proj_obj.trait == "explode":
                 proj_obj.size = (0,0)
+            
+                
                 
             knock1 += proj_knock1
             stun1 = max(stun1, proj_stun1)
@@ -215,6 +224,9 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             if proj_knock1 or proj_knock2 or proj_obj.size == (0,0):
                 projectileToJson(proj_obj, proj_json_dict, False)
                 projectiles.pop(projectileNum)
+                # then unstun caster if the projectile skill has self stun
+                if proj_info["self_stun"]:
+                    proj_obj.player._skill_state = False
 
                     
     return projectiles, knock1, stun1, knock2, stun2    
@@ -308,20 +320,18 @@ def startGame(path1, path2):
         updateMidair(player1)
         updateMidair(player2)
 
-        # if players are in the same position, move them away from each other
-        if (player1.get_pos() == player2.get_pos()):
-            if knock2:
-                # p2 causes knockback such that p1 and p2 in same position
-                player1._xCoord -= player1._direction
-            elif knock1:
-                # p1 causes knockback such that p1 and p2 in same position
-                player2._xCoord -= player2._direction
+        # correct player positions if off screen/under ground
+        correctPos(player1)
+        correctPos(player2)
+        
+        correctOverlap(player1, player2, knock1, knock2)
             
         updateCooldown(player1)
         updateCooldown(player2)
         
         #TODO update current startup every tick 
 
+        print(player2._moves)
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)
     #print(p1_json_dict)

@@ -41,8 +41,10 @@ class Skill:
     
     # Allows skill cancelling if skill is still in startup time
     def skillCancel(self):
-        if self.currentStartup < self.startup:
+        if self.currentStartup <= self.startup:
             self.currentStartup = self.startup
+            return True
+        return False
        
 # when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):
