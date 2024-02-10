@@ -20,15 +20,14 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(1,0,50,GORIGHT, Grenade, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(5,0,50,GOLEFT, Lasso, UppercutSkill, 2)
+    player1 = p1Import.Player_Controller(13,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
+    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, Lasso, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = None,
-    p2movelist = ("lasso", None), ("skill_cancel",), ("move", (1,1)), 
-    ("move", (1,1)), ("move", (1,1)), ("move", (1,1)), ("move", (1,1))
+    p1movelist = ("light", ), ("heavy", ), ("onepunch",)
+    p2movelist = None,
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          

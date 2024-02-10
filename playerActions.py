@@ -35,16 +35,13 @@ def fetchAttack(player, attackType):
         return player._lightAtk.activateSkill()
     elif attackType == "heavy":
         return player._heavyAtk.activateSkill()
-    else:
-        raise Exception("Invalid attack type!")
-
+    return None
 
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
     # checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    print(f"Knockback: {knockback}")
     if (abs(player_x-target_x) <= atk_range and 
         player_y + vertical >= target_y):
         # can be changed later : no knockback if block or stunned
@@ -70,8 +67,8 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
 
 # Light and heavy attacks
 def attack(player,target, action):
-    attack = fetchAttack(player, action[1])
-    if (action[0]=="attack") and not (isinstance(attack, int)):
+    attack = fetchAttack(player, action[0])
+    if attack and not (isinstance(attack, int)):
         player._blocking = False
         player._block.regenShield() 
         # gets only the attack info, doesn't include "light"/"heavy"
@@ -128,7 +125,7 @@ def dash_atk(player, target, action):
         skillInfo = fetchSkill(player, "dash_attack")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -147,7 +144,7 @@ def uppercut(player, target, action):
         skillInfo = fetchSkill(player, "uppercut")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -163,7 +160,7 @@ def teleport(player, target, action):
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
 
         distance = skillInfo[1]
@@ -171,7 +168,6 @@ def teleport(player, target, action):
 
         player._xCoord += distance * action[1] * player._direction
         correctPos(player)
-
     return None
 
 # buffs damage and speed for player
@@ -179,7 +175,7 @@ def super_saiyan(player, target, action):
     if (action[0] == "super_saiyan"):
         skillInfo = fetchSkill(player, "super_saiyan")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         speedBuff = skillInfo[1][0]
@@ -196,7 +192,7 @@ def meditate(player, target, action):
     if (action[0] == "heal"):
         skillInfo = fetchSkill(player, "heal")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         healVal = skillInfo[1]
@@ -210,17 +206,18 @@ def skill_cancel(player, target, action):
         player._skill_state = False
         player._moves.append(action)
         return None
-    player._moves.append("NoMove", None)
+    player._moves.append(("NoMove", None))
     return None
 
 # similar layout to dash_atk
 # TODO : has startup, add function to manage startups
 # powerful punch that takes time to charge up
 def one_punch(player, target, action):
-    if (action[0] == "one_punch"):
+    knockback = stun = 0
+    if (action[0] == "onepunch"):
         skillInfo = fetchSkill(player, "one_punch")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         skillInfo = skillInfo[1:]
@@ -250,7 +247,7 @@ def fetchProjectileSkill(player, projectileName, action):
             skillInfo = skillInfo[-1]
             player._moves.append(action)
             return skillInfo
-    player._moves.append("NoMove", None)
+    player._moves.append(("NoMove", None))
     return None
 
 # for actions that do not deal damage
@@ -259,8 +256,8 @@ defense_actions = {"block": block, "move": move, "teleport": teleport,
                    "skill_cancel":skill_cancel}
 
 # for actions that deal damage
-attack_actions = {"attack": attack, "dash_attack": dash_atk,
-                  "uppercut": uppercut, "one_punch": one_punch
+attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
+                  "uppercut": uppercut, "onepunch": one_punch
                   }
 
 # for projectile actions
