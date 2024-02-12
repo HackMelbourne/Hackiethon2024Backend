@@ -27,7 +27,7 @@ def setupGame():
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
     p1movelist = None, None, None, None, ("move", (1,0))
-    p2movelist = ("icewall",),
+    p2movelist = None, ("move", (1,1))
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -176,6 +176,9 @@ def startGame(path1, path2):
             
         updateCooldown(player1)
         updateCooldown(player2)
+        
+        updateBuffs(player1)
+        updateBuffs(player2)
         
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)

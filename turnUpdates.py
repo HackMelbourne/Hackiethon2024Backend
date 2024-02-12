@@ -1,4 +1,4 @@
-from playerActions import attackHit
+from playerActions import attackHit, changeDamage, changeSpeed
 
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
@@ -16,7 +16,8 @@ def updateCooldown(player):
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
     # check if player should be falling
-    player._falling = (player._yCoord >= player._jumpHeight)
+    if not player._falling:
+        player._falling = (player._yCoord >= player._jumpHeight * player._speed)
     # not yet at apex of jump
     if player._midair:
         if player._falling: 
@@ -25,8 +26,8 @@ def updateMidair(player):
             if player._moves[-2] != ("move",(1,1)):
                 player._yCoord -= GRAVITY
         else:
-            player._yCoord += 1
-        player._xCoord += player._velocity
+            player._yCoord += 1 * player._speed
+        player._xCoord += player._velocity * player._speed
 
     # player has landed, reset midair attributes
     if player._yCoord <= 0 and player._falling: 
@@ -135,3 +136,15 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     proj_obj.player._skill_state = False
               
     return projectiles, knock1, stun1, knock2, stun2  
+
+def updateBuffs(player):
+    if player._currentBuffDuration > 0:
+        player._currentBuffDuration -= 1
+    elif player._currentBuffDuration == 0:
+        # check if any buffs active, if they are, remove them
+        if player._atkbuff:
+            changeDamage(player, -player._atkbuff)
+            player._atkbuff = 0
+        if player._speed != 1:
+            changeSpeed(player, 0)
+            player._speed = 1

@@ -34,6 +34,12 @@ class Player_Controller:
         
         # moves input by player
         self._inputs = []
+        
+        # buffs
+        self._speed = 1
+        self._atkbuff = 0
+        self._currentBuffDuration = 0
+        
     def _action(self):
         if self._moveNum < len(self._inputs) and self._inputs[self._moveNum]:
             if self._inputs[self._moveNum][0] == ("skill_cancel") and self._skill_state:
