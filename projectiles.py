@@ -70,7 +70,13 @@ class Projectile:
                 
         elif self.trait == "timer":
             # stay at current position for given time to live
-            pass
+            # does damage if hits opponent before given time
+            self.collision = True
+            if self.timer:
+                self.timer -= 1
+            else:
+                self.size = (0,0)
+            
             
         elif self.trait == "timer_explode":
             # similar to timer, but does aoe damage after timer
@@ -86,15 +92,14 @@ class Projectile:
         return (self.xCoord, self.yCoord)
             
     def checkCollision(self, target):
-        hit_target = False
         # checks if projectile has a size
         if self.size[0] and self.size[1] and self.collision:
             # checks if projectile hits target
             if (abs(target._xCoord-self.xCoord) < self.size[0] and
                 abs(target._yCoord-self.yCoord) < self.size[1]):
-                hit_target = (target != self.player)
                 self.size = (0,0)
-        return hit_target
+                return target != self.player
+        return False
             
     def checkProjCollision(self, target):
         if self.size[0] and self.size[1]:
@@ -198,3 +203,42 @@ class Grenade(ProjectileSkill):
                 "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
                 "projectile": projectile}]
         
+class BearTrap(ProjectileSkill):
+    def __init__(self, player):
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
+                                 blockable=False, knockback=0, stun=3, 
+                                 skillName="beartrap")
+        self.path = [[1,0], [2,0]]
+        self.stunself = False
+        
+    def activateSkill(self):
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+                                           trait="timer", 
+                                           collision=False, timer=3)
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
+                "projectile": projectile}]
+        
+class IceWall(ProjectileSkill):
+    def __init__(self, player):
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=30, damage=10,
+                                 blockable=False, knockback=2, stun=1, 
+                                 skillName="icewall")
+        self.path = [[1,0], [2,0], [3,0]]
+        self.stunself = False
+        
+    def activateSkill(self):
+        atk_info = super().activateSkill()
+        if isinstance(atk_info, int):
+            return atk_info
+        
+        projectile = self.summonProjectile(path = self.path, size=(1,3), 
+                                           trait="timer", 
+                                           collision=True, timer=10)
+        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
+                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
+                "projectile": projectile}]

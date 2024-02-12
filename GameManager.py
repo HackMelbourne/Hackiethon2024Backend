@@ -21,13 +21,13 @@ def setupGame():
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
     player1 = p1Import.Player_Controller(13,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, Lasso, UppercutSkill, 2)
+    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, IceWall, UppercutSkill, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = ("light", ), ("heavy", ), ("onepunch",)
-    p2movelist = None,
+    p1movelist = None, None, None, None, ("move", (1,0))
+    p2movelist = ("icewall",),
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -68,9 +68,13 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
         
     if act1 and not player1._stun and act1[0] in projectile_actions:
-        projectiles.append(projectile_actions[act1[0]](player1, player2, act1))
+        proj_obj = projectile_actions[act1[0]](player1, player2, act1)
+        if proj_obj:
+            projectiles.append(proj_obj)
     if act2 and not player2._stun and act2[0] in projectile_actions:
-        projectiles.append(projectile_actions[act2[0]](player2, player1, act2))
+        proj_obj = projectile_actions[act2[0]](player2, player1, act2)
+        if proj_obj:
+            projectiles.append(proj_obj)
         
     player1._moveNum += 1
     player2._moveNum += 1
