@@ -4,8 +4,8 @@ class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction, primary, secondary, id):
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
-        self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 0)
-        self._heavyAtk = AttackSkill(2, 4, 10, 2, 0, True, 1, 1)
+        self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 1)
+        self._heavyAtk = AttackSkill(0, 4, 10, 2, 0, True, 2, 2)
         self._block = BlockSkill(0, 0, 15, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
@@ -30,12 +30,24 @@ class Player_Controller:
         # actual moves taken
         self._moves = []
         self._moveNum = 0
+        self._skill_state = False
         
         # moves input by player
         self._inputs = []
+        
+        # buffs
+        self._speed = 1
+        self._atkbuff = 0
+        self._currentBuffDuration = 0
+        self._encumberedDuration = 0
+        self._encumbered = False
+        
     def _action(self):
-        if self._moveNum < len(self._inputs):
-            return self._inputs[self._moveNum]
+        if self._moveNum < len(self._inputs) and self._inputs[self._moveNum]:
+            if self._inputs[self._moveNum][0] == ("skill_cancel") and self._skill_state:
+                self._skill_state = False
+            if not self._skill_state:
+                return self._inputs[self._moveNum]
         return ("NoMove")
            
     def get_pos(self):

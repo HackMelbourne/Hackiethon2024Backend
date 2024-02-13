@@ -1,5 +1,5 @@
 from test import validMove, correctPos
-
+from math import ceil
 
 def move(player, enemy, action):
     if (action[0] == "move"):
@@ -10,13 +10,14 @@ def move(player, enemy, action):
                 player._midair = True
                 if moveAction[0]:
                     # this is diagonal jump
-                    player._velocity += player._direction * moveAction[0]
+                    player._velocity += player._direction * moveAction[0] * player._speed
+                    player._jumpHeight = 1 * player._speed
             else:
-                # no vertical logic
+                # no vertical logic, simple horizontal movement
                 player._blocking = False
                 player._block.regenShield() 
                 player._moves.append(action)
-                player._xCoord += player._direction * moveAction[0]
+                player._xCoord += player._direction * moveAction[0] * player._speed
                 
             player._moves.append(action)    
     return None, None
@@ -34,16 +35,13 @@ def fetchAttack(player, attackType):
         return player._lightAtk.activateSkill()
     elif attackType == "heavy":
         return player._heavyAtk.activateSkill()
-    else:
-        raise Exception("Invalid attack type!")
-
+    return None
 
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
     # checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    print(f"Knockback: {knockback}")
     if (abs(player_x-target_x) <= atk_range and 
         player_y + vertical >= target_y):
         # can be changed later : no knockback if block or stunned
@@ -69,61 +67,71 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
 
 # Light and heavy attacks
 def attack(player,target, action):
-    if (action[0] == "attack"):
-        player._blocking = False
-        player._block.regenShield() 
-
-        # 2 types of attack, light and heavy
-        # action should be like ("attack", "light/heavy")
-        attack = fetchAttack(player, action[1])
-
+    attack = fetchAttack(player, action[0])
+    if attack:
+        if not (isinstance(attack, int)):
+            player._blocking = False
+            player._block.regenShield() 
+            # gets only the attack info, doesn't include "light"/"heavy"
+            attack = attack[1:]
+            player._moves.append(action)
         
-        # no action if attack is on cooldown or previous attack is still in startup
-        if isinstance(attack, int):
-            return 0, 0
-        # gets only the attack info, doesn't include "light"/"heavy"
-        attack = attack[1:]
-        player._moves.append(action)
-        
-        # performs the actual attack using fetched attack info
-        return attackHit(player, target, *attack)
+            # performs the actual attack using fetched attack info
+            return attackHit(player, target, *attack)
+        else:
+            # mid startup
+            doStartup(player, action)
+            print("startup")
+    player._moves.append(("NoMove", None))
     return 0, 0
 
 # helper function for all skills
 # return cooldown/startup if on cooldown/startup
 # else return skill type and related attributes
 def fetchSkill(player, skillClass):
+    returnVal = -2
+    # if using a skill correctly, reset the startup of every other action 
     if player._primarySkill.skillType == skillClass:
-        return player._primarySkill.activateSkill()
+        player._secondarySkill.resetStartup()
+        player._heavyAtk.resetStartup()
+        player._lightAtk.resetStartup()
+        player._block.resetStartup()
+        player._move.resetStartup()
+        returnVal = player._primarySkill.activateSkill()
     elif player._secondarySkill.skillType == skillClass:
-        return player._secondarySkill.activateSkill()
-    else:
-        raise Exception("Player does not have this skill!")
+        player._primarySkill.resetStartup()
+        player._heavyAtk.resetStartup()
+        player._lightAtk.resetStartup()
+        player._block.resetStartup()
+        player._move.resetStartup()
+        returnVal = player._secondarySkill.activateSkill()
+        
+    if returnVal == -2:
+        print("Player does not have this skill")
+    return returnVal
+    
     
 def changeSpeed(player, speed):
-    player._primarySkill.startup -= speed
-    player._secondarySkill.startup -= speed
-    player._lightAtk.startup -= speed
-    player._heavyAtk.startup -= speed
-    player._block.startup -= speed
-    if player._primarySkill.startup < 0:
-        player._primarySkill.startup = 0
-    if player._secondarySkill.startup < 0:
-        player._secondarySkill.startup = 0
-    if player._lightAtk.startup < 0:
-        player._lightAtk.startup = 0
-    if player._heavyAtk.startup < 0:
-        player._heavyAtk.startup = 0
-    if player._block.startup < 0:
-        player._block.startup = 0
+    # if speed == 0, reset startups back to default
+    player._primarySkill.reduceMaxStartup(speed)
+    player._secondarySkill.reduceMaxStartup(speed)
+    player._lightAtk.reduceMaxStartup(speed)
+    player._heavyAtk.reduceMaxStartup(speed)
+    player._block.reduceMaxStartup(speed)
+    player._move.reduceMaxStartup(speed)
+    player._speed = ceil(player._speed * speed)
+    # when resetting back to normal speed, set player speed to 1 and use 
+    # resetMaxStartup method
 
 def changeDamage(player, buffValue):
-    if player._primarySkill.skillType in attack_actions:
+    if player._primarySkill.skillType in (attack_actions | projectile_actions):
         player._primarySkill.damageBuff(buffValue)
-    if player._secondarySkill.skillType in attack_actions:
+    if player._secondarySkill.skillType in (attack_actions | projectile_actions):
         player._secondarySkill.damageBuff(buffValue)
+    
     player._lightAtk.damageBuff(buffValue)
     player._heavyAtk.damageBuff(buffValue)
+    player._atkbuff += buffValue
 
 # dashes towards target, deals damage along the way
 def dash_atk(player, target, action):
@@ -132,7 +140,7 @@ def dash_atk(player, target, action):
         skillInfo = fetchSkill(player, "dash_attack")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            player._moves.append(("NoMove", None))
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -151,7 +159,11 @@ def uppercut(player, target, action):
         skillInfo = fetchSkill(player, "uppercut")
         # if skill on cooldown or in startup
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
             return 0, 0
         
         # so now, skillInfo = damage, 
@@ -167,7 +179,11 @@ def teleport(player, target, action):
     if (action[0] == "teleport"):
         skillInfo = fetchSkill(player, "teleport")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
             return 0, 0
 
         distance = skillInfo[1]
@@ -182,40 +198,63 @@ def super_saiyan(player, target, action):
     if (action[0] == "super_saiyan"):
         skillInfo = fetchSkill(player, "super_saiyan")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
             return 0, 0
         
         speedBuff = skillInfo[1][0]
         atkBuff = skillInfo[1][1]
+        duration = skillInfo[1][2]
         player._moves.append(action)
         changeSpeed(player, speedBuff)
         changeDamage(player, atkBuff)
-        
+        player._currentBuffDuration = duration
+
     return None
     
 
 # heals player for given amount of hp
 def meditate(player, target, action):
-    if (action[0] == "heal"):
-        skillInfo = fetchSkill(player, "heal")
+    if (action[0] == "meditate"):
+        skillInfo = fetchSkill(player, "meditate")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
             return 0, 0
         
         healVal = skillInfo[1]
         player._moves.append(action)
-        
         player._hp += healVal
+
     return None    
     
+def skill_cancel(player, target, action):
+    if (action[0] == "skill_cancel"):
+        player._skill_state = False
+        player._moves.append(action)
+        return None
+    player._moves.append(("NoMove", None))
+    return None
+
 # similar layout to dash_atk
 # TODO : has startup, add function to manage startups
 # powerful punch that takes time to charge up
 def one_punch(player, target, action):
-    if (action[0] == "one_punch"):
+    knockback = stun = 0
+    if (action[0] == "onepunch"):
         skillInfo = fetchSkill(player, "one_punch")
         if isinstance(skillInfo, int):
-            player._moves.append("NoMove", None)
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
             return 0, 0
         
         skillInfo = skillInfo[1:]
@@ -228,10 +267,20 @@ def hadoken(player, target, action):
     return fetchProjectileSkill(player, "hadoken", action)
         
 def lasso(player, target, action):
+    player._skill_state = True
     return fetchProjectileSkill(player, "lasso", action)
 
 def boomerang(player, target, action):
     return fetchProjectileSkill(player, "boomerang", action)
+
+def grenade(player, target, action):
+    return fetchProjectileSkill(player, "grenade", action)
+
+def beartrap(player, target, action):
+    return fetchProjectileSkill(player, "beartrap", action)
+
+def icewall(player, target, action):
+    return fetchProjectileSkill(player, "icewall", action)
 
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
@@ -241,20 +290,57 @@ def fetchProjectileSkill(player, projectileName, action):
             skillInfo = skillInfo[-1]
             player._moves.append(action)
             return skillInfo
-    player._moves.append("NoMove", None)
+        else:
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
+    return None
+
+def encumber(player):
+    # special state for player after super saiyan duration finishes
+    print("START ENCUMBER")
+    player._encumberedDuration = 5
+    player._encumbered = True
+    changeSpeed(player, 1/2)
+    
+def doStartup(player, action):
+    player._moves.append(action)
+    if player._moveNum == len(player._inputs) - 1:
+        print("last move")
+        player._inputs.append(action)
+    elif player._inputs[player._moveNum + 1][0] == "skill_cancel":
+        player._primarySkill.resetStartup()
+        player._secondarySkill.resetStartup()
+        player._heavyAtk.resetStartup()
+        player._lightAtk.resetStartup()
+        player._block.resetStartup()
+        player._move.resetStartup()
+    elif player._inputs[player._moveNum + 1] in (action, None):
+        player._inputs[player._moveNum + 1] = action
+        
+     
+# null function
+def nullFunc(player, target, action):
+    return 0,0
+
+def nullProj(player, target, action):
     return None
 
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
-                   "super_saiyan": super_saiyan, "meditate": meditate}
+                   "super_saiyan": super_saiyan, "meditate": meditate,
+                   "skill_cancel":skill_cancel}
 
 # for actions that deal damage
-attack_actions = {"attack": attack, "dash_attack": dash_atk,
-                  "uppercut": uppercut, "one_punch": one_punch
+attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
+                  "uppercut": uppercut, "onepunch": one_punch
                   }
 
 # for projectile actions
-projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang}
+projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang,
+                      "grenade":grenade, "beartrap":beartrap, "icewall":icewall}
 
 '''
 How to add a new skill
