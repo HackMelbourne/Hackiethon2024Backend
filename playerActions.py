@@ -62,8 +62,6 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity -= knockback
-            target._stun += stun
-            print("hit!")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -324,6 +322,13 @@ def doStartup(player, action):
         player._inputs[player._moveNum + 1] = action
         
      
+# null function
+def nullFunc(player, target, action):
+    return 0,0
+
+def nullProj(player, target, action):
+    return None
+
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
                    "super_saiyan": super_saiyan, "meditate": meditate,

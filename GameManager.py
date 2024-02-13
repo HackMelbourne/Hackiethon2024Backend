@@ -1,6 +1,6 @@
 import test
 import importlib
-from playerActions import defense_actions, attack_actions, projectile_actions
+from playerActions import defense_actions, attack_actions, projectile_actions, nullFunc, nullProj
 from Skills import *
 from projectiles import *
 import json
@@ -20,14 +20,14 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(16,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, SuperSaiyanSkill, Meditate, 2)
+    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
+    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, SuperSaiyanSkill, Hadoken, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
     p1movelist = None, 
-    p2movelist = ("super_saiyan",), None, None, ("light", ), ("skill_cancel",), ("light", )
+    p2movelist = ("hadoken",),
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -40,46 +40,41 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if player2._stun:
         player2._stun -= 1
 
-        
-    # all actions have the signature
-    # function(player1, player2, act1)
-    # and return (knock1, stun1)
-
-    # to specify an action,
-    # define an action inside playerActions with the signature above,
-    # and then add it to attack_actions or defense_actions (inside playerActions)
-
-    # works under assumption of only 1 action per turn
-        
-    # movement and defensive actions take priority then attacks and skills 
-    if act1 in ("NoMove", ("NoMove", None), None):
+    # first check if a "no move" is input: 
+    if act1 in ("NoMove", ("NoMove", None), None) or player1._stun:
         player1._moves.append(("NoMove", None))
-    if act2 in ("NoMove", ("NoMove", None), None):
+        act1 = None
+    if act2 in ("NoMove", ("NoMove", None), None) or player2._stun:
         player2._moves.append(("NoMove", None))
+        act2 = None
         
-    if (act1 and act1[0] in defense_actions and not player1._stun):
-        defense_actions[act1[0]](player1, player2, act1)
-    if (act2 and act2[0] in defense_actions and not player2._stun):
-        defense_actions[act2[0]](player2, player1, act2)
+    # nullFunc, nullProj = default functions that return (0,0) or None with params
+    # actions can only occur if the player is not stunned
+    # if a defensive action is taken, it has priority over damage moves/skills
+    # defensive = any skill that does not deal damage
+    if act1:
+        defense_actions.get(act1[0], nullFunc)(player1, player2, act1)
+    if act2:
+        defense_actions.get(act2[0], nullFunc)(player2, player1, act2)
 
-    if act1 and not player1._stun and act1[0] in attack_actions:
-        knock1, stun1 = attack_actions[act1[0]](player1, player2, act1)
-    if act2 and not player2._stun and act2[0] in attack_actions:
-        knock2, stun2 = attack_actions[act2[0]](player2, player1, act2)
-        
-    if act1 and not player1._stun and act1[0] in projectile_actions:
-        proj_obj = projectile_actions[act1[0]](player1, player2, act1)
+    # then check if a damage dealing action is taken
+    # if an attack lands, return knockback and stun caused by player
+    # if projectile is created, add to projectile list
+    if act1:
+        knock1, stun1 = attack_actions.get(act1[0], nullFunc)(player1, player2, act1)
+        proj_obj = projectile_actions.get(act1[0], nullProj)(player1, player2, act1)
         if proj_obj:
             projectiles.append(proj_obj)
-    if act2 and not player2._stun and act2[0] in projectile_actions:
-        proj_obj = projectile_actions[act2[0]](player2, player1, act2)
+    if act2:
+        knock2, stun2 = attack_actions.get(act2[0], nullFunc)(player2, player1, act2)
+        proj_obj = projectile_actions.get(act2[0], nullProj)(player2, player1, act2)
         if proj_obj:
             projectiles.append(proj_obj)
         
     player1._moveNum += 1
     player2._moveNum += 1
     
-    return knock1, stun1, knock2, stun2
+    return knock1, stun1, knock2, stun2, projectiles
                                         
 def startGame(path1, path2):
     if not isinstance(path1, str) and isinstance(path2,str):
@@ -145,9 +140,9 @@ def startGame(path1, path2):
         act2 = player2._action()
         
         #test.playerInfo(player1, path1, act1)
-        test.playerInfo(player2, path2, act2)
+        #test.playerInfo(player2, path2, act2)
         
-        knock1, stun1, knock2, stun2 = performActions(player1, player2, 
+        knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                                       act1, act2, stun1, stun2, 
                                                       projectiles)
         # if there are projectiles, make them travel
@@ -156,7 +151,7 @@ def startGame(path1, path2):
                                 p1_json_dict, p2_json_dict)
         
         #only determine knockback and stun after attacks hit
-        #knock1 and stun1 = knockback and stun inflicted by player1
+        #knock1 and stun1 = knockback and stun inflicted by player1 on player2
         if knock1:
             player2._xCoord += knock1
             player2._stun += stun1

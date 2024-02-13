@@ -77,7 +77,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
         # if still existst then log
         projectileToJson(proj_obj, proj_json_dict, True)
-        print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
+        #print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
         
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
