@@ -68,7 +68,6 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
 # Light and heavy attacks
 def attack(player,target, action):
     attack = fetchAttack(player, action[0])
-    print(attack)
     if attack:
         if not (isinstance(attack, int)):
             player._blocking = False

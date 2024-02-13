@@ -7,7 +7,7 @@ import json
 import os
 from turnUpdates import *
 #game settings
-timeLimit = 8
+timeLimit = 15
 movesPerSecond = 1
 
 #direction constants
@@ -26,8 +26,8 @@ def setupGame():
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = None, 
-    p2movelist = ("hadoken",),
+    p1movelist = ("light", ), ("heavy", ), ("onepunch",), ("uppercut", ), ("move", (1,0)), ("move", (0,1)), ("move", (1,1)), ("block",), ("block",),
+    p2movelist = None,
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          

@@ -30,7 +30,6 @@ class Skill:
     If on cooldown, return current skill cooldown
     """
     def useSkill(self):
-        print(self.currentStartup)
         if self.cooldown <= 0:
             if self.currentStartup == 0:
                 self.currentStartup = self.maxStartup
