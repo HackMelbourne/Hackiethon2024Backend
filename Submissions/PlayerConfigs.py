@@ -39,6 +39,8 @@ class Player_Controller:
         self._speed = 1
         self._atkbuff = 0
         self._currentBuffDuration = 0
+        self._encumberedDuration = 0
+        self._encumbered = False
         
     def _action(self):
         if self._moveNum < len(self._inputs) and self._inputs[self._moveNum]:

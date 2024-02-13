@@ -1,5 +1,5 @@
 from test import validMove, correctPos
-
+from math import ceil
 
 def move(player, enemy, action):
     if (action[0] == "move"):
@@ -63,21 +63,28 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             target._hp -= damage
             target._velocity -= knockback
             target._stun += stun
+            print("hit!")
             return knockback * player._direction, stun
     return 0, 0
 
 # Light and heavy attacks
 def attack(player,target, action):
     attack = fetchAttack(player, action[0])
-    if attack and not (isinstance(attack, int)):
-        player._blocking = False
-        player._block.regenShield() 
-        # gets only the attack info, doesn't include "light"/"heavy"
-        attack = attack[1:]
-        player._moves.append(action)
+    print(attack)
+    if attack:
+        if not (isinstance(attack, int)):
+            player._blocking = False
+            player._block.regenShield() 
+            # gets only the attack info, doesn't include "light"/"heavy"
+            attack = attack[1:]
+            player._moves.append(action)
         
-        # performs the actual attack using fetched attack info
-        return attackHit(player, target, *attack)
+            # performs the actual attack using fetched attack info
+            return attackHit(player, target, *attack)
+        else:
+            # mid startup
+            doStartup(player, action)
+            print("startup")
     player._moves.append(("NoMove", None))
     return 0, 0
 
@@ -115,7 +122,7 @@ def changeSpeed(player, speed):
     player._heavyAtk.reduceMaxStartup(speed)
     player._block.reduceMaxStartup(speed)
     player._move.reduceMaxStartup(speed)
-    player._speed *= speed
+    player._speed = ceil(player._speed * speed)
     # when resetting back to normal speed, set player speed to 1 and use 
     # resetMaxStartup method
 
@@ -214,8 +221,8 @@ def super_saiyan(player, target, action):
 
 # heals player for given amount of hp
 def meditate(player, target, action):
-    if (action[0] == "heal"):
-        skillInfo = fetchSkill(player, "heal")
+    if (action[0] == "meditate"):
+        skillInfo = fetchSkill(player, "meditate")
         if isinstance(skillInfo, int):
             if (skillInfo == -1):
                 # is currently doing startup ticks
@@ -294,6 +301,29 @@ def fetchProjectileSkill(player, projectileName, action):
                 player._moves.append(("NoMove", None))
     return None
 
+def encumber(player):
+    # special state for player after super saiyan duration finishes
+    print("START ENCUMBER")
+    player._encumberedDuration = 5
+    player._encumbered = True
+    changeSpeed(player, 1/2)
+    
+def doStartup(player, action):
+    player._moves.append(action)
+    if player._moveNum == len(player._inputs) - 1:
+        print("last move")
+        player._inputs.append(action)
+    elif player._inputs[player._moveNum + 1][0] == "skill_cancel":
+        player._primarySkill.resetStartup()
+        player._secondarySkill.resetStartup()
+        player._heavyAtk.resetStartup()
+        player._lightAtk.resetStartup()
+        player._block.resetStartup()
+        player._move.resetStartup()
+    elif player._inputs[player._moveNum + 1] in (action, None):
+        player._inputs[player._moveNum + 1] = action
+        
+     
 # for actions that do not deal damage
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
                    "super_saiyan": super_saiyan, "meditate": meditate,

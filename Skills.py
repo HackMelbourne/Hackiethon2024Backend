@@ -7,6 +7,7 @@ class Skill:
         #skill is casted once currentStartup decreases to 0
         self.currentStartup = startup
         self.maxStartup = startup
+        self.initMaxStartup = startup
         self.startupReducMult = 1
         
         #cooldown after skill is used
@@ -29,6 +30,7 @@ class Skill:
     If on cooldown, return current skill cooldown
     """
     def useSkill(self):
+        print(self.currentStartup)
         if self.cooldown <= 0:
             if self.currentStartup == 0:
                 self.currentStartup = self.maxStartup
@@ -48,15 +50,17 @@ class Skill:
         if reductionMult == 0:
             self.resetMaxStartup()
         else:
-            self.maxStartup = int(self.maxStartup / reductionMult)
-            self.startupReducMult = reductionMult
-            if self.maxStartup < 0:
-                self.maxStartup = 0
-            if self.currentStartup > self.maxStartup:
-                self.currentStartup = self.maxStartup
+            if reductionMult < 1 and self.maxStartup == 0:
+                self.maxStartup = 1
+            else:
+                self.maxStartup = int(self.maxStartup / reductionMult)
+                self.startupReducMult = reductionMult
+            self.currentStartup = self.maxStartup
+        print(f"New: {self.currentStartup, self.maxStartup}")
             
     def resetMaxStartup(self):
-        self.reduceMaxStartup(1/self.startupReducMult)
+        self.maxStartup = self.initMaxStartup
+        self.currentStartup = self.maxStartup
        
 # when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):
@@ -77,6 +81,7 @@ class AttackSkill(Skill):
         self.blockable = blockable
         self.knockback = knockback
         self.stun = stun
+        self.initDamage = self.skillValue
         
     def activateSkill(self):
         if self.cooldown > 0:
@@ -89,9 +94,9 @@ class AttackSkill(Skill):
             return skill + (self.xRange, self.vertical,
                             self.blockable, self.knockback, self.stun)
     def damageBuff(self, buffVal):
-        self.skillValue += buffVal
-        if self.skillValue < 0:
-            self.skillValue = 0
+        self.skillValue = int(self.skillValue * buffVal)
+        if self.skillValue == 0:
+            self.skillValue = self.initDamage
         
 class BlockSkill(Skill):
     def __init__(self, startup, cooldown, shieldHp, stunOnBreak):
@@ -140,14 +145,14 @@ class OnePunchSkill(AttackSkill):
 # returns ("buff", (speedBuff, attackBuff, defenseBuff))
 class BuffSkill(Skill):
     def __init__(self, startup, cooldown, speedBuff, attackBuff, duration):
-        super.__init__(self, "buff", startup, cooldown, (speedBuff, attackBuff, duration))
+        super().__init__("buff", startup, cooldown, (speedBuff, attackBuff, duration))
 
     def activateSkill(self):
         return self.useSkill()
     
-class HealSkill(Skill):
+class Meditate(Skill):
     def __init__(self, player=None):
-        super.__init__(self, skillType="heal", startup=0, cooldown=20, skillValue=10)
+        super().__init__(skillType="meditate", startup=0, cooldown=20, skillValue=10)
     
     def activateSkill(self):
         return self.useSkill()
@@ -163,5 +168,5 @@ class TeleportSkill(Skill):
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
-                         duration=5)
+                         duration=1)
         self.skillType = "super_saiyan"

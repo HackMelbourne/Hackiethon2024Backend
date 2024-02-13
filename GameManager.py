@@ -7,7 +7,7 @@ import json
 import os
 from turnUpdates import *
 #game settings
-timeLimit = 6
+timeLimit = 8
 movesPerSecond = 1
 
 #direction constants
@@ -20,14 +20,14 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(13,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, IceWall, UppercutSkill, 2)
+    player1 = p1Import.Player_Controller(16,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
+    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, SuperSaiyanSkill, Meditate, 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test----
 def setMoves(player1, player2):    
-    p1movelist = None, None, None, None, ("move", (1,0))
-    p2movelist = None, ("move", (1,1))
+    p1movelist = None, 
+    p2movelist = ("super_saiyan",), None, None, ("light", ), ("skill_cancel",), ("light", )
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
@@ -144,7 +144,7 @@ def startGame(path1, path2):
         act1 = player1._action()
         act2 = player2._action()
         
-        test.playerInfo(player1, path1, act1)
+        #test.playerInfo(player1, path1, act1)
         test.playerInfo(player2, path2, act2)
         
         knock1, stun1, knock2, stun2 = performActions(player1, player2, 
