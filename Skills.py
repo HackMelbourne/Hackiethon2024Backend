@@ -60,6 +60,10 @@ class Skill:
     def resetMaxStartup(self):
         self.maxStartup = self.initMaxStartup
         self.currentStartup = self.maxStartup
+    
+   
+    def get_skillname(self):
+        return self.skillType
        
 # when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):
@@ -139,7 +143,7 @@ class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=20, xRange=2,
                          vertical=0, blockable=False, knockback=4, stun=3)
-        self.skillType = "one_punch"
+        self.skillType = "onepunch"
 
 # returns ("buff", (speedBuff, attackBuff, defenseBuff))
 class BuffSkill(Skill):

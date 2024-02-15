@@ -19,12 +19,10 @@ def move(player, enemy, action):
             player._xCoord += player._direction * moveAction[0] * player._speed
             
         player._moves.append(action)    
-    return None, None
 
 def block(player, target, action):
     player._moves.append(action)
     player._blocking = True
-    return None, None
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
@@ -206,23 +204,22 @@ def super_saiyan(player, target, action):
     changeSpeed(player, speedBuff)
     changeDamage(player, atkBuff)
     player._currentBuffDuration = duration
-
     return None
     
 # heals player for given amount of hp
 def meditate(player, target, action):
-    skillInfo = fetchSkill(player, "meditate")
-    if isinstance(skillInfo, int):
-        if (skillInfo == -1):
-            # is currently doing startup ticks
-            player._moves.append(action[0], "startup")
-        else:
-            player._moves.append(("NoMove", None))
-        return 0, 0
-    
-    healVal = skillInfo[1]
-    player._moves.append(action)
-    player._hp += healVal
+        skillInfo = fetchSkill(player, "meditate")
+        if isinstance(skillInfo, int):
+            if (skillInfo == -1):
+                # is currently doing startup ticks
+                player._moves.append(action[0], "startup")
+            else:
+                player._moves.append(("NoMove", None))
+            return 0, 0
+        
+        healVal = skillInfo[1]
+        player._moves.append(action)
+        player._hp += healVal
 
     return None    
     
@@ -236,7 +233,7 @@ def skill_cancel(player, target, action):
 # powerful punch that takes time to charge up
 def one_punch(player, target, action):
     knockback = stun = 0
-    skillInfo = fetchSkill(player, "one_punch")
+    skillInfo = fetchSkill(player, "onepunch")
     if isinstance(skillInfo, int):
         if (skillInfo == -1):
             # is currently doing startup ticks
