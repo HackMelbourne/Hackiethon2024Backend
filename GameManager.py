@@ -6,6 +6,8 @@ from projectiles import *
 import json
 import os
 from turnUpdates import *
+import Submissions.Player1 as p1
+import Submissions.Player2 as p2
 #game settings
 timeLimit = 15
 movesPerSecond = 1
@@ -19,12 +21,13 @@ GOLEFT = -1
 def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
-    p2Import = importlib.import_module("Submissions.PlayerConfigs")
-    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, OnePunchSkill, UppercutSkill, 1)
-    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, SuperSaiyanSkill, Hadoken, 2)
+    p2Import = importlib.import_module("Submissions.PlayerConfigs")     
+    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, *p1.init_player_skills(), 1)
+    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, *p2.init_player_skills(), 2)
     return player1,player2
 
-#------------------Adding to player1 and player2 move scripts for test----
+#------------------Adding to player1 and player2 move scripts for test---------
+# no longer needed, add moves to player1.py and player2.py
 def setMoves(player1, player2):    
     p1movelist = ("light", ), ("heavy", ), ("onepunch",), ("uppercut", ), ("move", (1,0)), ("move", (0,1)), ("move", (1,1)), ("block",), ("block",),
     p2movelist = None,
@@ -41,10 +44,10 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         player2._stun -= 1
 
     # first check if a "no move" is input: 
-    if act1 in ("NoMove", ("NoMove", None), None) or player1._stun:
+    if act1 in ("NoMove", ("NoMove",), None) or player1._stun:
         player1._moves.append(("NoMove", None))
         act1 = None
-    if act2 in ("NoMove", ("NoMove", None), None) or player2._stun:
+    if act2 in ("NoMove", ("NoMove",), None) or player2._stun:
         player2._moves.append(("NoMove", None))
         act2 = None
         
@@ -87,7 +90,7 @@ def startGame(path1, path2):
 
     stun1 = stun2 = 0
 
-    setMoves(player1, player2)
+    #setMoves(player1, player2)
 
     #TODO dont hard code path use the player names and use os for current path
     # * Check if file exists if so delete it 
@@ -135,6 +138,9 @@ def startGame(path1, path2):
             player2.direction = GOLEFT
         
         knock1 = knock2 = 0
+        
+        player1._inputs.append(p1.get_move())
+        player2._inputs.append(p2.get_move())
         
         act1 = player1._action()
         act2 = player2._action()
