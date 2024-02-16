@@ -31,7 +31,7 @@ SECONDARY = (second.get_skillname(),)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing
-moves = LIGHT, HEAVY, SECONDARY, PRIMARY, FORWARD, BACK, JUMP_FORWARD, BLOCK, BLOCK,
+moves = LIGHT, HEAVY, PRIMARY,JUMP_FORWARD, JUMP_FORWARD, BLOCK, BLOCK,
 moves_iter = iter(moves)
 
 
@@ -46,4 +46,8 @@ def get_move():
         return NOMOVE
     
     
-    
+# things to pass into get move to decide next move:
+# positions of both players
+# enemy projectile position
+# player last move
+# current skills and cooldowns

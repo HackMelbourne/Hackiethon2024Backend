@@ -5,7 +5,7 @@ from projectiles import *
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = OnePunchSkill
+SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
 #movements
@@ -22,8 +22,8 @@ BLOCK = ("block",)
 
 
 # skills
-prim = PRIMARY_SKILL()
-second = SECONDARY_SKILL()
+prim = PRIMARY_SKILL(None)
+second = SECONDARY_SKILL(None)
 
 PRIMARY = (prim.get_skillname(),)
 SECONDARY = (second.get_skillname(),)
@@ -31,7 +31,7 @@ SECONDARY = (second.get_skillname(),)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing
-moves = BACK , NOMOVE,
+moves = SECONDARY,
 moves_iter = iter(moves)
 
 

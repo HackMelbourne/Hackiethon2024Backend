@@ -9,103 +9,103 @@ class Projectile:
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
         self._direction = player._direction
-        self.initdirection = self._direction
-        self.distance = 0
-        self.size = list(size)
-        self.type = type
-        self.timer = timer
+        self._initdirection = self._direction
+        self._distance = 0
+        self._size = list(size)
+        self._type = type
+        self._timer = timer
         
         # True if projectile damages on hit during travel eg hadoken, lasso
         # False if prpojectile damages after travel eg ice wall, landmine
-        self.collision = collision
+        self._collision = collision
         
         # trait = effect after projectile has travelled its path
         # pop = remove projectile, explode = AOE dmg after timer, timer = pop after timer, no dmg
-        self.trait = trait
-        self.id = next(self.id)
-        self.player = player
+        self._trait = trait
+        self._id = next(self.id)
+        self._player = player
         
         # this is an array of projectile positions relative to cast position over time
-        self.path = path
-        self.pathIndex = 0
+        self._path = path
+        self._pathIndex = 0
         # initialize path acording to player direction, only change xCoord
-        for i in range(len(self.path)):
-            self.path[i][0] *= self._direction
+        for i in range(len(self._path)):
+            self._path[i][0] *= self._direction
             
-        self.xCoord = player._xCoord + path[0][0]
-        self.yCoord = player._yCoord + path[0][1]
+        self._xCoord = player._xCoord + path[0][0]
+        self._yCoord = player._yCoord + path[0][1]
 
-    def travel(self):
-        if 0 < self.pathIndex < len(self.path):
-            pos = self.path[self.pathIndex]
-            self.xCoord += pos[0] - self.path[self.pathIndex - 1][0]
-            self.yCoord += pos[1] - self.path[self.pathIndex - 1][1]
-        elif self.pathIndex >= len(self.path):
+    def _travel(self):
+        if 0 < self._pathIndex < len(self._path):
+            pos = self._path[self._pathIndex]
+            self._xCoord += pos[0] - self._path[self._pathIndex - 1][0]
+            self._yCoord += pos[1] - self._path[self._pathIndex - 1][1]
+        elif self._pathIndex >= len(self._path):
             # has reached end of path, so do effects based on trait
-            self.do_trait()
-        self.pathIndex += 1
+            self._do_trait()
+        self._pathIndex += 1
       
-    def do_trait(self):
-        if not self.trait:
+    def _do_trait(self):
+        if not self._trait:
             # pop
-            self.size = (0, 0)
+            self._size = (0, 0)
             
-        elif self.trait == "return":
+        elif self._trait == "return":
             # dynamically return towards player
-            self._direction = -1 * self.initdirection
-            if (self.xCoord == self.player._xCoord and 
-                self.yCoord == self.player._yCoord):
+            self._direction = -1 * self._initdirection
+            if (self._xCoord == self._player._xCoord and 
+                self._yCoord == self._player._yCoord):
                 # boomerang caught, or player in front of projectile
-                self.size = (0,0)
-            elif (self.player._xCoord - self.xCoord) * self._direction > 0 :
+                self._size = (0,0)
+            elif (self._player._xCoord - self._xCoord) * self._direction > 0 :
                 # if the player is currently at least behind the projectile 
                 # travel towards caster
-                self.xCoord += self._direction
-                if self.yCoord < self.player._yCoord:
-                    self.yCoord += 1
-                elif self.yCoord > self.player._yCoord:
-                    self.yCoord -= 1
+                self._xCoord += self._direction
+                if self._yCoord < self._player._yCoord:
+                    self._yCoord += 1
+                elif self._yCoord > self._player._yCoord:
+                    self._yCoord -= 1
             else:
-                self.size = (0,0)
+                self._size = (0,0)
                 
-        elif self.trait == "timer":
+        elif self._trait == "timer":
             # stay at current position for given time to live
             # does damage if hits opponent before given time
-            self.collision = True
-            if self.timer:
-                self.timer -= 1
+            self._collision = True
+            if self._timer:
+                self._timer -= 1
             else:
-                self.size = (0,0)
+                self._size = (0,0)
             
             
-        elif self.trait == "timer_explode":
+        elif self._trait == "timer_explode":
             # similar to timer, but does aoe damage after timer
-            if self.timer:
-                self.timer -= 1
+            if self._timer:
+                self._timer -= 1
             else:
                 # explode
-                self.size = (self.size[0] + 1, self.size[1] + 1)
-                self.collision = True
-                self.trait = "explode"
+                self._size = (self._size[0] + 1, self._size[1] + 1)
+                self._collision = True
+                self._trait = "explode"
               
     def get_pos(self):
-        return (self.xCoord, self.yCoord)
+        return (self._xCoord, self._yCoord)
             
-    def checkCollision(self, target):
+    def _checkCollision(self, target):
         # checks if projectile has a size
-        if self.size[0] and self.size[1] and self.collision:
+        if self._size[0] and self._size[1] and self._collision:
             # checks if projectile hits target
-            if (abs(target._xCoord-self.xCoord) < self.size[0] and
-                abs(target._yCoord-self.yCoord) < self.size[1]):
-                self.size = (0,0)
-                return target != self.player
+            if (abs(target._xCoord-self._xCoord) < self._size[0] and
+                abs(target._yCoord-self._yCoord) < self._size[1]):
+                self._size = (0,0)
+                return target != self._player
         return False
             
-    def checkProjCollision(self, target):
-        if self.size[0] and self.size[1]:
-            if (abs(target.xCoord + target.size[0]*target._direction 
-                    - self.xCoord) < self.size[0] and
-                abs(target.yCoord + target.size[1]-self.yCoord) < self.size[1]):
+    def _checkProjCollision(self, target):
+        if self._size[0] and self._size[1]:
+            if (abs(target._xCoord + target._size[0]*target._direction 
+                    - self._xCoord) < self._size[0] and
+                abs(target._yCoord + target._size[1]-self._yCoord) < self._size[1]):
                 return True
         return False
     
@@ -116,11 +116,11 @@ class ProjectileSkill(AttackSkill):
                             damage=damage, xRange=0, vertical=0, 
                             blockable=blockable, knockback=knockback, 
                             stun=stun)
-        self.player = player
-        self.skillType = skillName
+        self._player = player
+        self._skillType = skillName
         
     def summonProjectile(self, path, size, trait, collision, timer):
-        projectile = Projectile(self.player, path, size, self.skillType, trait, 
+        projectile = Projectile(self._player, path, size, self._skillType, trait, 
                                 collision, timer)
         return projectile
     
@@ -130,18 +130,18 @@ class Hadoken(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
-        self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
-        self.stunself = False
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._stunself = False
     
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+        projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait=None, collision=True, timer=0)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
     
 # TODO while lasso projecile is up, caster cannot move
@@ -150,18 +150,18 @@ class Lasso(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=-2, stun=0, 
                                  skillName="lasso")
-        self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
-        self.stunself = True
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._stunself = True
     
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path=self.path, size=(1,1), 
+        projectile = self.summonProjectile(path=self._path, size=(1,1), 
                                            trait=None, collision=True, timer=0)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
 class Boomerang(ProjectileSkill):
@@ -169,18 +169,18 @@ class Boomerang(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
-        self.path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
-        self.stunself = False
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._stunself = False
     
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+        projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait="return", collision=True, timer=0)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun,  "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
 class Grenade(ProjectileSkill):
@@ -188,19 +188,19 @@ class Grenade(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
                                  blockable=False, knockback=3, stun=3, 
                                  skillName="grenade")
-        self.path = [[1,1], [2,2], [3,1]]
-        self.stunself = False
+        self._path = [[1,1], [2,2], [3,1]]
+        self._stunself = False
     
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+        projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait="timer_explode", 
                                            collision=False, timer=0)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
 class BearTrap(ProjectileSkill):
@@ -208,19 +208,19 @@ class BearTrap(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
                                  blockable=False, knockback=0, stun=3, 
                                  skillName="beartrap")
-        self.path = [[1,0], [2,0]]
-        self.stunself = False
+        self._path = [[1,0], [2,0]]
+        self._stunself = False
         
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path = self.path, size=(1,1), 
+        projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait="timer", 
                                            collision=False, timer=3)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
 class IceWall(ProjectileSkill):
@@ -228,17 +228,17 @@ class IceWall(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=30, damage=10,
                                  blockable=False, knockback=2, stun=1, 
                                  skillName="icewall")
-        self.path = [[1,0], [2,0], [3,0]]
-        self.stunself = False
+        self._path = [[1,0], [2,0], [3,0]]
+        self._stunself = False
         
-    def activateSkill(self):
-        atk_info = super().activateSkill()
+    def _activateSkill(self):
+        atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path = self.path, size=(1,3), 
+        projectile = self.summonProjectile(path = self._path, size=(1,3), 
                                            trait="timer", 
                                            collision=True, timer=10)
-        return [self.skillType,  {"damage":self.skillValue, "blockable": self.blockable, 
-                "knockback":self.knockback, "stun":self.stun, "self_stun":self.stunself,
+        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
+                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]

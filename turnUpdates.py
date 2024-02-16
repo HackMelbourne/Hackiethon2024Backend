@@ -3,15 +3,15 @@ from playerActions import attackHit, changeDamage, changeSpeed, encumber
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
 def proj_knockback(proj, player):
-    if proj.xCoord < player._xCoord:
+    if proj._xCoord < player._xCoord:
         return -1
     return 1
 
 def updateCooldown(player):
-    player._lightAtk.reduceCd(1)
-    player._heavyAtk.reduceCd(1)
-    player._primarySkill.reduceCd(1)
-    player._secondarySkill.reduceCd(1)
+    player._lightAtk._reduceCd(1)
+    player._heavyAtk._reduceCd(1)
+    player._primarySkill._reduceCd(1)
+    player._secondarySkill._reduceCd(1)
     
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
@@ -46,9 +46,9 @@ def playerToJson(player, jsonDict):
 
 def projectileToJson(projectile, jsonDict, travelling):
     if travelling:
-        jsonDict['ProjectileType'] = projectile.type
-        jsonDict['projXCoord'].append(projectile.xCoord)
-        jsonDict['projYCoord'].append(projectile.yCoord)
+        jsonDict['ProjectileType'] = projectile._type
+        jsonDict['projXCoord'].append(projectile._xCoord)
+        jsonDict['projYCoord'].append(projectile._yCoord)
     else:
         jsonDict['projXCoord'].append(None)
         jsonDict['projYCoord'].append(None) 
@@ -59,16 +59,16 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
         
-        if proj_obj.player._id == 1:
+        if proj_obj._player._id == 1:
             proj_json_dict = p1_dict
         else:
             proj_json_dict = p2_dict
         
         # if exists, then travel
-        proj_obj.travel()
+        proj_obj._travel()
         
         # first check if the projectile already travelled its range or offscreen
-        if (proj_obj.size == (0,0) or (proj_info["self_stun"] and 
+        if (proj_obj._size == (0,0) or (proj_info["self_stun"] and 
                             proj_obj.player._moves[-1][0] == "skill_cancel")):
             # remove projectile from array
             projectiles.pop(projectileNum)
@@ -83,35 +83,35 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         for nextProjNum in range(len(projectiles)):
             nextproj_obj = projectiles[nextProjNum]["projectile"]
             if (nextProjNum != projectileNum and 
-                proj_obj.checkProjCollision(nextproj_obj)):
+                proj_obj._checkProjCollision(nextproj_obj)):
                     projectiles.pop(projectileNum)
                     projectiles.pop(nextproj_obj)
                     break
         
         # list of ids of projectiles currently on screen
-        projectile_ids = [projectile_obj["projectile"].id for projectile_obj in projectiles]
+        projectile_ids = [projectile_obj["projectile"]._id for projectile_obj in projectiles]
         # check if this projectile still exists
-        if proj_obj.id in projectile_ids:
+        if proj_obj._id in projectile_ids:
             # get projectile info and initialise
             proj_info = projectiles[projectileNum]
             proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
             # collision checks and attack checks
-            if proj_obj.checkCollision(player1):
+            if proj_obj._checkCollision(player1):
                 # if explosive, the knockback depends on where the enemy was
                 knockback = proj_info["knockback"] * proj_knockback(proj_obj, player1)
                 proj_knock2, proj_stun2 = attackHit(proj_obj, player1,
                                                 proj_info["damage"],
-                                                proj_obj.size[0],
-                                                proj_obj.size[1],
+                                                proj_obj._size[0],
+                                                proj_obj._size[1],
                                                 proj_info["blockable"],
                                                 knockback,
                                                 proj_info["stun"])
-            if proj_obj.checkCollision(player2):
+            if proj_obj._checkCollision(player2):
                 knockback = proj_info["knockback"] * proj_knockback(proj_obj, player2)
                 proj_knock1, proj_stun1 = attackHit(proj_obj, player2,
                                                 proj_info["damage"],
-                                                proj_obj.size[0],
-                                                proj_obj.size[1],
+                                                proj_obj._size[0],
+                                                proj_obj._size[1],
                                                 proj_info["blockable"],
                                                 knockback,
                                                 proj_info["stun"])
@@ -119,8 +119,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # total knockback and highest stun
             
             # this is if the projectile explodes
-            if proj_obj.trait == "explode":
-                proj_obj.size = (0,0)
+            if proj_obj._trait == "explode":
+                proj_obj._size = (0,0)
             
             knock1 += proj_knock1
             stun1 = max(stun1, proj_stun1)
@@ -128,12 +128,12 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             stun2 = max(stun2, proj_stun2)
               
             # then pop the projectile if it hit or expires, else continue travel
-            if proj_knock1 or proj_knock2 or proj_obj.size == (0,0):
+            if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
                 projectileToJson(proj_obj, proj_json_dict, False)
                 projectiles.pop(projectileNum)
                 # then unstun caster if the projectile skill has self stun
                 if proj_info["self_stun"]:
-                    proj_obj.player._skill_state = False
+                    proj_obj._player._skill_state = False
               
     return projectiles, knock1, stun1, knock2, stun2  
 

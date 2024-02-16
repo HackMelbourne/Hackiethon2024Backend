@@ -2,19 +2,19 @@ from test import validMove, correctPos
 from math import ceil
 
 def move(player, enemy, action):
-    moveAction = player._move.activateSkill(action[1])[1]
+    moveAction = player._move._activateSkill(action[1])[1]
     if validMove(moveAction, player, enemy) and not player._midair:
         # has vertical logic
         if moveAction[1]:
             player._midair = True
             if moveAction[0]:
                 # this is diagonal jump
-                player._velocity += player._direction * moveAction[0] * player._speed
+                player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
         else:
             # no vertical logic, simple horizontal movement
             player._blocking = False
-            player._block.regenShield() 
+            player._block._regenShield() 
             player._moves.append(action)
             player._xCoord += player._direction * moveAction[0] * player._speed
             
@@ -28,9 +28,9 @@ def block(player, target, action):
 # if on cd, return current cd, or -1 if mid startup
 def fetchAttack(player, attackType):
     if attackType == "light":
-        return player._lightAtk.activateSkill()
+        return player._lightAtk._activateSkill()
     elif attackType == "heavy":
-        return player._heavyAtk.activateSkill()
+        return player._heavyAtk._activateSkill()
     return None
 
 # Helper function for all attack types and attack skills    
@@ -50,7 +50,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 player._stun = 2
             elif target._blocking:
                 #target is stunned if their shield breaks from damage taken
-                target._stun += target._block.shieldDmg(damage)
+                target._stun += target._block._shieldDmg(damage)
             return 0, 0
         else:
             damage = damage - target._defense
@@ -67,7 +67,7 @@ def attack(player,target, action):
     if attack:
         if not (isinstance(attack, int)):
             player._blocking = False
-            player._block.regenShield() 
+            player._block._regenShield() 
             # gets only the attack info, doesn't include "light"/"heavy"
             attack = attack[1:]
             player._moves.append(action)
@@ -87,20 +87,20 @@ def attack(player,target, action):
 def fetchSkill(player, skillClass):
     returnVal = -2
     # if using a skill correctly, reset the startup of every other action 
-    if player._primarySkill.skillType == skillClass:
-        player._secondarySkill.resetStartup()
-        player._heavyAtk.resetStartup()
-        player._lightAtk.resetStartup()
-        player._block.resetStartup()
-        player._move.resetStartup()
-        returnVal = player._primarySkill.activateSkill()
-    elif player._secondarySkill.skillType == skillClass:
-        player._primarySkill.resetStartup()
-        player._heavyAtk.resetStartup()
-        player._lightAtk.resetStartup()
-        player._block.resetStartup()
-        player._move.resetStartup()
-        returnVal = player._secondarySkill.activateSkill()
+    if player._primarySkill._skillType == skillClass:
+        player._secondarySkill._resetStartup()
+        player._heavyAtk._resetStartup()
+        player._lightAtk._resetStartup()
+        player._block._resetStartup()
+        player._move._resetStartup()
+        returnVal = player._primarySkill._activateSkill()
+    elif player._secondarySkill._skillType == skillClass:
+        player._primarySkill._resetStartup()
+        player._heavyAtk._resetStartup()
+        player._lightAtk._resetStartup()
+        player._block._resetStartup()
+        player._move._resetStartup()
+        returnVal = player._secondarySkill._activateSkill()
         
     if returnVal == -2:
         print("Player does not have this skill")
@@ -109,24 +109,24 @@ def fetchSkill(player, skillClass):
     
 def changeSpeed(player, speed):
     # if speed == 0, reset startups back to default
-    player._primarySkill.reduceMaxStartup(speed)
-    player._secondarySkill.reduceMaxStartup(speed)
-    player._lightAtk.reduceMaxStartup(speed)
-    player._heavyAtk.reduceMaxStartup(speed)
-    player._block.reduceMaxStartup(speed)
-    player._move.reduceMaxStartup(speed)
+    player._primarySkill._reduceMaxStartup(speed)
+    player._secondarySkill._reduceMaxStartup(speed)
+    player._lightAtk._reduceMaxStartup(speed)
+    player._heavyAtk._reduceMaxStartup(speed)
+    player._block._reduceMaxStartup(speed)
+    player._move._reduceMaxStartup(speed)
     player._speed = ceil(player._speed * speed)
     # when resetting back to normal speed, set player speed to 1 and use 
     # resetMaxStartup method
 
 def changeDamage(player, buffValue):
-    if player._primarySkill.skillType in (attack_actions | projectile_actions):
-        player._primarySkill.damageBuff(buffValue)
-    if player._secondarySkill.skillType in (attack_actions | projectile_actions):
-        player._secondarySkill.damageBuff(buffValue)
+    if player._primarySkill._skillType in (attack_actions | projectile_actions):
+        player._primarySkill._damageBuff(buffValue)
+    if player._secondarySkill._skillType in (attack_actions | projectile_actions):
+        player._secondarySkill._damageBuff(buffValue)
     
-    player._lightAtk.damageBuff(buffValue)
-    player._heavyAtk.damageBuff(buffValue)
+    player._lightAtk._damageBuff(buffValue)
+    player._heavyAtk._damageBuff(buffValue)
     player._atkbuff += buffValue
 
 # dashes towards target, deals damage along the way
@@ -208,18 +208,18 @@ def super_saiyan(player, target, action):
     
 # heals player for given amount of hp
 def meditate(player, target, action):
-        skillInfo = fetchSkill(player, "meditate")
-        if isinstance(skillInfo, int):
-            if (skillInfo == -1):
-                # is currently doing startup ticks
-                player._moves.append(action[0], "startup")
-            else:
-                player._moves.append(("NoMove", None))
-            return 0, 0
-        
-        healVal = skillInfo[1]
-        player._moves.append(action)
-        player._hp += healVal
+    skillInfo = fetchSkill(player, "meditate")
+    if isinstance(skillInfo, int):
+        if (skillInfo == -1):
+            # is currently doing startup ticks
+            player._moves.append(action[0], "startup")
+        else:
+            player._moves.append(("NoMove", None))
+        return 0, 0
+    
+    healVal = skillInfo[1]
+    player._moves.append(action)
+    player._hp += healVal
 
     return None    
     
@@ -296,12 +296,12 @@ def doStartup(player, action):
         print("last move")
         player._inputs.append(action)
     elif player._inputs[player._moveNum + 1][0] == "skill_cancel":
-        player._primarySkill.resetStartup()
-        player._secondarySkill.resetStartup()
-        player._heavyAtk.resetStartup()
-        player._lightAtk.resetStartup()
-        player._block.resetStartup()
-        player._move.resetStartup()
+        player._primarySkill._resetStartup()
+        player._secondarySkill._resetStartup()
+        player._heavyAtk._resetStartup()
+        player._lightAtk._resetStartup()
+        player._block._resetStartup()
+        player._move._resetStartup()
     elif player._inputs[player._moveNum + 1] in (action, None):
         player._inputs[player._moveNum + 1] = action
         
