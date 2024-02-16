@@ -63,8 +63,10 @@ class Player_Controller:
         return self._stun
     
     def get_blocking(self):
-        '''Returns player current block status as boolean'''
-        return self._blocking
+        '''Returns player current block value: shield strength if blocking, 0 if not'''
+        if self._blocking:
+            return self._block._shieldHp
+        return 0
     
     def get_last_move(self):
         '''Returns player's most recent move -> (move, moveValue)

@@ -139,8 +139,11 @@ def startGame(path1, path2):
         
         knock1 = knock2 = 0
         
-        player1._inputs.append(p1.get_move())
-        player2._inputs.append(p2.get_move())
+        p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
+        p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
+        
+        player1._inputs.append(p1.get_move(player1, player2, p1_projectiles, p2_projectiles))
+        player2._inputs.append(p2.get_move(player2, player1, p2_projectiles, p1_projectiles))
         
         act1 = player1._action()
         act2 = player2._action()

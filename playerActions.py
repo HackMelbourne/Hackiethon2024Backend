@@ -23,6 +23,9 @@ def move(player, enemy, action):
 def block(player, target, action):
     player._moves.append(action)
     player._blocking = True
+    if player._moves[-1][0] != "block":
+        # reset shield strength
+        player._block._regenShield
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
