@@ -58,11 +58,25 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     for projectileNum in range(len(projectiles)):
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
+        proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
         
         if proj_obj._player._id == 1:
             proj_json_dict = p1_dict
         else:
             proj_json_dict = p2_dict
+        
+        # a bit finicky, but this part checks if enemy moves into projectile before travelling
+        proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
+        proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
+        knock1 += proj_knock1
+        stun1 = max(stun1, proj_stun1)
+        knock2 += proj_knock2
+        stun2 = max(stun2, proj_stun2)
+        if proj_knock1 or proj_knock2:
+            # player got hit, so remove projectile
+            projectiles.pop(projectileNum)
+            projectileToJson(proj_obj, proj_json_dict, False)
+            continue
         
         # if exists, then travel
         proj_obj._travel()
@@ -77,7 +91,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
         # if still existst then log
         projectileToJson(proj_obj, proj_json_dict, True)
-        #print(f"PROJ {proj_obj.xCoord, proj_obj.yCoord}")
+        #print(f"PROJ {proj_obj.get_pos()}")
         
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
@@ -92,51 +106,46 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         projectile_ids = [projectile_obj["projectile"]._id for projectile_obj in projectiles]
         # check if this projectile still exists
         if proj_obj._id in projectile_ids:
-            # get projectile info and initialise
-            proj_info = projectiles[projectileNum]
-            proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
             # collision checks and attack checks
-            if proj_obj._checkCollision(player1):
-                # if explosive, the knockback depends on where the enemy was
-                knockback = proj_info["knockback"] * proj_knockback(proj_obj, player1)
-                proj_knock2, proj_stun2 = attackHit(proj_obj, player1,
-                                                proj_info["damage"],
-                                                proj_obj._size[0],
-                                                proj_obj._size[1],
-                                                proj_info["blockable"],
-                                                knockback,
-                                                proj_info["stun"])
-            if proj_obj._checkCollision(player2):
-                knockback = proj_info["knockback"] * proj_knockback(proj_obj, player2)
-                proj_knock1, proj_stun1 = attackHit(proj_obj, player2,
-                                                proj_info["damage"],
-                                                proj_obj._size[0],
-                                                proj_obj._size[1],
-                                                proj_info["blockable"],
-                                                knockback,
-                                                proj_info["stun"])
+            proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
+            proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
             # if attack and projectile hits target at same time, use
             # total knockback and highest stun
             
-            # this is if the projectile explodes
-            if proj_obj._trait == "explode":
-                proj_obj._size = (0,0)
+        # this is if the projectile explodes
+        if proj_obj._trait == "explode":
+            proj_obj._size = (0,0)
+        
+        # recalculate knockbacks and stuns
+        knock1 += proj_knock1
+        stun1 = max(stun1, proj_stun1)
+        knock2 += proj_knock2
+        stun2 = max(stun2, proj_stun2)
             
-            knock1 += proj_knock1
-            stun1 = max(stun1, proj_stun1)
-            knock2 += proj_knock2
-            stun2 = max(stun2, proj_stun2)
-              
-            # then pop the projectile if it hit or expires, else continue travel
-            if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
-                projectileToJson(proj_obj, proj_json_dict, False)
-                projectiles.pop(projectileNum)
-                # then unstun caster if the projectile skill has self stun
-                if proj_info["self_stun"]:
-                    proj_obj._player._skill_state = False
+        # then pop the projectile if it hit or expires, else continue travel
+        if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
+            projectileToJson(proj_obj, proj_json_dict, False)
+            projectiles.pop(projectileNum)
+            # then unstun caster if the projectile skill has self stun
+            if proj_info["self_stun"]:
+                proj_obj._player._skill_state = False
               
     return projectiles, knock1, stun1, knock2, stun2  
 
+def proj_collision_check(proj, player):
+    proj_obj = proj["projectile"]
+    knockback = stun = 0
+    if proj_obj._checkCollision(player):
+        knockback = proj["knockback"] * proj_knockback(proj_obj, player)
+        knockback, stun = attackHit(proj_obj, player,
+                                proj["damage"],
+                                proj_obj._size[0],
+                                proj_obj._size[1],
+                                proj["blockable"],
+                                knockback,
+                                proj["stun"])
+    return knockback, stun
+        
 def updateBuffs(player):
     if player._currentBuffDuration > 0:
         player._currentBuffDuration -= 1
@@ -163,3 +172,8 @@ def updateBuffs(player):
             player._speed = 1
             player._encumbered = False
             
+def check_death(player):
+    if player.get_hp() <= 0:
+        player._hp = 0
+        return True
+    return False

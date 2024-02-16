@@ -72,4 +72,15 @@ class Player_Controller:
         '''Returns player's most recent move -> (move, moveValue)
            as (string, any type)
         '''
-        return self._moves[-1]
+        if len(self._moves) > 0:
+            return self._moves[-1]
+        return None
+    
+    def primary_on_cd(self):
+        return self._primarySkill.on_cooldown()
+    
+    def secondary_on_cd(self):
+        return self._secondarySkill.on_cooldown()
+    
+    def heavy_on_cd(self):
+        return self._heavyAtk.on_cooldown()

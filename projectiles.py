@@ -97,7 +97,6 @@ class Projectile:
             # checks if projectile hits target
             if (abs(target._xCoord-self._xCoord) < self._size[0] and
                 abs(target._yCoord-self._yCoord) < self._size[1]):
-                self._size = (0,0)
                 return target != self._player
         return False
             

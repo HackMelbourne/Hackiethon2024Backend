@@ -3,6 +3,8 @@ from math import ceil
 
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])[1]
+    player._blocking = False
+    player._block._regenShield()
     if validMove(moveAction, player, enemy) and not player._midair:
         # has vertical logic
         if moveAction[1]:
@@ -12,20 +14,19 @@ def move(player, enemy, action):
                 player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
         else:
-            # no vertical logic, simple horizontal movement
-            player._blocking = False
-            player._block._regenShield() 
+            # no vertical logic, simple horizontal movement 
             player._moves.append(action)
             player._xCoord += player._direction * moveAction[0] * player._speed
             
-        player._moves.append(action)    
-
+        player._moves.append(action)
+        
+def reset_block(player):
+    player._block._regenShield()
+    player._blocking = False
+    
 def block(player, target, action):
     player._moves.append(action)
     player._blocking = True
-    if player._moves[-1][0] != "block":
-        # reset shield strength
-        player._block._regenShield
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
@@ -42,14 +43,12 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
     if (abs(player_x-target_x) <= atk_range and 
-        player_y + vertical >= target_y):
-        # can be changed later : no knockback if block or stunned
-        if target._blocking or target._stun:
-            knockback = 0
+        (player_y + vertical >= target_y)):
         # if target is blocking
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
-            if target._moves[-1] == "block" and target._moves[-2] != "block":
+            print(target._moves[-1])
+            if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
                 player._stun = 2
             elif target._blocking:
                 #target is stunned if their shield breaks from damage taken
@@ -66,11 +65,11 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
 
 # Light and heavy attacks
 def attack(player,target, action):
+    player._blocking = False
+    player._block._regenShield() 
     attack = fetchAttack(player, action[0])
     if attack:
         if not (isinstance(attack, int)):
-            player._blocking = False
-            player._block._regenShield() 
             # gets only the attack info, doesn't include "light"/"heavy"
             attack = attack[1:]
             player._moves.append(action)

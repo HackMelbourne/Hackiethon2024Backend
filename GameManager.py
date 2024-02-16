@@ -9,7 +9,7 @@ from turnUpdates import *
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
 #game settings
-timeLimit = 15
+timeLimit = 30
 movesPerSecond = 1
 
 #direction constants
@@ -34,7 +34,11 @@ def setMoves(player1, player2):
     
     player1._inputs += p1movelist
     player2._inputs += p2movelist          
-
+    
+def reset_block(player):
+    player._block._regenShield()
+    player._blocking = False
+    
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
 
@@ -46,9 +50,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # first check if a "no move" is input: 
     if act1 in ("NoMove", ("NoMove",), None) or player1._stun:
         player1._moves.append(("NoMove", None))
+        reset_block(player1)
         act1 = None
     if act2 in ("NoMove", ("NoMove",), None) or player2._stun:
         player2._moves.append(("NoMove", None))
+        reset_block(player2)
         act2 = None
         
     # nullFunc, nullProj = default functions that return (0,0) or None with params
@@ -56,8 +62,12 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # if a defensive action is taken, it has priority over damage moves/skills
     # defensive = any skill that does not deal damage
     if act1:
+        if act1[0] != "block":
+            reset_block(player1)
         defense_actions.get(act1[0], nullFunc)(player1, player2, act1)
     if act2:
+        if act2[0] != "block":
+            reset_block(player2)
         defense_actions.get(act2[0], nullFunc)(player2, player1, act2)
 
     # then check if a damage dealing action is taken
@@ -68,15 +78,17 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         proj_obj = projectile_actions.get(act1[0], nullProj)(player1, player2, act1)
         if proj_obj:
             projectiles.append(proj_obj)
+        reset_block(player1)
     if act2:
         knock2, stun2 = attack_actions.get(act2[0], nullFunc)(player2, player1, act2)
         proj_obj = projectile_actions.get(act2[0], nullProj)(player2, player1, act2)
         if proj_obj:
             projectiles.append(proj_obj)
+        reset_block(player2)
         
     player1._moveNum += 1
     player2._moveNum += 1
-    
+  
     return knock1, stun1, knock2, stun2, projectiles
                                         
 def startGame(path1, path2):
@@ -127,8 +139,12 @@ def startGame(path1, path2):
         'projYCoord':[]
     }
     projectiles = []
-  
-    for tick in range(timeLimit *movesPerSecond):
+    
+    tick = 0
+    max_tick = timeLimit * movesPerSecond
+    game_running = True
+    
+    while game_running:
         #flips orientation if player jumps over each other
         if test.flip_orientation(player1, player2):
             player1.direction = GOLEFT
@@ -147,13 +163,14 @@ def startGame(path1, path2):
         
         act1 = player1._action()
         act2 = player2._action()
-        
+            
+        knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
+                                            act1, act2, stun1, stun2, 
+                                            projectiles)
+
+        #print("After movement:")
         #test.playerInfo(player1, path1, act1)
         #test.playerInfo(player2, path2, act2)
-        
-        knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
-                                                      act1, act2, stun1, stun2, 
-                                                      projectiles)
         # if there are projectiles, make them travel
         projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                                 knock1, stun1, knock2, stun2, player1, player2,
@@ -163,10 +180,10 @@ def startGame(path1, path2):
         #knock1 and stun1 = knockback and stun inflicted by player1 on player2
         if knock1:
             player2._xCoord += knock1
-            player2._stun += stun1
+            player2._stun = max(stun1, player2._stun)
         if knock2:
             player1._xCoord += knock2
-            player1._stun += stun2
+            player1._stun = max(stun2, player1._stun)
             
         #if midair, start falling/rising
         updateMidair(player1)
@@ -177,6 +194,10 @@ def startGame(path1, path2):
         test.correctPos(player2)
         
         test.correctOverlap(player1, player2, knock1, knock2)
+        
+        #print("After all projectile movement:")
+        #test.playerInfo(player1, path1, act1)
+        #test.playerInfo(player2, path2, act2)
             
         updateCooldown(player1)
         updateCooldown(player2)
@@ -184,9 +205,15 @@ def startGame(path1, path2):
         updateBuffs(player1)
         updateBuffs(player2)
         
+        p1_dead = check_death(player1)
+        p2_dead = check_death(player2)
+        game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
+        tick += 1
+        
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)
-
+        
+        
     json.dump(p1_json_dict, player1_json)
     json.dump(p2_json_dict, player2_json)
     
@@ -197,10 +224,10 @@ def startGame(path1, path2):
     print(p2_json_dict)
     
     if player1._hp > player2._hp:
-        print('match won by: ', path1)
+        print(f"{path1} won in {tick} turns!")
         return path1
     elif player1._hp < player2._hp:
-        print('match won by: ', path2)
+        print(f"{path2} won in {tick} turns!")
         return path2
     else:
         print('Tie!')

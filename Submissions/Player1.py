@@ -41,12 +41,13 @@ def init_player_skills():
 #MAIN FUNCTION that returns a single move to the game manager
 def get_move(player, enemy, player_projectiles, enemy_projectiles):
 
-    try:
-        return next(moves_iter)
-    except StopIteration:
-        return NOMOVE
+    # uncomment below for scripted moves
+    # return scripted_moves()    
+    # uncomment below for calculated moves
+    return full_assault(player, enemy)
     
     
+# helpful functions
 def get_hp(player):
     return player.get_hp()
 
@@ -65,8 +66,32 @@ def get_block_status(player):
 def get_proj_pos(proj):
     return proj.get_pos()
 
-# things to pass into get move to decide next move:
-# positions of both players
-# enemy projectile position
-# player last move
-# current skills and cooldowns
+def primary_on_cooldown(player):
+    return player.primary_on_cd()
+
+def secondary_on_cooldown(player):
+    return player.secondary_on_cd()
+
+def heavy_on_cooldown(player):
+    return player.heavy_on_cd()
+
+# tactics below
+def full_assault(player, enemy):
+    player_x, player_y = get_pos(player)
+    enemy_x, enemy_y = get_pos(enemy)
+    if player_y == enemy_y and abs(player_x - enemy_x) == 1:
+        if not primary_on_cooldown(player):
+            return PRIMARY
+        if not secondary_on_cooldown(player):
+            return SECONDARY 
+        if not heavy_on_cooldown(player):
+            return HEAVY
+        return LIGHT
+    else:
+        return FORWARD
+    
+def scripted_moves():
+    try:
+        return next(moves_iter)
+    except StopIteration:
+        return NOMOVE

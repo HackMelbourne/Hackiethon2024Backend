@@ -41,6 +41,6 @@ def correctOverlap(p1, p2, knock1, knock2):
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):
-    print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block.shieldHp}, stun: {player._stun}, facing: {player.direction}, airvelo:{player._velocity}")
+    print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block._shieldHp}, stun: {player._stun}, facing: {player._direction}, airvelo:{player._velocity}")
     print(f"             SPEED: {player._speed}, ATKBUFF: {player._atkbuff}, DURATION: {player._currentBuffDuration}")
     print(f"NEXT ACTION: {action}")
