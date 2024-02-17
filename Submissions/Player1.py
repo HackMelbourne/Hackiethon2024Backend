@@ -128,4 +128,40 @@ def spam_second():
     return SECONDARY
         
         
-    
+def winning_strategy(player, enemy):
+    # Check if any skill is available and use it wisely
+    if not primary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= prim.range:
+        return PRIMARY
+    elif not secondary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= second.range:
+        return SECONDARY
+    elif not heavy_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= 1:
+        return HEAVY
+
+    # Defensive strategy if low on health or enemy is too close
+    if get_hp(player) < 20 or abs(get_pos(player)[0] - get_pos(enemy)[0]) < 2:
+        # Block if enemy is close and likely to attack
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) == 1:
+            return BLOCK
+        # Move away from the enemy if possible
+        elif get_pos(player)[0] < get_pos(enemy)[0]:
+            return BACK
+        else:
+            return FORWARD
+
+    # Offensive strategy if player has more health
+    if get_hp(player) > get_hp(enemy):
+        # Close in on the enemy if not in attack range
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) > 1:
+            if get_pos(player)[0] < get_pos(enemy)[0]:
+                return FORWARD
+            else:
+                return BACK
+        # Use light attack if close and other attacks are on cooldown
+        else:
+            return LIGHT
+
+    # Default to light attack if nothing else is applicable
+    return LIGHT
+
+def get_move(player, enemy, player_projectiles, enemy_projectiles):
+    return winning_strategy(player, enemy)
