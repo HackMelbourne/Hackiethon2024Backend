@@ -46,9 +46,10 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
     #return eric_func(player, enemy)
-    return leo_func(player, enemy)
+    #return leo_func(player, enemy)
     #return spam_second()
     #return winning_strategy(player, enemy)
+    return heavy_combo(player, enemy)
     
 # helpful functions
 def get_hp(player):
@@ -83,6 +84,9 @@ def prim_range(player):
 
 def seco_range(player):
     return player.secondary_range()
+
+def get_past_move(player, turns):
+    return player.get_past_move(turns)
 
 # tactics below
 def full_assault(player, enemy):
@@ -168,3 +172,18 @@ def winning_strategy(player, enemy):
     # Default to light attack if nothing else is applicable
     return LIGHT
 
+def heavy_combo(player, enemy):
+    player_x, player_y = get_pos(player)
+    enemy_x, enemy_y = get_pos(enemy)
+    if player_y == enemy_y and abs(player_x - enemy_x) == 1:
+        if get_last_move(player) == LIGHT:
+            two_moves_ago = get_past_move(player, 2)
+            print(two_moves_ago)
+            if get_past_move(player, 2) == LIGHT:
+                print("2 LIGHT")
+                return HEAVY
+            else:
+                return LIGHT
+        else:
+            return LIGHT
+    return FORWARD

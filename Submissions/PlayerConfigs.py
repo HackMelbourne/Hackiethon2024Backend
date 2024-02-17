@@ -4,7 +4,7 @@ class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction, primary, secondary, id):
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
-        self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 1, 1)
+        self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 0, 1)
         self._heavyAtk = AttackSkill(0, 4, 10, 2, 0, True, 2, 2)
         self._block = BlockSkill(0, 0, 15, 2)
         self._move = MoveSkill(0, 0, (0,0))
@@ -96,3 +96,12 @@ class Player_Controller:
             return self._secondarySkill._xRange
         except:
             return 0
+        
+    def get_past_move(self, turns):
+        if turns <= len(self._moves):
+            print(turns)
+            print(self._moves[-2])
+            print(self._moves[-turns])
+            return (self._moves[-turns])
+        else:
+            return None

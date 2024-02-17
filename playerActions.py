@@ -37,6 +37,12 @@ def fetchAttack(player, attackType):
         return player._heavyAtk._activateSkill()
     return None
 
+def check_atk_combo(player):
+    if player._moves[-1][0] == player._moves[-2][0] == "light":
+        # last two attacks were light attacks, so third normal attack does extra dmg
+        return True
+    return False
+
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
     # checks if target is within the horizontal and vertical attack range
@@ -71,10 +77,18 @@ def attack(player,target, action):
     if attack:
         if not (isinstance(attack, int)):
             # gets only the attack info, doesn't include "light"/"heavy"
-            attack = attack[1:]
-            player._moves.append(action)
+            attack = list(attack[1:])
         
             # performs the actual attack using fetched attack info
+            if check_atk_combo(player):
+                # buffs damage and knockback for this hit
+                # damage buff
+                print("combo")
+                attack[0] = int(attack[0] * 1.5 + 1)
+                # knockback buff
+                attack[4] += 2
+                
+            player._moves.append(action)
             return attackHit(player, target, *attack)
         else:
             # mid startup
