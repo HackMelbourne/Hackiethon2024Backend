@@ -232,6 +232,3 @@ def startGame(path1, path2):
     else:
         print('Tie!')
         return None
-
-if __name__ == "__main__":
-    startGame("PLAYER 1", "PLAYER 2")

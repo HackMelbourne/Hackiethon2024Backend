@@ -5,7 +5,7 @@ from Submissions.PlayerConfigs import Player_Controller
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = OnePunchSkill
+SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
 #movements
@@ -22,8 +22,8 @@ BLOCK = ("block",)
 
 
 # skills
-prim = PRIMARY_SKILL()
-second = SECONDARY_SKILL()
+prim = PRIMARY_SKILL(None)
+second = SECONDARY_SKILL(None)
 
 PRIMARY = (prim.get_skillname(),)
 SECONDARY = (second.get_skillname(),)
@@ -44,8 +44,8 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     # uncomment below for scripted moves
     # return scripted_moves()    
     # uncomment below for calculated moves
-    return full_assault(player, enemy)
-    
+    #return full_assault(player, enemy)
+    return eric_func(player, enemy)
     
 # helpful functions
 def get_hp(player):
@@ -95,3 +95,8 @@ def scripted_moves():
         return next(moves_iter)
     except StopIteration:
         return NOMOVE
+    
+def eric_func(player, enemy):
+    if abs(get_pos(player)[0] - get_pos(enemy)[0]) < 5:
+        return PRIMARY
+    return SECONDARY
