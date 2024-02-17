@@ -84,3 +84,15 @@ class Player_Controller:
     
     def heavy_on_cd(self):
         return self._heavyAtk.on_cooldown()
+    
+    def primary_range(self):
+        try:
+            return self._primarySkill._xRange
+        except:
+            return 0
+        
+    def secondary_range(self):
+        try:
+            return self._secondarySkill._xRange
+        except:
+            return 0

@@ -45,7 +45,11 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     # return scripted_moves()    
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
-    return eric_func(player, enemy)
+    #return eric_func(player, enemy)
+    retval = leo_func(player, enemy)
+    print(retval)
+    return retval
+    #return spam_second()
     
 # helpful functions
 def get_hp(player):
@@ -109,16 +113,19 @@ def leo_func(player, enemy):
 
     if distance > 3:
         if (not secondary_on_cooldown(player)):
-            return SECONDARY_SKILL
+            return SECONDARY
         else:
             return BACK
     elif distance > 2:
         return BACK
     else:
         if (not primary_on_cooldown(player)):
-            return PRIMARY_SKILL
+            return PRIMARY
         else:
             return BLOCK
+        
+def spam_second():
+    return SECONDARY
         
         
     

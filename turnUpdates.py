@@ -45,6 +45,7 @@ def playerToJson(player, jsonDict):
     jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player._midair)
     jsonDict['falling'].append(player._falling)
+    #print(player._moves)
 
 def projectileToJson(projectile, jsonDict, travelling):
     if travelling and projectile:
@@ -60,6 +61,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     #TODO add None for no projectiles, even when not yet casted
     
     # check if no projectiles by player1
+    print([proj["projectile"]._player._id for proj in projectiles])
     if 1 not in [proj["projectile"]._player._id for proj in projectiles]:
         projectileToJson(None, p1_dict, False)
     if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
@@ -75,6 +77,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         else:
             proj_json_dict = p2_dict
         
+        print(f"PROJ {proj_obj.get_pos()}")
         # a bit finicky, but this part checks if enemy moves into projectile before travelling
         proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
         proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
@@ -101,7 +104,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
         # if still existst then log
         projectileToJson(proj_obj, proj_json_dict, True)
-        #print(f"PROJ {proj_obj.get_pos()}")
+        print(f"PROJ {proj_obj.get_pos()}")
         
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
@@ -110,8 +113,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 proj_obj._checkProjCollision(nextproj_obj)):
                     projectiles.pop(projectileNum)
                     projectiles.pop(nextproj_obj)
+                    print("pop both")
                     break
-        
         # list of ids of projectiles currently on screen
         projectile_ids = [projectile_obj["projectile"]._id for projectile_obj in projectiles]
         # check if this projectile still exists

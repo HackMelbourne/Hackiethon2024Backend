@@ -48,11 +48,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         player2._stun -= 1
 
     # first check if a "no move" is input: 
-    if act1 in ("NoMove", ("NoMove",), None) or player1._stun:
+    if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()) or player1._stun:
         player1._moves.append(("NoMove", None))
         reset_block(player1)
         act1 = None
-    if act2 in ("NoMove", ("NoMove",), None) or player2._stun:
+    if act2[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()) or player2._stun:
         player2._moves.append(("NoMove", None))
         reset_block(player2)
         act2 = None
@@ -158,9 +158,10 @@ def startGame(path1, path2):
         p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
+        print(player1._inputs, player1._moves)
         player1._inputs.append(p1.get_move(player1, player2, p1_projectiles, p2_projectiles))
         player2._inputs.append(p2.get_move(player2, player1, p2_projectiles, p1_projectiles))
-        
+        print(player1._inputs, player1._moves)
         act1 = player1._action()
         act2 = player2._action()
             
@@ -223,6 +224,7 @@ def startGame(path1, path2):
     print(p1_json_dict)
     print(p2_json_dict)
     
+    print(len(player1._inputs))
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
         return path1
@@ -232,3 +234,5 @@ def startGame(path1, path2):
     else:
         print('Tie!')
         return None
+
+startGame("p1", "p2")
