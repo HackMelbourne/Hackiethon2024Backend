@@ -4,7 +4,7 @@ from projectiles import *
 from Submissions.PlayerConfigs import Player_Controller
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
+PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -100,3 +100,25 @@ def eric_func(player, enemy):
     if abs(get_pos(player)[0] - get_pos(enemy)[0]) < 5:
         return PRIMARY
     return SECONDARY
+
+def leo_func(player, enemy):
+    distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+
+    if get_pos(player) == 0 or get_pos(player) == 30:
+        return JUMP_FORWARD
+
+    if distance > 3:
+        if (not secondary_on_cooldown(player)):
+            return SECONDARY_SKILL
+        else:
+            return BACK
+    elif distance > 2:
+        return BACK
+    else:
+        if (not primary_on_cooldown(player)):
+            return PRIMARY_SKILL
+        else:
+            return BLOCK
+        
+        
+    
