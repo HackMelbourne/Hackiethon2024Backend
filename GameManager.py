@@ -158,16 +158,16 @@ def startGame(path1, path2):
         p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
-        print(player1._inputs, player1._moves)
         player1._inputs.append(p1.get_move(player1, player2, p1_projectiles, p2_projectiles))
         player2._inputs.append(p2.get_move(player2, player1, p2_projectiles, p1_projectiles))
-        print(player1._inputs, player1._moves)
+
         act1 = player1._action()
         act2 = player2._action()
             
         knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                             act1, act2, stun1, stun2, 
                                             projectiles)
+        
 
         #print("After movement:")
         #test.playerInfo(player1, path1, act1)
@@ -176,6 +176,7 @@ def startGame(path1, path2):
         projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                                 knock1, stun1, knock2, stun2, player1, player2,
                                 p1_json_dict, p2_json_dict)
+        
         
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1 on player2
@@ -197,8 +198,9 @@ def startGame(path1, path2):
         test.correctOverlap(player1, player2, knock1, knock2)
         
         #print("After all projectile movement:")
-        test.playerInfo(player1, path1, act1)
-        test.playerInfo(player2, path2, act2)
+        #test.playerInfo(player1, path1, act1)
+        #test.playerInfo(player2, path2, act2)
+        #print(player1._moves[-1], player1._moveNum)
             
         updateCooldown(player1)
         updateCooldown(player2)
@@ -217,12 +219,21 @@ def startGame(path1, path2):
         
     json.dump(p1_json_dict, player1_json)
     json.dump(p2_json_dict, player2_json)
-    
+        
     player1_json.close()
     player2_json.close()
 
     print(p1_json_dict)
     print(p2_json_dict)
+    
+    # for json checking purposes
+    for json_key in p1_json_dict:
+        if json_key != "ProjectileType":
+            print(f"{json_key} : {len(p1_json_dict[json_key])}")
+            
+    for json_key in p2_json_dict:
+        if json_key != "ProjectileType":
+            print(f"{json_key} : {len(p2_json_dict[json_key])}")
     
     print(len(player1._inputs))
     if player1._hp > player2._hp:

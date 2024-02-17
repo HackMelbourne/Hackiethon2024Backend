@@ -60,8 +60,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
     #TODO add None for no projectiles, even when not yet casted
     
-    # check if no projectiles by player1
-    print([proj["projectile"]._player._id for proj in projectiles])
+    # check if no projectiles by player1 and player2
     if 1 not in [proj["projectile"]._player._id for proj in projectiles]:
         projectileToJson(None, p1_dict, False)
     if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
@@ -77,7 +76,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         else:
             proj_json_dict = p2_dict
         
-        print(f"PROJ {proj_obj.get_pos()}")
         # a bit finicky, but this part checks if enemy moves into projectile before travelling
         proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
         proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
@@ -103,7 +101,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             continue
         
         # if still existst then log
-        projectileToJson(proj_obj, proj_json_dict, True)
         print(f"PROJ {proj_obj.get_pos()}")
         
         # check for projectiles colliding with each other
@@ -142,6 +139,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # then unstun caster if the projectile skill has self stun
             if proj_info["self_stun"]:
                 proj_obj._player._skill_state = False
+        else:
+            projectileToJson(proj_obj, proj_json_dict, True)
               
     return projectiles, knock1, stun1, knock2, stun2  
 

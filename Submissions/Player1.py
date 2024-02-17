@@ -46,10 +46,9 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
     #return eric_func(player, enemy)
-    retval = leo_func(player, enemy)
-    print(retval)
-    return retval
+    return leo_func(player, enemy)
     #return spam_second()
+    #return winning_strategy(player, enemy)
     
 # helpful functions
 def get_hp(player):
@@ -78,6 +77,12 @@ def secondary_on_cooldown(player):
 
 def heavy_on_cooldown(player):
     return player.heavy_on_cd()
+
+def prim_range(player):
+    return player.primary_range()
+
+def seco_range(player):
+    return player.secondary_range()
 
 # tactics below
 def full_assault(player, enemy):
@@ -130,9 +135,9 @@ def spam_second():
         
 def winning_strategy(player, enemy):
     # Check if any skill is available and use it wisely
-    if not primary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= prim.range:
+    if not primary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= prim_range(player):
         return PRIMARY
-    elif not secondary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= second.range:
+    elif not secondary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= seco_range(player):
         return SECONDARY
     elif not heavy_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= 1:
         return HEAVY
@@ -163,5 +168,3 @@ def winning_strategy(player, enemy):
     # Default to light attack if nothing else is applicable
     return LIGHT
 
-def get_move(player, enemy, player_projectiles, enemy_projectiles):
-    return winning_strategy(player, enemy)

@@ -15,10 +15,10 @@ def move(player, enemy, action):
                 player._jumpHeight = 1 * player._speed
         else:
             # no vertical logic, simple horizontal movement 
-            player._moves.append(action)
-            player._xCoord += player._direction * moveAction[0] * player._speed
-            
+            player._xCoord += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
+    else:
+        player._moves.append(("NoMove", None))
         
 def reset_block(player):
     player._block._regenShield()
