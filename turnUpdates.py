@@ -47,7 +47,7 @@ def playerToJson(player, jsonDict):
     jsonDict['falling'].append(player._falling)
 
 def projectileToJson(projectile, jsonDict, travelling):
-    if travelling:
+    if travelling and projectile:
         jsonDict['ProjectileType'] = projectile._type
         jsonDict['projXCoord'].append(projectile._xCoord)
         jsonDict['projYCoord'].append(projectile._yCoord)
@@ -57,6 +57,14 @@ def projectileToJson(projectile, jsonDict, travelling):
         
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
+    #TODO add None for no projectiles, even when not yet casted
+    
+    # check if no projectiles by player1
+    if 1 not in [proj["projectile"]._player._id for proj in projectiles]:
+        projectileToJson(None, p1_dict, False)
+    if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
+        projectileToJson(None, p2_dict, False)
+        
     for projectileNum in range(len(projectiles)):
         proj_info = projectiles[projectileNum]
         proj_obj = proj_info["projectile"]
