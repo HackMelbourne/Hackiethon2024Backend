@@ -32,6 +32,8 @@ def updateMidair(player):
     # player has landed, reset midair attributes
     if player._yCoord <= 0 and player._falling: 
         player._midair = player._falling = False
+    
+    if not player._midair:
         player._velocity = 0
         player._jumpheight = MAX_JUMP_HEIGHT
 

@@ -196,8 +196,8 @@ def startGame(path1, path2):
         test.correctOverlap(player1, player2, knock1, knock2)
         
         #print("After all projectile movement:")
-        #test.playerInfo(player1, path1, act1)
-        #test.playerInfo(player2, path2, act2)
+        test.playerInfo(player1, path1, act1)
+        test.playerInfo(player2, path2, act2)
             
         updateCooldown(player1)
         updateCooldown(player2)
