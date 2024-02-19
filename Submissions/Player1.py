@@ -177,10 +177,7 @@ def heavy_combo(player, enemy):
     enemy_x, enemy_y = get_pos(enemy)
     if player_y == enemy_y and abs(player_x - enemy_x) == 1:
         if get_last_move(player) == LIGHT:
-            two_moves_ago = get_past_move(player, 2)
-            print(two_moves_ago)
             if get_past_move(player, 2) == LIGHT:
-                print("2 LIGHT")
                 return HEAVY
             else:
                 return LIGHT

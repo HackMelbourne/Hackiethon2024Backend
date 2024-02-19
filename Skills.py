@@ -136,7 +136,7 @@ class DashAttackSkill(AttackSkill):
 class UppercutSkill(AttackSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
-                         vertical=2, blockable=True, knockback=2, stun=3)
+                         vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
 
 #TODO add one_punch, super saiyan and meditate/heal playeractions

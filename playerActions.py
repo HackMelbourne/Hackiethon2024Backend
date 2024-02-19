@@ -92,8 +92,9 @@ def attack(player,target, action):
             return attackHit(player, target, *attack)
         else:
             # mid startup
-            doStartup(player, action)
             print("startup")
+            # try this for all skills
+            player._moves.append(doStartup(player, action))
     player._moves.append(("NoMove", None))
     return 0, 0
 
@@ -311,6 +312,7 @@ def doStartup(player, action):
     if player._moveNum == len(player._inputs) - 1:
         print("last move")
         player._inputs.append(action)
+    # fix this NOW
     elif player._inputs[player._moveNum + 1][0] == "skill_cancel":
         player._primarySkill._resetStartup()
         player._secondarySkill._resetStartup()
@@ -320,6 +322,7 @@ def doStartup(player, action):
         player._move._resetStartup()
     elif player._inputs[player._moveNum + 1] in (action, None):
         player._inputs[player._moveNum + 1] = action
+    return action
         
      
 # null function

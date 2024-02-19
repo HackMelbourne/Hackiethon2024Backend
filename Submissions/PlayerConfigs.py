@@ -99,9 +99,6 @@ class Player_Controller:
         
     def get_past_move(self, turns):
         if turns <= len(self._moves):
-            print(turns)
-            print(self._moves[-2])
-            print(self._moves[-turns])
             return (self._moves[-turns])
         else:
             return None
