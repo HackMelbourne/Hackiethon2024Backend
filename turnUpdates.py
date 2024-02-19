@@ -189,3 +189,11 @@ def check_death(player):
         player._hp = 0
         return True
     return False
+
+def update_stun(player):
+    if player._stun > 0:
+        player._stun -= 1
+        
+def update_recovery(player):
+    if player._recovery > 0:
+        player._recovery -= 1

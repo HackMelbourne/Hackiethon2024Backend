@@ -15,6 +15,9 @@ class Skill:
         #current skill cooldown
         self._cooldown = 0
         
+        # this should be the same for most skills, can change in specific skills for balance
+        self._recovery = 1
+        
         #skillValue for "move" is (xcoord, ycoord), "attack" is damage, etc
         self._skillValue = skillValue
         
@@ -176,3 +179,7 @@ class SuperSaiyanSkill(BuffSkill):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
                          duration=1)
         self._skillType = "super_saiyan"
+
+def get_skill(skillClass):
+    obj = skillClass(None)
+    return (obj.get_skillname(), None)

@@ -9,7 +9,7 @@ from turnUpdates import *
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
 #game settings
-timeLimit = 30
+timeLimit = 10
 movesPerSecond = 1
 
 #direction constants
@@ -42,17 +42,34 @@ def reset_block(player):
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
 
-    if player1._stun:
-        player1._stun -= 1
-    if player2._stun:
-        player2._stun -= 1
-
+    # empty move if player is currently stunned or doing recovery ticks
+    if player1._stun or player1._recovery:
+        act1 = ("NoMove", None)
+        update_stun(player1)
+        update_recovery(player1)
+    if player2._stun or player2._recovery:
+        act2 = ("NoMove", None)
+        update_stun(player2)
+        update_recovery(player2)
+    
+    if player1._midStartup or player1._skill_state:
+        if player1._inputs[-1][0] == "skill_cancel":
+            act1 = ("NoMove", None)
+        else:
+            act1 = player1._moves[-1]
+            
+    if player2._midStartup or player2._skill_state:
+        if player2._inputs[-1][0] == "skill_cancel":
+            act2 = ("NoMove", None)
+        else:
+            act2 = player2._moves[-1]
+            
     # first check if a "no move" is input: 
-    if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()) or player1._stun:
+    if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         player1._moves.append(("NoMove", None))
         reset_block(player1)
         act1 = None
-    if act2[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()) or player2._stun:
+    if act2[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         player2._moves.append(("NoMove", None))
         reset_block(player2)
         act2 = None
@@ -85,10 +102,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         if proj_obj:
             projectiles.append(proj_obj)
         reset_block(player2)
-        
+    
+     
     player1._moveNum += 1
     player2._moveNum += 1
-  
+    
     return knock1, stun1, knock2, stun2, projectiles
                                         
 def startGame(path1, path2):
@@ -160,15 +178,16 @@ def startGame(path1, path2):
         
         player1._inputs.append(p1.get_move(player1, player2, p1_projectiles, p2_projectiles))
         player2._inputs.append(p2.get_move(player2, player1, p2_projectiles, p1_projectiles))
-
+        
         act1 = player1._action()
         act2 = player2._action()
-            
+                    
         knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                             act1, act2, stun1, stun2, 
                                             projectiles)
         
-
+        print(f"Inputs: {player1._moveNum}, {player1._inputs}")
+        print(f"Moves : {len(player1._moves)}, {player1._moves}")
         #print("After movement:")
         #test.playerInfo(player1, path1, act1)
         #test.playerInfo(player2, path2, act2)

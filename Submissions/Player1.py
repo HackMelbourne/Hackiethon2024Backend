@@ -1,7 +1,9 @@
 # bot code goes here
 from Skills import *
 from projectiles import *
-from Submissions.PlayerConfigs import Player_Controller
+
+# primary skill can be defensive or offensive
+# secondary skills involve summoning a projectile
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
@@ -20,13 +22,8 @@ LIGHT = ("light",)
 HEAVY = ("heavy",)
 BLOCK = ("block",)
 
-
-# skills
-prim = PRIMARY_SKILL(None)
-second = SECONDARY_SKILL(None)
-
-PRIMARY = (prim.get_skillname(),)
-SECONDARY = (second.get_skillname(),)
+PRIMARY = get_skill(PRIMARY_SKILL)
+SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
@@ -49,6 +46,7 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     #return leo_func(player, enemy)
     #return spam_second()
     #return winning_strategy(player, enemy)
+    print(PRIMARY)
     return heavy_combo(player, enemy)
     
 # helpful functions
@@ -87,6 +85,12 @@ def seco_range(player):
 
 def get_past_move(player, turns):
     return player.get_past_move(turns)
+
+def get_recovery(player):
+    return player.get_recovery()
+
+def skill_cancellable(player):
+    return player.skill_cancellable()
 
 # tactics below
 def full_assault(player, enemy):
@@ -176,8 +180,8 @@ def heavy_combo(player, enemy):
     player_x, player_y = get_pos(player)
     enemy_x, enemy_y = get_pos(enemy)
     if player_y == enemy_y and abs(player_x - enemy_x) == 1:
-        if get_last_move(player) == LIGHT:
-            if get_past_move(player, 2) == LIGHT:
+        if get_past_move(player, 2) == LIGHT:
+            if get_past_move(player, 4) == LIGHT:
                 return HEAVY
             else:
                 return LIGHT

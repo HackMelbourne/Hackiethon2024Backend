@@ -5,7 +5,7 @@ class Player_Controller:
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
         self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 0, 1)
-        self._heavyAtk = AttackSkill(0, 4, 10, 2, 0, True, 2, 2)
+        self._heavyAtk = AttackSkill(1, 4, 10, 2, 0, True, 2, 2)
         self._block = BlockSkill(0, 0, 15, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
@@ -15,6 +15,8 @@ class Player_Controller:
 
         #current stun duration
         self._stun = 0
+        self._recovery = 0
+        self._midStartup = False
         self._blocking = False
         self._hp = HP
         self._defense = 0
@@ -44,11 +46,9 @@ class Player_Controller:
         
     def _action(self):
         if self._moveNum < len(self._inputs) and self._inputs[self._moveNum]:
-            if self._inputs[self._moveNum][0] == ("skill_cancel") and self._skill_state:
-                self._skill_state = False
-            if not self._skill_state:
-                return self._inputs[self._moveNum]
-        return ("NoMove")
+            return self._inputs[self._moveNum]
+        else:   
+            return ("NoMove")
            
     def get_pos(self):
         '''Returns player position -> (x, y) as (int, int)'''
@@ -102,3 +102,9 @@ class Player_Controller:
             return (self._moves[-turns])
         else:
             return None
+        
+    def get_recovery(self):
+        return self._recovery
+    
+    def skill_cancellable(self):
+        return (self._skill_state or self._midStartup)

@@ -20,13 +20,9 @@ LIGHT = ("light",)
 HEAVY = ("heavy",)
 BLOCK = ("block",)
 
-
 # skills
-prim = PRIMARY_SKILL(None)
-second = SECONDARY_SKILL(None)
-
-PRIMARY = (prim.get_skillname(),)
-SECONDARY = (second.get_skillname(),)
+PRIMARY = get_skill(PRIMARY_SKILL)
+SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
@@ -76,8 +72,22 @@ def secondary_on_cooldown(player):
 def heavy_on_cooldown(player):
     return player.heavy_on_cd()
 
+def prim_range(player):
+    return player.primary_range()
+
+def seco_range(player):
+    return player.secondary_range()
+
+def get_past_move(player, turns):
+    return player.get_past_move(turns)
+
+def get_recovery(player):
+    return player.get_recovery()
+
+def skill_cancellable(player):
+    return player.skill_cancellable()
+
 # tactics below
-# get close to enemy and use skills and attacks
 def full_assault(player, enemy):
     player_x, player_y = get_pos(player)
     enemy_x, enemy_y = get_pos(enemy)
@@ -91,28 +101,87 @@ def full_assault(player, enemy):
         return LIGHT
     else:
         return FORWARD
-
-# try to parry as much as possible   
-def full_parry(player, enemy):
-    player_x, player_y = get_pos(player)
-    enemy_x, enemy_y = get_pos(enemy)
-    if get_last_move(enemy) == FORWARD:
-        # hmm, they're trying to close in for an attack,
-        if player_y == enemy_y and abs(player_x - enemy_x) == 1:
-            # they are within attack range, time to parry
-            return BLOCK
-    elif get_stun_duration(enemy) != 0 and (player_y == enemy_y and abs(player_x - enemy_x) == 1):
-        # enemy is stunned and within attack range, counterattack
-        if not heavy_on_cooldown(player):
-            return HEAVY
-        return LIGHT
-    # they werent moving forward last turn, what to do...
-    return NOMOVE
-
+    
 def scripted_moves():
     try:
         return next(moves_iter)
     except StopIteration:
         return NOMOVE
+    
+def eric_func(player, enemy):
+    if abs(get_pos(player)[0] - get_pos(enemy)[0]) < 5:
+        return PRIMARY
+    return SECONDARY
+
+def leo_func(player, enemy):
+    distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+
+    if get_pos(player) == 0 or get_pos(player) == 30:
+        return JUMP_FORWARD
+
+    if distance > 3:
+        if (not secondary_on_cooldown(player)):
+            return SECONDARY
+        else:
+            return BACK
+    elif distance > 2:
+        return BACK
+    else:
+        if (not primary_on_cooldown(player)):
+            return PRIMARY
+        else:
+            return BLOCK
+        
+def spam_second():
+    return SECONDARY
+        
+        
+def winning_strategy(player, enemy):
+    # Check if any skill is available and use it wisely
+    if not primary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= prim_range(player):
+        return PRIMARY
+    elif not secondary_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= seco_range(player):
+        return SECONDARY
+    elif not heavy_on_cooldown(player) and abs(get_pos(player)[0] - get_pos(enemy)[0]) <= 1:
+        return HEAVY
+
+    # Defensive strategy if low on health or enemy is too close
+    if get_hp(player) < 20 or abs(get_pos(player)[0] - get_pos(enemy)[0]) < 2:
+        # Block if enemy is close and likely to attack
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) == 1:
+            return BLOCK
+        # Move away from the enemy if possible
+        elif get_pos(player)[0] < get_pos(enemy)[0]:
+            return BACK
+        else:
+            return FORWARD
+
+    # Offensive strategy if player has more health
+    if get_hp(player) > get_hp(enemy):
+        # Close in on the enemy if not in attack range
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) > 1:
+            if get_pos(player)[0] < get_pos(enemy)[0]:
+                return FORWARD
+            else:
+                return BACK
+        # Use light attack if close and other attacks are on cooldown
+        else:
+            return LIGHT
+
+    # Default to light attack if nothing else is applicable
+    return LIGHT
+
+def heavy_combo(player, enemy):
+    player_x, player_y = get_pos(player)
+    enemy_x, enemy_y = get_pos(enemy)
+    if player_y == enemy_y and abs(player_x - enemy_x) == 1:
+        if get_past_move(player, 2) == LIGHT:
+            if get_past_move(player, 4) == LIGHT:
+                return HEAVY
+            else:
+                return LIGHT
+        else:
+            return LIGHT
+    return FORWARD
     
     
