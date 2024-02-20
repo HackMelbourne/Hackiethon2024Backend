@@ -2,6 +2,8 @@
 from Skills import *
 from projectiles import *
 
+# PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
+# SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = UppercutSkill
@@ -27,7 +29,7 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing
-moves = BACK,SECONDARY,
+moves = SECONDARY,
 moves_iter = iter(moves)
 
 
@@ -38,11 +40,11 @@ def init_player_skills():
 def get_move(player, enemy, player_projectiles, enemy_projectiles):
 
     # uncomment below for scripted moves
-    #return scripted_moves()    
+    return scripted_moves()    
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
     # return full_parry(player, enemy)
-    return NOMOVE
+    # return NOMOVE
     
 # helpful functions
 def get_hp(player):

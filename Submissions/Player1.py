@@ -5,6 +5,10 @@ from projectiles import *
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
 
+# PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
+# SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
+
+# currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
@@ -28,7 +32,7 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing
-moves = LIGHT, HEAVY, PRIMARY,JUMP_FORWARD, JUMP_FORWARD, BLOCK, BLOCK,
+moves = SECONDARY,
 moves_iter = iter(moves)
 
 
@@ -39,15 +43,14 @@ def init_player_skills():
 def get_move(player, enemy, player_projectiles, enemy_projectiles):
 
     # uncomment below for scripted moves
-    # return scripted_moves()    
+    return scripted_moves()    
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
     #return eric_func(player, enemy)
     #return leo_func(player, enemy)
     #return spam_second()
     #return winning_strategy(player, enemy)
-    print(PRIMARY)
-    return heavy_combo(player, enemy)
+    #return heavy_combo(player, enemy)
     
 # helpful functions
 def get_hp(player):

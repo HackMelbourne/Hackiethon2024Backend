@@ -66,8 +66,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
         projectileToJson(None, p2_dict, False)
         
-    for projectileNum in range(len(projectiles)):
-        proj_info = projectiles[projectileNum]
+    for proj_info in projectiles:
         proj_obj = proj_info["projectile"]
         proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
         
@@ -76,7 +75,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         else:
             proj_json_dict = p2_dict
         
-        # a bit finicky, but this part checks if enemy moves into projectile before travelling
+        # a bit finicky, but this part checks if anything moves into projectile before travelling
         proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
         proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
         knock1 += proj_knock1
@@ -85,7 +84,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         stun2 = max(stun2, proj_stun2)
         if proj_knock1 or proj_knock2:
             # player got hit, so remove projectile
-            projectiles.pop(projectileNum)
+            projectiles.remove(proj_info)
             projectileToJson(proj_obj, proj_json_dict, False)
             continue
         
@@ -96,7 +95,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         if (proj_obj._size == (0,0) or (proj_info["self_stun"] and 
                             proj_obj.player._moves[-1][0] == "skill_cancel")):
             # remove projectile from array
-            projectiles.pop(projectileNum)
+            projectiles.remove(proj_info)
             projectileToJson(proj_obj, proj_json_dict, False)
             continue
         
@@ -104,16 +103,19 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         print(f"PROJ {proj_obj.get_pos()}")
         
         # check for projectiles colliding with each other
-        for nextProjNum in range(len(projectiles)):
-            nextproj_obj = projectiles[nextProjNum]["projectile"]
-            if (nextProjNum != projectileNum and 
+        for nextProj in projectiles:
+            nextproj_obj = nextProj["projectile"]
+            print(nextproj_obj)
+            if (nextproj_obj._id != proj_obj._id and 
                 proj_obj._checkProjCollision(nextproj_obj)):
-                    projectiles.pop(projectileNum)
-                    projectiles.pop(nextproj_obj)
+                    projectiles.remove(proj_info)
+                    projectiles.remove(nextProj)
                     print("pop both")
                     break
+                
         # list of ids of projectiles currently on screen
         projectile_ids = [projectile_obj["projectile"]._id for projectile_obj in projectiles]
+        
         # check if this projectile still exists
         if proj_obj._id in projectile_ids:
             # collision checks and attack checks
@@ -122,25 +124,25 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # if attack and projectile hits target at same time, use
             # total knockback and highest stun
             
-        # this is if the projectile explodes
-        if proj_obj._trait == "explode":
-            proj_obj._size = (0,0)
-        
-        # recalculate knockbacks and stuns
-        knock1 += proj_knock1
-        stun1 = max(stun1, proj_stun1)
-        knock2 += proj_knock2
-        stun2 = max(stun2, proj_stun2)
+            # this is if the projectile explodes
+            if proj_obj._trait == "explode":
+                proj_obj._size = (0,0)
             
-        # then pop the projectile if it hit or expires, else continue travel
-        if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
-            projectileToJson(proj_obj, proj_json_dict, False)
-            projectiles.pop(projectileNum)
-            # then unstun caster if the projectile skill has self stun
-            if proj_info["self_stun"]:
-                proj_obj._player._skill_state = False
-        else:
-            projectileToJson(proj_obj, proj_json_dict, True)
+            # recalculate knockbacks and stuns
+            knock1 += proj_knock1
+            stun1 = max(stun1, proj_stun1)
+            knock2 += proj_knock2
+            stun2 = max(stun2, proj_stun2)
+                
+            # then pop the projectile if it hit or expires, else continue travel
+            if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
+                projectileToJson(proj_obj, proj_json_dict, False)
+                projectiles.remove(proj_info)
+                # then unstun caster if the projectile skill has self stun
+                if proj_info["self_stun"]:
+                    proj_obj._player._skill_state = False
+            else:
+                projectileToJson(proj_obj, proj_json_dict, True)
               
     return projectiles, knock1, stun1, knock2, stun2  
 

@@ -22,7 +22,7 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, *p1.init_player_skills(), 1)
+    player1 = p1Import.Player_Controller(10,0,50,GORIGHT, *p1.init_player_skills(), 1)
     player2 = p2Import.Player_Controller(17,0,50,GOLEFT, *p2.init_player_skills(), 2)
     return player1,player2
 
@@ -186,8 +186,8 @@ def startGame(path1, path2):
                                             act1, act2, stun1, stun2, 
                                             projectiles)
         
-        print(f"Inputs: {player1._moveNum}, {player1._inputs}")
-        print(f"Moves : {len(player1._moves)}, {player1._moves}")
+        #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
+        #print(f"Moves : {len(player1._moves)}, {player1._moves}")
         #print("After movement:")
         #test.playerInfo(player1, path1, act1)
         #test.playerInfo(player2, path2, act2)

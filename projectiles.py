@@ -95,16 +95,22 @@ class Projectile:
         # checks if projectile has a size
         if self._size[0] and self._size[1] and self._collision:
             # checks if projectile hits target
-            if (abs(target._xCoord-self._xCoord) < self._size[0] and
-                abs(target._yCoord-self._yCoord) < self._size[1]):
+            if ((abs(target._xCoord-self._xCoord) < self._size[0]) and
+                (abs(target._yCoord-self._yCoord) < self._size[1])):
                 return target != self._player
         return False
             
     def _checkProjCollision(self, target):
+        print(f"self: {self.get_pos()}, target: {target.get_pos()}")
         if self._size[0] and self._size[1]:
-            if (abs(target._xCoord + target._size[0]*target._direction 
-                    - self._xCoord) < self._size[0] and
-                abs(target._yCoord + target._size[1]-self._yCoord) < self._size[1]):
+            print("projectile exists")
+            # this projectiles range = x to x + target size * direction
+            # therefore, get max x and max y sizes, check if they hit
+            # hits if both positions within the max x and y sizes
+            max_x = max(target._size[0], self._size[0])
+            max_y = max(target._size[1], self._size[1])
+            if ((abs(target._xCoord-self._xCoord) < max_x) and 
+                (abs(target._yCoord-self._yCoord) < max_y)):
                 return True
         return False
     
