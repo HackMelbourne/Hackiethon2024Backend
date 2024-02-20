@@ -53,8 +53,8 @@ def projectileToJson(projectile, jsonDict, travelling):
         jsonDict['projXCoord'].append(projectile._xCoord)
         jsonDict['projYCoord'].append(projectile._yCoord)
     else:
-        jsonDict['projXCoord'].append(None)
-        jsonDict['projYCoord'].append(None) 
+        jsonDict['projXCoord'].append(-1)
+        jsonDict['projYCoord'].append(-1) 
         
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
@@ -86,6 +86,16 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # player got hit, so remove projectile
             projectiles.remove(proj_info)
             projectileToJson(proj_obj, proj_json_dict, False)
+            # uncomment if make nomove if walk into projectile
+            '''
+            if proj_knock1:
+                print(player2._moves[-1])
+                player2._moves[-1] = ("NoMove", None)
+            
+            if proj_knock2:
+                print(player1._moves[-1])
+                player1._moves[-1] = ("NoMove", None)
+            '''
             continue
         
         # if exists, then travel

@@ -51,6 +51,7 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     #return spam_second()
     #return winning_strategy(player, enemy)
     return heavy_combo(player, enemy)
+    # return eric_func2()
     
 # helpful functions
 def get_hp(player):
@@ -182,6 +183,8 @@ def winning_strategy(player, enemy):
 def heavy_combo(player, enemy):
     player_x, player_y = get_pos(player)
     enemy_x, enemy_y = get_pos(enemy)
+    if get_stun_duration(player):
+        return NOMOVE
     if player_y == enemy_y and abs(player_x - enemy_x) == 1:
         if get_past_move(player, 1) == LIGHT:
             if get_past_move(player, 2) == LIGHT:
@@ -191,3 +194,20 @@ def heavy_combo(player, enemy):
         else:
             return LIGHT
     return FORWARD
+
+def eric_func2():
+    flip = False
+    if flip:
+        for i in range(20):
+            if i % 5 == 0:
+                return HEAVY
+            if i == 19:
+                flip = True
+            return FORWARD
+    else:
+        for i in range(20):
+            if i % 5 == 0:
+                return HEAVY
+            if i == 19:
+                flip = False
+            return BACK
