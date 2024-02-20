@@ -22,7 +22,7 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(10,0,50,GORIGHT, *p1.init_player_skills(), 1)
+    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, *p1.init_player_skills(), 1)
     player2 = p2Import.Player_Controller(17,0,50,GOLEFT, *p2.init_player_skills(), 2)
     return player1,player2
 

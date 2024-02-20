@@ -147,7 +147,7 @@ class UppercutSkill(AttackSkill):
 
 class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=10, damage=20, xRange=2,
+        super().__init__(startup=0, cooldown=10, damage=20, xRange=1,
                          vertical=0, blockable=False, knockback=4, stun=3)
         self._skillType = "onepunch"
 
