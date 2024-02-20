@@ -16,7 +16,7 @@ class Skill:
         self._cooldown = 0
         
         # this should be the same for most skills, can change in specific skills for balance
-        self._recovery = 1
+        self._recovery = 0
         
         #skillValue for "move" is (xcoord, ycoord), "attack" is damage, etc
         self._skillValue = skillValue

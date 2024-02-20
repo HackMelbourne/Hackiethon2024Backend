@@ -43,7 +43,10 @@ class Projectile:
         elif self._pathIndex >= len(self._path):
             # has reached end of path, so do effects based on trait
             self._do_trait()
+            
         self._pathIndex += 1
+        if ((self._xCoord < 0) or (self._xCoord > 10)):
+            self._size = (0,0)
       
     def _do_trait(self):
         if not self._trait:

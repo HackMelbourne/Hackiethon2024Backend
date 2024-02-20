@@ -9,7 +9,7 @@ from turnUpdates import *
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
 #game settings
-timeLimit = 10
+timeLimit = 30
 movesPerSecond = 1
 
 #direction constants
@@ -22,8 +22,8 @@ def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(14,0,50,GORIGHT, *p1.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(17,0,50,GOLEFT, *p2.init_player_skills(), 2)
+    player1 = p1Import.Player_Controller(4,0,50,GORIGHT, *p1.init_player_skills(), 1)
+    player2 = p2Import.Player_Controller(7,0,50,GOLEFT, *p2.init_player_skills(), 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
