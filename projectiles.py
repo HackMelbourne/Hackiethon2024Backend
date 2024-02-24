@@ -132,7 +132,6 @@ class ProjectileSkill(AttackSkill):
                                 collision, timer)
         return projectile
     
-
 class Hadoken(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
@@ -151,6 +150,9 @@ class Hadoken(ProjectileSkill):
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
+        
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]
     
 # TODO while lasso projecile is up, caster cannot move
 class Lasso(ProjectileSkill):
@@ -171,6 +173,9 @@ class Lasso(ProjectileSkill):
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
+    
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]
         
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
@@ -190,6 +195,9 @@ class Boomerang(ProjectileSkill):
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
+    
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]
         
 class Grenade(ProjectileSkill):
     def __init__(self, player):
@@ -211,6 +219,9 @@ class Grenade(ProjectileSkill):
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]
+    
 class BearTrap(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
@@ -231,6 +242,9 @@ class BearTrap(ProjectileSkill):
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]
+        
 class IceWall(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=30, damage=10,
@@ -250,3 +264,6 @@ class IceWall(ProjectileSkill):
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
+    
+    def path_range(self):
+        return self._path[-1][0] - self._path[0][0]

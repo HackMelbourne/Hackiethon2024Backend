@@ -96,6 +96,8 @@ def get_recovery(player):
 def skill_cancellable(player):
     return player.skill_cancellable()
 
+# todo add function to get names of enemy skills
+
 # tactics below
 def full_assault(player, enemy):
     player_x, player_y = get_pos(player)

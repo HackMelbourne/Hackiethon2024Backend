@@ -90,10 +90,14 @@ class Player_Controller:
             return self._primarySkill._xRange
         except:
             return 0
-        
+    
+    # todo make this work with projectile range   
     def secondary_range(self):
         try:
-            return self._secondarySkill._xRange
+            second_range = self._secondarySkill._xRange
+            if second_range == 0:
+                # this is a projectile
+                return self._secondarySkill.path_range()
         except:
             return 0
         

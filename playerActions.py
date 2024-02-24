@@ -44,11 +44,33 @@ def fetchAttack(player, attackType):
             player._recovery += player._primarySkill._recovery
     return returnVal
 
-def check_atk_combo(player):
-    if player._moves[-1][0] == player._moves[-2][0] == "light":
-        # last two attacks were light attacks, so third normal attack does extra dmg
-        return True
-    return False
+# todo fix this, based on relative moves, not absolute
+def check_atk_combo(player, attack):
+    if attack == "light":
+        # go to previous move before heavy startup
+        prev_move_pos = go_to_prev_atk(player, ("light", "startup"), -1)
+        if player._moves[prev_move_pos][0] == "light":
+            # go to previous move before light startup
+            prev_move_pos -= 1
+            prev_move_pos = go_to_prev_atk(player, ("light", "startup"), prev_move_pos)
+            if player._moves[prev_move_pos][0] == "light":
+                return True
+    elif attack == "heavy":
+        # go to previous move before heavy startup
+        prev_move_pos = go_to_prev_atk(player, ("heavy", "startup"), -1)
+        if player._moves[prev_move_pos][0] == "light":
+            # go to previous move before light startup
+            prev_move_pos -= 1
+            prev_move_pos = go_to_prev_atk(player, ("light", "startup"), prev_move_pos)
+            if player._moves[prev_move_pos][0] == "light":
+                return True
+    return False           
+ 
+# goes to previous move that isnt startup       
+def go_to_prev_atk(player, move, start):
+    while player._moves[start] == move:
+        start -= 1
+    return start
 
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
@@ -87,7 +109,7 @@ def attack(player,target, action):
             player._midStartup = False
         
             # performs the actual attack using fetched attack info
-            if check_atk_combo(player):
+            if check_atk_combo(player, action[0]):
                 # buffs damage and knockback for this hit
                 # damage buff
                 print("combo")
@@ -99,7 +121,7 @@ def attack(player,target, action):
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", None))
     else:
