@@ -7,7 +7,7 @@ def validMove(moveset, player, enemy):
     # check if out of bound 
     # *assuming the screen is 0-10
     elif (player._xCoord + player.direction * moveset[0] <0 or 
-          player._xCoord + player.direction * moveset[0] >10):
+          player._xCoord + player.direction * moveset[0] >15):
         return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
@@ -27,8 +27,8 @@ def flip_orientation(player1, player2):
 def correctPos(player):
     if player._xCoord < 0:
         player._xCoord = 0
-    elif player._xCoord > 10:
-        player._xCoord = 10
+    elif player._xCoord > 15:
+        player._xCoord = 15
     return None
 
 def correctOverlap(p1, p2, knock1, knock2):

@@ -29,7 +29,7 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing
-moves = SECONDARY,
+moves = SECONDARY, BACK, BACK, BACK
 moves_iter = iter(moves)
 
 
@@ -40,11 +40,11 @@ def init_player_skills():
 def get_move(player, enemy, player_projectiles, enemy_projectiles):
 
     # uncomment below for scripted moves
-    # return scripted_moves()    
+    return scripted_moves()    
     # uncomment below for calculated moves
     #return full_assault(player, enemy)
     # return full_parry(player, enemy)
-    return NOMOVE
+    # return NOMOVE
     
 # helpful functions
 def get_hp(player):
