@@ -6,8 +6,11 @@ from projectiles import *
 import json
 import os
 from turnUpdates import *
-import Submissions.Player1 as p1
-import Submissions.Player2 as p2
+#import Submissions.Player1 as p1
+#import Submissions.Player2 as p2
+import Submissions.Player3 as p1
+#import Submissions.Player5 as p2
+import Submissions.Player3 as p2
 #game settings
 timeLimit = 30
 movesPerSecond = 1
@@ -218,9 +221,7 @@ def startGame(path1, path2):
         
         #print("After all projectile movement:")
         test.playerInfo(player1, path1, act1)
-        print(player1._moves[-1])
         test.playerInfo(player2, path2, act2)
-        print(player2._moves[-1])
         #print(player1._moves[-1], player1._moveNum)
             
         updateCooldown(player1)

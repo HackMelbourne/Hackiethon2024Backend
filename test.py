@@ -1,4 +1,6 @@
 #checks if a "move" is valid
+LEFTBORDER = 0
+RIGHTBORDER = 15
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
@@ -6,8 +8,8 @@ def validMove(moveset, player, enemy):
         return False
     # check if out of bound 
     # *assuming the screen is 0-10
-    elif (player._xCoord + player.direction * moveset[0] <0 or 
-          player._xCoord + player.direction * moveset[0] >15):
+    elif (player._xCoord + player.direction * moveset[0] < LEFTBORDER or 
+          player._xCoord + player.direction * moveset[0] > RIGHTBORDER):
         return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
@@ -25,10 +27,10 @@ def flip_orientation(player1, player2):
 
 # used to correct position of player if they move offscreen
 def correctPos(player):
-    if player._xCoord < 0:
-        player._xCoord = 0
-    elif player._xCoord > 15:
-        player._xCoord = 15
+    if player._xCoord < LEFTBORDER:
+        player._xCoord = LEFTBORDER
+    elif player._xCoord > RIGHTBORDER:
+        player._xCoord = RIGHTBORDER
     return None
 
 def correctOverlap(p1, p2, knock1, knock2):
