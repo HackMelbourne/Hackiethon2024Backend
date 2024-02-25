@@ -15,6 +15,7 @@ def move(player, enemy, action):
                 player._jumpHeight = 1 * player._speed
         else:
             # no vertical logic, simple horizontal movement 
+            print(player._direction, moveAction)
             player._xCoord += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
     else:
@@ -93,7 +94,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             if damage < 0:
                 damage = 0
             target._hp -= damage
-            target._velocity -= knockback
+            target._velocity = 0
             return knockback * player._direction, stun
     return 0, 0
 

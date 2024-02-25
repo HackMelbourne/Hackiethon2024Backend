@@ -1,6 +1,8 @@
 #checks if a "move" is valid
 LEFTBORDER = 0
 RIGHTBORDER = 15
+GOLEFT = -1
+GORIGHT = 1
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
@@ -8,22 +10,23 @@ def validMove(moveset, player, enemy):
         return False
     # check if out of bound 
     # *assuming the screen is 0-10
-    elif (player._xCoord + player.direction * moveset[0] < LEFTBORDER or 
-          player._xCoord + player.direction * moveset[0] > RIGHTBORDER):
+    elif (player._xCoord + player._direction * moveset[0] < LEFTBORDER or 
+          player._xCoord + player._direction * moveset[0] > RIGHTBORDER):
         return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
         return False
     return True
 
-#returns if player1 or player2 switch sides
-def flip_orientation(player1, player2):
-    player1_x = player1.get_pos()[0]
-    player2_x = player2.get_pos()[0]
-    if player1_x > player2_x:
-        # should flip orientations if they switch sides
-        return True
-    return False
+def correct_orientation(p1, p2):
+        #flips orientation if player jumps over each other
+    if p1._xCoord > p2._xCoord:
+        print("p1 faces -1, p2 faces 1")
+        p1._direction = GOLEFT
+        p2._direction = GORIGHT
+    else:
+        p1._direction = GORIGHT
+        p2._direction = GOLEFT      
 
 # used to correct position of player if they move offscreen
 def correctPos(player):
@@ -35,6 +38,7 @@ def correctPos(player):
 
 def correctOverlap(p1, p2, knock1, knock2):
     if p1.get_pos() == p2.get_pos():
+        print("Overlapping")
         # if p2 caused the knockback, move p1 1 xcoord away in p2 direction
         if knock2:
             p1._xCoord += p2._direction

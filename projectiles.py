@@ -28,9 +28,13 @@ class Projectile:
         # this is an array of projectile positions relative to cast position over time
         self._path = path
         self._pathIndex = 0
-        # initialize path acording to player direction, only change xCoord
+        
+        
         for i in range(len(self._path)):
-            self._path[i][0] *= self._direction
+            self._path[i][0] = self._direction * abs(self._path[i][0])
+        print(player._direction, self._path)
+        
+        
             
         self._xCoord = player._xCoord + path[0][0]
         self._yCoord = player._yCoord + path[0][1]

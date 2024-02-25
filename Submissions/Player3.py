@@ -37,6 +37,7 @@ def init_player_skills():
 def get_move(player, enemy, player_projectiles, enemy_projectiles):
     # PRIMARY_SKILL is OnePunchSkill
     # SECONDARY SKILL is Grenade
+    
     if get_pos(player)[0] == 0 or get_pos(player)[0] == 15:
         return JUMP_FORWARD
 
@@ -56,11 +57,19 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
         return BACK
     else:
         return FORWARD
+    
+    #return scripted_moves()
 
 
+moves = BACK, BACK
+moves_iter = iter(moves)
 
-
-
+def scripted_moves():
+    try:
+        return next(moves_iter)
+    except StopIteration:
+        return NOMOVE
+    
 
 
 # helpful functions

@@ -68,6 +68,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     num_proj = len(projectiles)  
     for proj_index in range(num_proj):
         proj_info = projectiles[proj_index]
+        if proj_info == None:
+            continue
         proj_obj = proj_info["projectile"]
         proj_knock1 = proj_knock2 = proj_stun1 = proj_stun2 = 0
         
@@ -113,7 +115,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             projectiles[proj_index] = None
             projectileToJson(proj_obj, proj_json_dict, False)
             continue
-        print("Here")
+        print(f"Here at {proj_obj.get_pos()}")
         # if still existst then log
         #print(f"PROJ {proj_obj.get_pos()}")
         # check for projectiles colliding with each other
@@ -147,6 +149,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             stun1 = max(stun1, proj_stun1)
             knock2 += proj_knock2
             stun2 = max(stun2, proj_stun2)
+
             # then pop the projectile if it hit or expires, else continue travel
             if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
                 projectileToJson(proj_obj, proj_json_dict, False)
@@ -160,7 +163,14 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
     #after final calculation, remove all destroyed projectiles
     projectiles = [proj for proj in projectiles if proj]
-            
+      
+    print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+    if knock1:
+        print("hit p2")
+        print(knock1)
+    if knock2:
+        print("hit p1")
+        print(knock2)      
     return projectiles, knock1, stun1, knock2, stun2  
 
 def proj_collision_check(proj, player):

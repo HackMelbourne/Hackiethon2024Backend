@@ -11,6 +11,7 @@ from turnUpdates import *
 import Submissions.Player3 as p1
 #import Submissions.Player5 as p2
 import Submissions.Player3 as p2
+
 #game settings
 timeLimit = 30
 movesPerSecond = 1
@@ -18,15 +19,18 @@ movesPerSecond = 1
 #direction constants
 GORIGHT = 1
 GOLEFT = -1
-
+DIST_FROM_MID = 1
+LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
+RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
+print(LEFTSTART, RIGHTSTART)
 #player variables
 
 def setupGame():
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(4,0,50,GORIGHT, *p1.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(7,0,50,GOLEFT, *p2.init_player_skills(), 2)
+    player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1.init_player_skills(), 1)
+    player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2.init_player_skills(), 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
@@ -111,7 +115,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     player2._moveNum += 1
     
     return knock1, stun1, knock2, stun2, projectiles
-                                        
+                                          
 def startGame(path1, path2):
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
@@ -166,13 +170,6 @@ def startGame(path1, path2):
     game_running = True
     
     while game_running:
-        #flips orientation if player jumps over each other
-        if test.flip_orientation(player1, player2):
-            player1.direction = GOLEFT
-            player2.direction = GORIGHT
-        else:
-            player1.direction = GORIGHT
-            player2.direction = GOLEFT
         
         knock1 = knock2 = 0
         
@@ -202,6 +199,7 @@ def startGame(path1, path2):
         
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1 on player2
+        print(f"k1 {knock1}, k2 {knock2}")
         if knock1:
             player2._xCoord += knock1
             player2._stun = max(stun1, player2._stun)
@@ -209,19 +207,19 @@ def startGame(path1, path2):
             player1._xCoord += knock2
             player1._stun = max(stun2, player1._stun)
             
+        print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
         #if midair, start falling/rising
         updateMidair(player1)
         updateMidair(player2)
-
-        # correct player positions if off screen/under ground
+        # correct player positions if off screen/under ground        
         test.correctPos(player1)
         test.correctPos(player2)
         
+        test.correct_orientation(player1, player2)
         test.correctOverlap(player1, player2, knock1, knock2)
-        
         #print("After all projectile movement:")
-        test.playerInfo(player1, path1, act1)
-        test.playerInfo(player2, path2, act2)
+        #test.playerInfo(player1, path1, act1)
+        #test.playerInfo(player2, path2, act2)
         #print(player1._moves[-1], player1._moveNum)
             
         updateCooldown(player1)
