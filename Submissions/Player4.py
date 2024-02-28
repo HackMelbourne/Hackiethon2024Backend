@@ -88,7 +88,7 @@ def get_stun_duration(player):
     return player.get_stun()
 
 def get_block_status(player):
-    return player.get_block()
+    return player.get_blocking()
 
 def get_proj_pos(proj):
     return proj.get_pos()

@@ -19,9 +19,8 @@ def validMove(moveset, player, enemy):
     return True
 
 def correct_orientation(p1, p2):
-        #flips orientation if player jumps over each other
+    #flips orientation if player jumps over each other
     if p1._xCoord > p2._xCoord:
-        print("p1 faces -1, p2 faces 1")
         p1._direction = GOLEFT
         p2._direction = GORIGHT
     else:

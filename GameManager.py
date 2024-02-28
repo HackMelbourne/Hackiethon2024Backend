@@ -10,7 +10,7 @@ from turnUpdates import *
 #import Submissions.Player2 as p2
 import Submissions.Player3 as p1
 #import Submissions.Player5 as p2
-import Submissions.Player3 as p2
+import Submissions.Player4 as p2
 
 #game settings
 timeLimit = 30
