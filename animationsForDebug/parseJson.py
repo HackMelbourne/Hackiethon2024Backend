@@ -15,10 +15,8 @@ def get_coordinates(jsonFile):
                 coord_length = len(x_data)
                 for i in range(coord_length):
                     coords.append((x_data[i], y_data[i]))
-                        
+                return coords
             else:
-                raise("DIFFERENT LENGTHS OF COORDINATES")
-            
+                raise("DIFFERENT LENGTHS OF COORDINATES")          
     return None
 
-get_coordinates("jsonfiles\p1.json")
