@@ -39,13 +39,20 @@ def correctOverlap(p1, p2, knock1, knock2):
     if p1.get_pos() == p2.get_pos():
         print("Overlapping")
         # if p2 caused the knockback, move p1 1 xcoord away in p2 direction
+        print(knock2, knock1) 
         if knock2:
             p1._xCoord += p2._direction
         elif knock1:
             p2._xCoord += p1._direction
+        else:
+            # rare overlap caused by air movement, move both away from each other
+            p1._xCoord += p2._direction
+            p2._xCoord += p1._direction
+            
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):
     print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block._shieldHp}, stun: {player._stun}, facing: {player._direction}, airvelo:{player._velocity}")
     print(f"             SPEED: {player._speed}, ATKBUFF: {player._atkbuff}, DURATION: {player._currentBuffDuration}")
-    print(f"NEXT ACTION: {action}")
+    print(f"INPUT ACTION: {action}")
+    print(f"ACTUAL ACTION: {player._moves[-1]}")

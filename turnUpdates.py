@@ -93,6 +93,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             print("hit player")
             projectiles[proj_index] = None # to set destroyed projectiles
             projectileToJson(proj_obj, proj_json_dict, False)
+            if proj_knock1:
+                player1._skill_state = False
+            if proj_knock2:
+                player2._skill_state = False
             # uncomment if make nomove if walk into projectile
             '''
             if proj_knock1:
@@ -114,6 +118,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # remove projectile from array
             projectiles[proj_index] = None
             projectileToJson(proj_obj, proj_json_dict, False)
+            proj_obj._player._skill_state = False
             continue
         print(f"Here at {proj_obj.get_pos()}")
         # if still existst then log
@@ -130,6 +135,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                         print("pop both")
                         projectileToJson(proj_obj, proj_json_dict, False)
                         projectileToJson(nextproj_obj, enemy_proj_dict, False)
+                        proj_obj._player._skill_state = False
+                        nextproj_obj._player._skill_state = False
                         break
 
         # check if this projectile still exists
@@ -155,8 +162,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 projectileToJson(proj_obj, proj_json_dict, False)
                 projectiles[proj_index] = None
                 # then unstun caster if the projectile skill has self stun
-                if proj_info["self_stun"]:
-                    proj_obj._player._skill_state = False
+                proj_obj._player._skill_state = False
             else:
                 projectileToJson(proj_obj, proj_json_dict, True)
         current_proj(projectiles)

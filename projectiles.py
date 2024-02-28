@@ -163,7 +163,7 @@ class Lasso(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=-2, stun=0, 
                                  skillName="lasso")
-        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._path = [[1, 0], [2, 0], [3, 0]]
         self._stunself = True
     
     def _activateSkill(self):

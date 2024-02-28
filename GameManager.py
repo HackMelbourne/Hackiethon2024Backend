@@ -47,7 +47,7 @@ def reset_block(player):
     
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
-
+    print(act1, act2)
     # empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
         act1 = ("NoMove", None)
@@ -59,17 +59,19 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         update_recovery(player2)
     
     if player1._midStartup or player1._skill_state:
-        if player1._inputs[-1][0] == "skill_cancel":
-            act1 = ("NoMove", None)
+        print("p1 skill state")
+        if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
+            player1._skill_state = False
         else:
             act1 = player1._moves[-1]
             
     if player2._midStartup or player2._skill_state:
-        if player2._inputs[-1][0] == "skill_cancel":
-            act2 = ("NoMove", None)
+        print("p2 skill state")
+        if player2._inputs[-1][0] in ("skill_cancel", "move", "block"):
+            player2._skill_state = False
         else:
             act2 = player2._moves[-1]
-            
+        print(act2)
     # first check if a "no move" is input: 
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         player1._moves.append(("NoMove", None))
@@ -179,8 +181,14 @@ def startGame(path1, path2):
         p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
-        player1._inputs.append(p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles))
-        player2._inputs.append(p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles))
+        p1_move = p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles)
+        p2_move = p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles)
+        if not p1_move:
+            p1_move = ("NoMove",)
+        if not p2_move:
+            p2_move = ("NoMove",)
+        player1._inputs.append(p1_move)
+        player2._inputs.append(p2_move)
         
         act1 = player1._action()
         act2 = player2._action()
@@ -202,7 +210,7 @@ def startGame(path1, path2):
         
         #only determine knockback and stun after attacks hit
         #knock1 and stun1 = knockback and stun inflicted by player1 on player2
-        print(f"k1 {knock1}, k2 {knock2}")
+        # print(f"k1 {knock1}, k2 {knock2}")
         if knock1:
             player2._xCoord += knock1
             player2._stun = max(stun1, player2._stun)
@@ -210,7 +218,7 @@ def startGame(path1, path2):
             player1._xCoord += knock2
             player1._stun = max(stun2, player1._stun)
             
-        print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+        #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
         #if midair, start falling/rising
         updateMidair(player1)
         updateMidair(player2)
@@ -221,8 +229,8 @@ def startGame(path1, path2):
         test.correct_orientation(player1, player2)
         test.correctOverlap(player1, player2, knock1, knock2)
         #print("After all projectile movement:")
-        #test.playerInfo(player1, path1, act1)
-        #test.playerInfo(player2, path2, act2)
+        test.playerInfo(player1, path1, act1)
+        test.playerInfo(player2, path2, act2)
         #print(player1._moves[-1], player1._moveNum)
             
         updateCooldown(player1)

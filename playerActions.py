@@ -95,6 +95,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity = 0
+            print(f"player {player._id} hit player {target._id}")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -227,7 +228,7 @@ def uppercut(player, target, action):
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
     player._moves.append(action)
-
+    print(f"My : {player.get_pos()} enemy: {target.get_pos()}")
     knockback, stun = attackHit(player, target, *skillInfo)
     correctPos(player)
     return knockback, stun
