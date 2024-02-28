@@ -9,8 +9,8 @@ from turnUpdates import *
 #import Submissions.Player1 as p1
 #import Submissions.Player2 as p2
 import Submissions.Player3 as p1
-#import Submissions.Player5 as p2
-import Submissions.Player4 as p2
+import Submissions.Player5 as p2
+#import Submissions.Player4 as p2
 
 #game settings
 timeLimit = 30
@@ -24,12 +24,12 @@ LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
 #player variables
 
-def setupGame():
+def setupGame(p1_script, p2_script):
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2.init_player_skills(), 2)
+    player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
@@ -122,7 +122,10 @@ def startGame(path1, path2):
         return path1
     if not isinstance(path1, str) and not isinstance(path2,str):
         return None
-    player1, player2 = setupGame()
+    
+    p1_script = p1.Script()
+    p2_script = p2.Script()
+    player1, player2 = setupGame(p1_script, p2_script)
 
     stun1 = stun2 = 0
 
@@ -168,6 +171,7 @@ def startGame(path1, path2):
     max_tick = timeLimit * movesPerSecond
     game_running = True
     
+    #instantiate the player scripts
     while game_running:
         
         knock1 = knock2 = 0
@@ -175,8 +179,8 @@ def startGame(path1, path2):
         p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
-        player1._inputs.append(p1.get_move(player1, player2, p1_projectiles, p2_projectiles))
-        player2._inputs.append(p2.get_move(player2, player1, p2_projectiles, p1_projectiles))
+        player1._inputs.append(p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles))
+        player2._inputs.append(p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles))
         
         act1 = player1._action()
         act2 = player2._action()

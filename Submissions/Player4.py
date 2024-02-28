@@ -1,6 +1,7 @@
 # bot code goes here
 from Skills import *
 from projectiles import *
+from Submissions.usefulFunctions import *
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
@@ -30,89 +31,50 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 NOMOVE = "NoMove"
 
 # Don't touch
-def init_player_skills():
-    return PRIMARY_SKILL, SECONDARY_SKILL
-
-
-#MAIN FUNCTION that returns a single move to the game manager
-def get_move(player, enemy, player_projectiles, enemy_projectiles):
+class Script:
+    def __init__(self):
+        self.primary = PRIMARY_SKILL
+        self.secondary = SECONDARY_SKILL
+        
+    def init_player_skills(self):
+        return self.primary, self.secondary
+    
+    #MAIN FUNCTION that returns a single move to the game manager
+    def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
     # PRIMARY_SKILL is DashAttackSkill
-    # SECONDARY SKILL is IceWall
-    distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+        # SECONDARY SKILL is IceWall
+        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
 
-    if (len(enemy_projectiles) > 0):
-        dist_from_proj = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
-    else:
-        dist_from_proj = -1
+        if (len(enemy_projectiles) > 0):
+            dist_from_proj = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
+        else:
+            dist_from_proj = -1
 
-    if (1 <= dist_from_proj <= 2):
-        if get_block_status(player) > 4:
-            return BLOCK 
+        if (1 <= dist_from_proj <= 2):
+            if get_block_status(player) > 4:
+                return BLOCK 
 
-    if prim_range(player) <= distance:
-        if not primary_on_cooldown(player):
-            return PRIMARY
+        if prim_range(player) <= distance:
+            if not primary_on_cooldown(player):
+                return PRIMARY
 
-    if distance == 1:
-        if not heavy_on_cooldown(player):
-            return HEAVY
-        return LIGHT
+        if distance == 1:
+            if not heavy_on_cooldown(player):
+                return HEAVY
+            return LIGHT
 
-    if get_last_move(player) == "icewall":
-        print("ENEMY RECOVERY", get_recovery(enemy))
-        return FORWARD
-
-
-    if get_pos(player) == 0 or get_pos(player) == 30:
-        return FORWARD
-
-    if (dist_from_proj >= seco_range(player)):
-        if not secondary_on_cooldown(player):
-            return SECONDARY
+        if get_last_move(player) == "icewall":
+            print("ENEMY RECOVERY", get_recovery(enemy))
+            return FORWARD
 
 
-    return FORWARD   
+        if get_pos(player) == 0 or get_pos(player) == 30:
+            return FORWARD
+
+        if (dist_from_proj >= seco_range(player)):
+            if not secondary_on_cooldown(player):
+                return SECONDARY
 
 
-# helpful functions
-def get_hp(player):
-    return player.get_hp()
+        return FORWARD   
 
-def get_pos(player):
-    return player.get_pos()
-
-def get_last_move(player):
-    return player.get_last_move()
-
-def get_stun_duration(player):
-    return player.get_stun()
-
-def get_block_status(player):
-    return player.get_block()
-
-def get_proj_pos(proj):
-    return proj.get_pos()
-
-def primary_on_cooldown(player):
-    return player.primary_on_cd()
-
-def secondary_on_cooldown(player):
-    return player.secondary_on_cd()
-
-def heavy_on_cooldown(player):
-    return player.heavy_on_cd()
-
-def prim_range(player):
-    return player.primary_range()
-
-def seco_range(player):
-    return player.secondary_range()
-
-def get_past_move(player, turns):
-    return player.get_past_move(turns)
-
-def get_recovery(player):
-    return player.get_recovery()
-
-def skill_cancellable(player):
-    return player.skill_cancellable()
