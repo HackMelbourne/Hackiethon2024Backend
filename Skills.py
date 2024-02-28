@@ -177,7 +177,7 @@ class TeleportSkill(Skill):
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
-                         duration=1)
+                         duration=5)
         self._skillType = "super_saiyan"
 
 def get_skill(skillClass):

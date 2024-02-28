@@ -78,8 +78,8 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     # checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    if (abs(player_x-target_x) <= atk_range and 
-        (player_y + vertical >= target_y)):
+    if ((abs(player_x-target_x) <= atk_range) and 
+        (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # if target is blocking
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
@@ -119,7 +119,7 @@ def attack(player,target, action):
                 # knockback buff
                 attack[4] += 2
                 
-            player._moves.append(action)
+            player._moves.append((action[0], ))
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True

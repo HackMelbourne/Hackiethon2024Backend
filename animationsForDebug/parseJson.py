@@ -29,3 +29,15 @@ def get_moves(jsonFile):
             data = json.load(f)
             moveData = data['state']
             return moveData           
+
+
+def get_info(jsonFile, infoType):
+    if not jsonFile:
+        return None
+    if(os.path.isfile(jsonFile)):
+        # files exists, so can read
+        with open(jsonFile, 'r') as f:
+            data = json.load(f)
+            moveData = data[infoType]
+            return moveData 
+    

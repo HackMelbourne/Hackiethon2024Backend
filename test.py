@@ -55,4 +55,4 @@ def playerInfo(player, playerName, action):
     print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block._shieldHp}, stun: {player._stun}, facing: {player._direction}, airvelo:{player._velocity}")
     print(f"             SPEED: {player._speed}, ATKBUFF: {player._atkbuff}, DURATION: {player._currentBuffDuration}")
     print(f"INPUT ACTION: {action}")
-    print(f"ACTUAL ACTION: {player._moves[-1]}")
+    print(f"ACTUAL ACTION: {player._moves[player._moveNum - 1]}")

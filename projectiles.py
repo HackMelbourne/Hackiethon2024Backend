@@ -240,7 +240,7 @@ class BearTrap(ProjectileSkill):
         
         projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait="timer", 
-                                           collision=False, timer=3)
+                                           collision=False, timer=5)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]

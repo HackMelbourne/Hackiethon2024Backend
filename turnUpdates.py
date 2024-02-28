@@ -16,6 +16,7 @@ def updateCooldown(player):
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
     # check if player should be falling
+    updated = False
     if not player._falling:
         player._falling = (player._yCoord >= player._jumpHeight * player._speed)
     # not yet at apex of jump
@@ -28,6 +29,7 @@ def updateMidair(player):
         else:
             player._yCoord += 1 * player._speed
         player._xCoord += player._velocity * player._speed
+        updated = True
 
     # player has landed, reset midair attributes
     if player._yCoord <= 0 and player._falling: 
@@ -36,12 +38,17 @@ def updateMidair(player):
     if not player._midair:
         player._velocity = 0
         player._jumpheight = MAX_JUMP_HEIGHT
+        
+    return updated
 
-def playerToJson(player, jsonDict):
+def playerToJson(player, jsonDict, fill=False):
     jsonDict['hp'].append(player._hp)
     jsonDict['xCoord'].append(player._xCoord)
     jsonDict['yCoord'].append(player._yCoord)
-    jsonDict['state'].append(player._moves[-1][0])
+    if not fill:
+        jsonDict['state'].append(player._moves[-1][0])
+    else:
+        jsonDict['state'].append("NoMove")
     jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player._midair)
     jsonDict['falling'].append(player._falling)
@@ -61,11 +68,20 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     #TODO add None for no projectiles, even when not yet casted
     
     # check if no projectiles by player1 and player2
+    exist_proj_1 = exist_proj_2 = True
     if 1 not in [proj["projectile"]._player._id for proj in projectiles]:
         projectileToJson(None, p1_dict, False)
+        exist_proj_1 = False
     if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
         projectileToJson(None, p2_dict, False)
+        exist_proj_2 = False
+        
+    # early return if neither have projectiles
+    if not(exist_proj_1 or exist_proj_2):
+        return projectiles, knock1, stun1, knock2, stun2
+    
     num_proj = len(projectiles)  
+    # now check for existing projectiles
     for proj_index in range(num_proj):
         proj_info = projectiles[proj_index]
         if proj_info == None:

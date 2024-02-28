@@ -178,6 +178,15 @@ def startGame(path1, path2):
         
         knock1 = knock2 = 0
         
+        #if midair, start falling/rising
+        updateMidair(player1)
+        updateMidair(player2)
+
+        # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
+        # if uncommented, length of projectile json would be half of player json
+        #playerToJson(player1, p1_json_dict, True)
+        #playerToJson(player2,p2_json_dict, True)
+        
         p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
@@ -196,6 +205,7 @@ def startGame(path1, path2):
         knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                             act1, act2, stun1, stun2, 
                                             projectiles)
+        
         
         #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
         #print(f"Moves : {len(player1._moves)}, {player1._moves}")
@@ -219,9 +229,6 @@ def startGame(path1, path2):
             player1._stun = max(stun2, player1._stun)
             
         #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
-        #if midair, start falling/rising
-        updateMidair(player1)
-        updateMidair(player2)
         # correct player positions if off screen/under ground        
         test.correctPos(player1)
         test.correctPos(player2)
