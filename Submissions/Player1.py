@@ -96,6 +96,12 @@ def get_recovery(player):
 def skill_cancellable(player):
     return player.skill_cancellable()
 
+def get_primary_skill(player):
+    return player.get_primary_name()
+
+def get_secondary_skill(player):
+    return player.get_secondary_name()
+
 # todo add function to get names of enemy skills
 
 # tactics below
