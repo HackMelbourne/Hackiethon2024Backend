@@ -3,9 +3,18 @@ from playerActions import attackHit, changeDamage, changeSpeed, encumber
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
 def proj_knockback(proj, player):
-    if proj._xCoord < player._xCoord:
-        return -1
-    return player._direction
+    knockback = 1
+    # checking for grenade physics
+    if proj._type == "grenade":
+        proj._direction = 1
+        if player._xCoord < proj._xCoord:
+            knockback = -1
+        elif player._xCoord > proj._xCoord:
+            knockback = 1
+        else:
+            # same xcoord = no knockback
+            knockback = 0
+    return knockback
 
 def updateCooldown(player):
     player._lightAtk._reduceCd(1)
@@ -199,14 +208,15 @@ def proj_collision_check(proj, player):
     proj_obj = proj["projectile"]
     knockback = stun = 0
     if proj_obj._checkCollision(player):
-        knockback = proj["knockback"] * proj_knockback(proj_obj, player)
+        knockback = proj["knockback"] * proj_knockback(proj_obj, player, knockback)
         knockback, stun = attackHit(proj_obj, player,
                                 proj["damage"],
                                 proj_obj._size[0],
                                 proj_obj._size[1],
                                 proj["blockable"],
                                 knockback,
-                                proj["stun"])
+                                proj["stun"],
+                                surehit=True)
     return knockback, stun
 def current_proj(projectiles):
     print("Current projectiles: ")
