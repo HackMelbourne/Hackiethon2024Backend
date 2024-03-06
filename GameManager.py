@@ -15,8 +15,8 @@ import Submissions.promotional_ai1 as p1
 import Submissions.promotional_ai2 as p2
 
 #game settings
-timeLimit = 45
-movesPerSecond = 1
+timeLimit = 30
+movesPerSecond = 4
 
 #direction constants
 GORIGHT = 1
