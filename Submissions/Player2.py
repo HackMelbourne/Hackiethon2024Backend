@@ -39,12 +39,15 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        # PRIMARY_SKILL = OnePunchSkill
+        # SECONDARY_SKILL = Grenade
 
         if get_pos(player)[0] == 0 or get_pos(player)[0] == 30:
             return JUMP_FORWARD

@@ -7,8 +7,8 @@ from Submissions.usefulFunctions import *
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = TeleportSkill
+SECONDARY_SKILL = BearTrap
 
 #constants, for easier move return
 #movements
