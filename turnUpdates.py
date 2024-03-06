@@ -236,8 +236,8 @@ def updateBuffs(player):
         player._currentBuffDuration -= 1
     elif player._currentBuffDuration == 0:
         # check if any buffs active, if they are, remove them
-        if player._atkbuff or (player._speed != 1) :
-            encumber(player)
+        #if player._atkbuff or (player._speed != 1) :
+            #encumber(player)
         if player._atkbuff:
             changeDamage(player, 0)
             player._atkbuff = 0

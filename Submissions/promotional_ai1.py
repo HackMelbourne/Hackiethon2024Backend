@@ -65,7 +65,7 @@ class Script:
         self.nextskills = ((DashAttackSkill, UppercutSkill), (OnePunchSkill, Hadoken), (Lasso, Boomerang), (Grenade, BearTrap), (IceWall, SuperSaiyanSkill))
         self.next_skills_iter = iter(self.nextskills)
         self.noswaps = False
-        self.othertest = (JUMP, JUMP_BACKWARD, JUMP_FORWARD)
+        self.othertest = (JUMP, JUMP_BACKWARD, JUMP_FORWARD, BLOCK, LIGHT, HEAVY)
         self.newiter = iter(self.othertest)
     def request_swap(self):
         try:
@@ -89,6 +89,9 @@ class Script:
         #return spam_second()
         #return winning_strategy(player, enemy)
         # check that no toher projectile on screen at the moment
+        if get_stun_duration(player) or get_recovery(player):
+            #cant do anth, early return
+            return NOMOVE
         can_cast_p = can_cast_s = True
         if player_projectiles:
             if player._primarySkill._skillType in projectile_actions:

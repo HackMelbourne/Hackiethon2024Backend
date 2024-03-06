@@ -129,6 +129,7 @@ class ProjectileSkill(AttackSkill):
                             stun=stun)
         self._player = player
         self._skillType = skillName
+        self._recovery = 0
         
     def summonProjectile(self, path, size, trait, collision, timer):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 
@@ -207,7 +208,7 @@ class Grenade(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
                                  blockable=False, knockback=3, stun=3, 
                                  skillName="grenade")
-        self._path = [[1,1], [2,2], [3,1]]
+        self._path = [[1,1], [2,1], [3,1], [4,1]]
         self._stunself = False
     
     def _activateSkill(self):

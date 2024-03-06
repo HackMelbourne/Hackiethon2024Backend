@@ -169,7 +169,7 @@ def fetchSkill(player, skillClass):
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._primarySkill._recovery
+            player._recovery += player._secondarySkill._recovery
         
     if returnVal == -2:
         print("Player does not have this skill")
@@ -282,7 +282,9 @@ def super_saiyan(player, target, action):
     atkBuff = skillInfo[1][1]
     duration = skillInfo[1][2]
     player._moves.append((action[0], "activate"))
-    changeSpeed(player, speedBuff)
+    # turned off for now since startup and recovery so wack with super saiyan
+    # encumbered also turned off
+    #changeSpeed(player, speedBuff)
     changeDamage(player, atkBuff)
     player._currentBuffDuration = duration
     return None

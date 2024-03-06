@@ -91,8 +91,6 @@ class AttackSkill(Skill):
         self._knockback = knockback
         self._stun = stun
         self._initDamage = self._skillValue
-        # all attack skills have a turn of recovery
-        self._recovery = 1
         
     def _activateSkill(self):
         if self._cooldown > 0:
@@ -143,7 +141,7 @@ class UppercutSkill(AttackSkill):
         super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
-
+        
 #TODO add one_punch, super saiyan and meditate/heal playeractions
 #TODO add buff duration timer 
 
