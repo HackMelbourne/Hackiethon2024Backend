@@ -64,11 +64,14 @@ class Script:
         # list of next skills to switch to
         self.nextskills = ((DashAttackSkill, UppercutSkill), (OnePunchSkill, Hadoken), (Lasso, Boomerang), (Grenade, BearTrap), (IceWall, SuperSaiyanSkill))
         self.next_skills_iter = iter(self.nextskills)
-    
+        self.noswaps = False
+        self.othertest = (JUMP, JUMP_BACKWARD, JUMP_FORWARD)
+        self.newiter = iter(self.othertest)
     def request_swap(self):
         try:
             return ("swap", *next(self.next_skills_iter))
         except StopIteration:
+            self.noswaps = True
             return NOMOVE
     
     def init_player_skills(self):
@@ -92,19 +95,28 @@ class Script:
                 can_cast_p = False
             if player._secondarySkill._skillType in projectile_actions:
                 can_cast_s = False
-            
-        if self.skillNum == 1 and can_cast_p:
-            self.skillNum = 2
-            return (player._primarySkill._skillType, )
-        elif self.skillNum == 2 and can_cast_s:
-            self.skillNum = 3
-            return (player._secondarySkill._skillType, )
+        if not self.noswaps:  
+            if self.skillNum == 1 and can_cast_p:
+                self.skillNum = 2
+                return (player._primarySkill._skillType, )
+            elif self.skillNum == 2 and can_cast_s:
+                self.skillNum = 3
+                return (player._secondarySkill._skillType, )
+            else:
+                if not can_cast_s and not can_cast_p:
+                    # both skills were projectiles, just gotta wait
+                    return NOMOVE
+                self.skillNum = 1
+                return self.request_swap()
         else:
-            if not can_cast_s and not can_cast_p:
-                # both skills were projectiles, just gotta wait
+            # do the other stuff
+            if not player._midair:
+                try:
+                    return next(self.newiter)
+                except StopIteration:
+                    return NOMOVE
+            else:
                 return NOMOVE
-            self.skillNum = 1
-            return self.request_swap()
         
         # return eric_func2()
         
