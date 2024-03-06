@@ -49,8 +49,8 @@ def get_move(player, enemy, player_projectiles, enemy_projectiles):
     #return eric_func(player, enemy)
     #return leo_func(player, enemy)
     #return spam_second()
-    #return winning_strategy(player, enemy)
-    return heavy_combo(player, enemy)
+    return winning_strategy(player, enemy)
+    # return heavy_combo(player, enemy)
     # return eric_func2()
     
 # helpful functions
