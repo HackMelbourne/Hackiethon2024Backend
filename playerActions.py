@@ -10,7 +10,7 @@ def move(player, enemy, action):
             player._moves.append((action[0], "startup"))
         else:
             # cooldown
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return None      
     
     player._blocking = False
@@ -136,7 +136,7 @@ def attack(player,target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
     else:
         player._moves.append(("NoMove", None))
     return 0, 0
@@ -208,7 +208,7 @@ def dash_atk(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -232,7 +232,7 @@ def uppercut(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -251,7 +251,7 @@ def teleport(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -273,7 +273,7 @@ def super_saiyan(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -296,7 +296,7 @@ def meditate(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -319,7 +319,7 @@ def one_punch(player, target, action):
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("cooldown", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
@@ -362,7 +362,7 @@ def fetchProjectileSkill(player, projectileName, action):
                 player._midStartup = True
                 player._moves.append((action[0], "startup"))
             else:
-                player._moves.append(("cooldown", None))
+                player._moves.append(("NoMove", "cooldown"))
     return None
 
 

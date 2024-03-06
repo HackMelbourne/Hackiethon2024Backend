@@ -91,6 +91,8 @@ class AttackSkill(Skill):
         self._knockback = knockback
         self._stun = stun
         self._initDamage = self._skillValue
+        # all attack skills have a turn of recovery
+        self._recovery = 1
         
     def _activateSkill(self):
         if self._cooldown > 0:
@@ -150,6 +152,7 @@ class OnePunchSkill(AttackSkill):
         super().__init__(startup=0, cooldown=10, damage=20, xRange=1,
                          vertical=0, blockable=False, knockback=4, stun=3)
         self._skillType = "onepunch"
+        self._recovery = 2 # bcs op
 
 # returns ("buff", (speedBuff, attackBuff, defenseBuff))
 class BuffSkill(Skill):
