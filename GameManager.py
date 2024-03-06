@@ -49,11 +49,11 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     print(act1, act2)
     # empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
-        act1 = ("NoMove", None)
+        act1 = ("NoMove", "NoMove")
         update_stun(player1)
         update_recovery(player1)
     if player2._stun or player2._recovery:
-        act2 = ("NoMove", None)
+        act2 = ("NoMove", "NoMove")
         update_stun(player2)
         update_recovery(player2)
     
@@ -75,19 +75,19 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # exclusively for testing
     if act1[0] == "swap":
         swap_skills(player1, act1[1], act1[2])
-        act1 = ("NoMove", None)
+        act1 = ("NoMove", "NoMove")
     if act2[0] == "swap":
         swap_skills(player2, act1[1], act1[2])
-        act2 = ("NoMove", None)
+        act2 = ("NoMove", "NoMove")
     
     print(act1, act2)
     # first check if a "no move" is input: 
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
-        player1._moves.append(("NoMove", None))
+        player1._moves.append(("NoMove", "NoMove"))
         reset_block(player1)
         act1 = None
     if act2[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
-        player2._moves.append(("NoMove", None))
+        player2._moves.append(("NoMove", "NoMove"))
         reset_block(player2)
         act2 = None
     
@@ -158,6 +158,7 @@ def startGame(path1, path2):
         'xCoord': [],
         'yCoord': [],
         'state': [],
+        'actionType': [],
         'stun': [],
         'midair': [],
         'falling':[],
@@ -170,6 +171,7 @@ def startGame(path1, path2):
         'xCoord': [],
         'yCoord': [],
         'state': [],
+        'actionType': [],
         'stun': [],
         'midair': [],
         'falling':[],

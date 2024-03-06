@@ -56,8 +56,10 @@ def playerToJson(player, jsonDict, fill=False):
     jsonDict['yCoord'].append(player._yCoord)
     if not fill:
         jsonDict['state'].append(player._moves[-1][0])
+        jsonDict['actionType'].append(player._moves[-1][1])
     else:
         jsonDict['state'].append("NoMove")
+        jsonDict['actionType'].append("NoMove")
     jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player._midair)
     jsonDict['falling'].append(player._falling)
