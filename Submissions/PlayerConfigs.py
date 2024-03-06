@@ -5,7 +5,7 @@ class Player_Controller:
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
         self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 0, 1)
-        self._heavyAtk = AttackSkill(1, 4, 10, 2, 0, True, 2, 2)
+        self._heavyAtk = AttackSkill(1, 4, 10, 1, 0, True, 2, 2)
         self._block = BlockSkill(0, 0, 15, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
@@ -62,7 +62,7 @@ class Player_Controller:
         '''Return player's current stun duration as int, 0 means not stunned'''
         return self._stun
     
-    def get_blocking(self):
+    def get_block(self):
         '''Returns player current block value: shield strength if blocking, 0 if not'''
         if self._blocking:
             return self._block._shieldHp
@@ -112,3 +112,9 @@ class Player_Controller:
     
     def skill_cancellable(self):
         return (self._skill_state or self._midStartup)
+    
+    def get_primary_name(self):
+        return self._primarySkill._skillType
+    
+    def get_secondary_name(self):
+        return self._secondarySkill._skillType

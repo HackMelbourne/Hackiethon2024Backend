@@ -1,6 +1,6 @@
 import itertools
 from Skills import AttackSkill
-
+from test import LEFTBORDER, RIGHTBORDER
 class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
@@ -28,14 +28,19 @@ class Projectile:
         # this is an array of projectile positions relative to cast position over time
         self._path = path
         self._pathIndex = 0
-        # initialize path acording to player direction, only change xCoord
+        
+        
         for i in range(len(self._path)):
-            self._path[i][0] *= self._direction
+            self._path[i][0] = self._direction * abs(self._path[i][0])
+        print(player._direction, self._path)
+        
+        
             
         self._xCoord = player._xCoord + path[0][0]
         self._yCoord = player._yCoord + path[0][1]
 
     def _travel(self):
+        print(self._pathIndex)
         if 0 < self._pathIndex < len(self._path):
             pos = self._path[self._pathIndex]
             self._xCoord += pos[0] - self._path[self._pathIndex - 1][0]
@@ -45,7 +50,7 @@ class Projectile:
             self._do_trait()
             
         self._pathIndex += 1
-        if ((self._xCoord < 0) or (self._xCoord > 10)):
+        if ((self._xCoord < LEFTBORDER) or (self._xCoord > RIGHTBORDER)):
             self._size = (0,0)
       
     def _do_trait(self):
@@ -104,9 +109,7 @@ class Projectile:
         return False
             
     def _checkProjCollision(self, target):
-        print(f"self: {self.get_pos()}, target: {target.get_pos()}")
-        if self._size[0] and self._size[1]:
-            print("projectile exists")
+        if self._size[0] and self._size[1] and self._collision:
             # this projectiles range = x to x + target size * direction
             # therefore, get max x and max y sizes, check if they hit
             # hits if both positions within the max x and y sizes
@@ -160,7 +163,7 @@ class Lasso(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=-2, stun=0, 
                                  skillName="lasso")
-        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._path = [[1, 0], [2, 0], [3, 0]]
         self._stunself = True
     
     def _activateSkill(self):
@@ -237,7 +240,7 @@ class BearTrap(ProjectileSkill):
         
         projectile = self.summonProjectile(path = self._path, size=(1,1), 
                                            trait="timer", 
-                                           collision=False, timer=3)
+                                           collision=False, timer=5)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]

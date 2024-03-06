@@ -15,6 +15,7 @@ def move(player, enemy, action):
                 player._jumpHeight = 1 * player._speed
         else:
             # no vertical logic, simple horizontal movement 
+            print(player._direction, moveAction)
             player._xCoord += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
     else:
@@ -73,12 +74,13 @@ def go_to_prev_atk(player, move, start):
     return start
 
 # Helper function for all attack types and attack skills    
-def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun):
+def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun, surehit=False):
     # checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    if (abs(player_x-target_x) <= atk_range and 
-        (player_y + vertical >= target_y)):
+    # surehit is for projectiles, bcs checking for collision alr done 
+    if (surehit or (abs(player_x-target_x) <= atk_range) and 
+        (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # if target is blocking
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
@@ -93,7 +95,8 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             if damage < 0:
                 damage = 0
             target._hp -= damage
-            target._velocity -= knockback
+            target._velocity = 0
+            print(f"player {player._id} hit player {target._id}")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -117,7 +120,7 @@ def attack(player,target, action):
                 # knockback buff
                 attack[4] += 2
                 
-            player._moves.append(action)
+            player._moves.append((action[0], ))
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True
@@ -226,7 +229,7 @@ def uppercut(player, target, action):
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
     player._moves.append(action)
-
+    print(f"My : {player.get_pos()} enemy: {target.get_pos()}")
     knockback, stun = attackHit(player, target, *skillInfo)
     correctPos(player)
     return knockback, stun
