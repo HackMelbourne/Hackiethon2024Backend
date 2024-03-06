@@ -46,5 +46,5 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return heavy_combo(player, enemy)
+        return FORWARD
         
