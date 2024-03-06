@@ -12,9 +12,11 @@ from turnUpdates import *
 import Submissions.Player2 as p1
 import Submissions.Player1 as p2
 #import Submissions.Player4 as p2
+import Submissions.promotional_ai1 as p1
+import Submissions.promotional_ai2 as p2
 
 #game settings
-timeLimit = 30
+timeLimit = 45
 movesPerSecond = 1
 
 #direction constants
@@ -34,13 +36,10 @@ def setupGame(p1_script, p2_script):
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
-# no longer needed, add moves to player1.py and player2.py
-def setMoves(player1, player2):    
-    p1movelist = ("light", ), ("heavy", ), ("onepunch",), ("uppercut", ), ("move", (1,0)), ("move", (0,1)), ("move", (1,1)), ("block",), ("block",),
-    p2movelist = None,
-    
-    player1._inputs += p1movelist
-    player2._inputs += p2movelist          
+# changes skills --  TODO finish
+def swap_skills(player, new_prim, new_second):
+    player._primarySkill = new_prim(player)
+    player._secondarySkill = new_second(player)
     
 def reset_block(player):
     player._block._regenShield()
@@ -73,6 +72,16 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         else:
             act2 = player2._moves[-1]
         print(act2)
+        
+    # exclusively for testing
+    if act1[0] == "swap":
+        swap_skills(player1, act1[1], act1[2])
+        act1 = ("NoMove", None)
+    if act2[0] == "swap":
+        swap_skills(player2, act1[1], act1[2])
+        act2 = ("NoMove", None)
+    
+    print(act1, act2)
     # first check if a "no move" is input: 
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         player1._moves.append(("NoMove", None))
@@ -82,7 +91,8 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         player2._moves.append(("NoMove", None))
         reset_block(player2)
         act2 = None
-        
+    
+    print(act1, act2)
     # nullFunc, nullProj = default functions that return (0,0) or None with params
     # actions can only occur if the player is not stunned
     # if a defensive action is taken, it has priority over damage moves/skills

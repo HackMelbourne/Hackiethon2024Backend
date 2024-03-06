@@ -213,7 +213,7 @@ def proj_collision_check(proj, player):
     proj_obj = proj["projectile"]
     knockback = stun = 0
     if proj_obj._checkCollision(player):
-        knockback = proj["knockback"] * proj_knockback(proj_obj, player, knockback)
+        knockback = proj["knockback"] * proj_knockback(proj_obj, player)
         knockback, stun = attackHit(proj_obj, player,
                                 proj["damage"],
                                 proj_obj._size[0],
