@@ -78,15 +78,16 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
     
     # check if no projectiles by player1 and player2
     exist_proj_1 = exist_proj_2 = True
-    if 1 not in [proj["projectile"]._player._id for proj in projectiles]:
+    curr_proj_ids = [proj["projectile"]._player._id for proj in projectiles]
+    if 1 not in curr_proj_ids:
         projectileToJson(None, p1_dict, False)
         exist_proj_1 = False
-    if 2 not in [proj["projectile"]._player._id for proj in projectiles]:
+    if 2 not in curr_proj_ids:
         projectileToJson(None, p2_dict, False)
         exist_proj_2 = False
         
     # early return if neither have projectiles
-    if not(exist_proj_1 or exist_proj_2):
+    if (not exist_proj_1) and (not exist_proj_2):
         return projectiles, knock1, stun1, knock2, stun2
     
     num_proj = len(projectiles)  
@@ -149,6 +150,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         # if still existst then log
         #print(f"PROJ {proj_obj.get_pos()}")
         # check for projectiles colliding with each other
+        cont = False
         for nextProjNum in range(len(projectiles)):
             nextProj = projectiles[nextProjNum]
             if nextProj:
@@ -162,7 +164,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                         projectileToJson(nextproj_obj, enemy_proj_dict, False)
                         proj_obj._player._skill_state = False
                         nextproj_obj._player._skill_state = False
+                        cont = True
                         break
+        if cont:
+            continue
 
         # check if this projectile still exists
         if projectiles[proj_index]:
