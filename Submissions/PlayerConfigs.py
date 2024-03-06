@@ -22,7 +22,7 @@ class Player_Controller:
         self._defense = 0
         #midair attributes
         self._midair = False
-        self._jumpHeight = 2
+        self._jumpHeight = 1
         self._falling = False
         self._velocity = 0
         
