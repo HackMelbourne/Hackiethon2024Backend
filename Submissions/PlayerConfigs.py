@@ -118,3 +118,6 @@ class Player_Controller:
     
     def get_secondary_name(self):
         return self._secondarySkill._skillType
+    
+    def get_landed(self):
+        return self._move._cooldown > 0

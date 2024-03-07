@@ -89,6 +89,7 @@ class Script:
         #return spam_second()
         #return winning_strategy(player, enemy)
         # check that no toher projectile on screen at the moment
+        return NOMOVE
         if get_stun_duration(player) or get_recovery(player):
             #cant do anth, early return
             return NOMOVE

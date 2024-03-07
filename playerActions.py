@@ -3,9 +3,10 @@ from math import ceil
 
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
+    print(f"moveAction is {moveAction}")
     if isinstance(moveAction, int):
         # weird, but is on cooldown or startup
-        if moveAction == 1:
+        if moveAction == -1:
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
@@ -15,14 +16,19 @@ def move(player, enemy, action):
     
     player._blocking = False
     player._block._regenShield()
+    moveAction = moveAction[1]
+    print(validMove(moveAction, player, enemy), not player._midair)
     if validMove(moveAction, player, enemy) and not player._midair:
+        print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
+            player._yCoord += 1
             if moveAction[0]:
                 # this is diagonal jump
                 player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
+                player._xCoord += player._velocity
         else:
             # no vertical logic, simple horizontal movement 
             print(player._direction, moveAction)

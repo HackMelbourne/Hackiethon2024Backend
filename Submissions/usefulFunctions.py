@@ -63,6 +63,10 @@ def get_primary_skill(player):
 def get_secondary_skill(player):
     return player.get_secondary_name()
 
+# checks if the player has landed this turn: cannot make a movement but can still attack or block
+def get_landed(player):
+    return player.get_landed()
+
 # tactics
 
 def full_assault(player, enemy, primary, secondary):

@@ -1,8 +1,8 @@
-# add 2nd promotional ai here
 # bot code goes here
 from Skills import *
 from projectiles import *
 from Submissions.usefulFunctions import *
+from playerActions import defense_actions, attack_actions, projectile_actions
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -48,14 +48,5 @@ class Script:
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
 
-        # uncomment below for scripted moves
-        #return scripted_moves()    
-        # uncomment below for calculated moves
-        #return full_assault(player, enemy)
-        #return eric_func(player, enemy)
-        #return leo_func(player, enemy)
-        #return spam_second()
-        #return winning_strategy(player, enemy)
-        return JUMP_BACKWARD
-        # return eric_func2()
+        return NOMOVE
         

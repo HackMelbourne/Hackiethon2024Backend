@@ -21,6 +21,7 @@ def updateCooldown(player):
     player._heavyAtk._reduceCd(1)
     player._primarySkill._reduceCd(1)
     player._secondarySkill._reduceCd(1)
+    player._move._reduceCd(1)
     
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
@@ -33,7 +34,9 @@ def updateMidair(player):
         if player._falling: 
             # specifically to check for diagonal jumps, ensure jump arc
             # like _ - - _
-            if player._moves[-2] != ("move",(1,1)):
+            check_point = player._jumpHeight
+            print(player.get_past_move(check_point))
+            if player.get_past_move(check_point)[1] not in ((1,1), (-1,1)):
                 player._yCoord -= GRAVITY
         else:
             player._yCoord += 1 * player._speed
@@ -43,10 +46,14 @@ def updateMidair(player):
     # player has landed, reset midair attributes
     if player._yCoord <= 0 and player._falling: 
         player._midair = player._falling = False
+        # set a movestun to the player so that they cant jump away right after
+        player._move._movestun_on_fall(1)
     
     if not player._midair:
         player._velocity = 0
         player._jumpheight = MAX_JUMP_HEIGHT
+        
+        
         
     return updated
 

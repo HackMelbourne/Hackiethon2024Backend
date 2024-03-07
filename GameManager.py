@@ -8,11 +8,13 @@ import os
 from turnUpdates import *
 #import Submissions.Player1 as p1
 #import Submissions.Player2 as p2
-import Submissions.Player3 as p1
-import Submissions.Player5 as p2
+#import Submissions.Player3 as p1
+#import Submissions.Player5 as p2
 #import Submissions.Player4 as p2
-import Submissions.promotional_ai1 as p1
-import Submissions.promotional_ai2 as p2
+#import Submissions.promotional_ai1 as p1
+#import Submissions.promotional_ai2 as p2
+import Submissions.finalpromoai1 as p1
+import Submissions.finalpromoai2 as p2
 
 #game settings
 timeLimit = 30
@@ -196,11 +198,9 @@ def startGame(path1, path2):
     while game_running:
         
         knock1 = knock2 = 0
-        
         #if midair, start falling/rising
         updateMidair(player1)
         updateMidair(player2)
-
         # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
         # if uncommented, length of projectile json would be half of player json
         #playerToJson(player1, p1_json_dict, True)
@@ -220,6 +220,7 @@ def startGame(path1, path2):
         
         act1 = player1._action()
         act2 = player2._action()
+        
                     
         knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                             act1, act2, stun1, stun2, 

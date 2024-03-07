@@ -79,6 +79,9 @@ class MoveSkill(Skill):
     def _activateSkill(self, direction):
         self._skillValue = direction
         return self._useSkill()
+    
+    def _movestun_on_fall(self, stuncd):
+        self._cooldown = stuncd
         
 class AttackSkill(Skill):
     def __init__(self, startup, cooldown, damage, xRange, vertical, blockable, knockback, stun):
@@ -132,13 +135,13 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=10, damage=10, xRange=4, 
+        super().__init__(startup=0, cooldown=20, damage=10, xRange=5, 
                          vertical=0, blockable=False, knockback=0, stun=2)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=10, damage=15, xRange = 1, 
+        super().__init__(startup=0, cooldown=20, damage=15, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
         
@@ -147,7 +150,7 @@ class UppercutSkill(AttackSkill):
 
 class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=10, damage=20, xRange=1,
+        super().__init__(startup=0, cooldown=30, damage=20, xRange=1,
                          vertical=0, blockable=False, knockback=4, stun=3)
         self._skillType = "onepunch"
         self._recovery = 2 # bcs op
@@ -169,7 +172,7 @@ class Meditate(Skill):
 
 class TeleportSkill(Skill):
     def __init__(self, player=None):
-        super().__init__(skillType= "teleport", startup= 0, cooldown= 10, skillValue= 5)
+        super().__init__(skillType= "teleport", startup= 0, cooldown= 30, skillValue= 5)
 
     def _activateSkill(self):
         return self._useSkill()
@@ -177,8 +180,8 @@ class TeleportSkill(Skill):
 # returns ("super_saiyan", (speedBuff, attackBuff, defenseBuff))
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=15, speedBuff=2, attackBuff=2, 
-                         duration=5)
+        super().__init__(startup=0, cooldown=30, speedBuff=2, attackBuff=2, 
+                         duration=20)
         self._skillType = "super_saiyan"
 
 def get_skill(skillClass):
