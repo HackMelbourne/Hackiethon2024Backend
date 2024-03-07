@@ -26,7 +26,8 @@ GOLEFT = -1
 DIST_FROM_MID = 1
 LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
-#player variables
+
+BUFFERTURNS = 3
 
 def setupGame(p1_script, p2_script):
     
@@ -194,6 +195,10 @@ def startGame(path1, path2):
     max_tick = timeLimit * movesPerSecond
     game_running = True
     
+    # buffer turn : for smoothness
+    for i in range(BUFFERTURNS):
+        playerToJson(player1, p1_json_dict, fill=True)
+        playerToJson(player2, p2_json_dict, fill=True)
     #instantiate the player scripts
     while game_running:
         
