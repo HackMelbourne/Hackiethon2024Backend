@@ -60,6 +60,9 @@ class Script:
         # if enemy charging up with heavy, ready to parry
         # if enemy 1 block away, ready to parry
         
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
         if get_landed(player):
             if self.get_x_distance(player, enemy) == 1:
                 # enemy likely to attack, so parry
@@ -119,7 +122,7 @@ class Script:
     def get_x_distance(self, player, enemy):
         return abs(get_pos(player)[0] - get_pos(enemy)[0]) 
     
-    def check_dodge_proj(player, enemy, projobj):
+    def check_dodge_proj(self, player, enemy, projobj):
         if ((get_pos(player)[0] < get_pos(projobj)[0] < get_pos(enemy)[0]) or
             (get_pos(player)[0] > get_pos(projobj)[0] > get_pos(enemy)[0])):
             # projectile is in the way of the player to enemy

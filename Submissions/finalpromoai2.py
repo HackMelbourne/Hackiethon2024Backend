@@ -82,6 +82,7 @@ class Script:
             # move
             # try to dodge projectiles
             if len(enemy_projectiles):
+                print(enemy_projectiles[0])
                 enem_proj = enemy_projectiles[0]
                 if (self.get_x_distance(player, enem_proj) <= 2 and 
                     self.check_dodge_proj(player, enemy, enem_proj)):
@@ -114,7 +115,7 @@ class Script:
     def get_x_distance(self, player, enemy):
         return abs(get_pos(player)[0] - get_pos(enemy)[0]) 
     
-    def check_dodge_proj(player, enemy, projobj):
+    def check_dodge_proj(self, player, enemy, projobj):
         if ((get_pos(player)[0] < get_pos(projobj)[0] < get_pos(enemy)[0]) or
             (get_pos(player)[0] > get_pos(projobj)[0] > get_pos(enemy)[0])):
             # projectile is in the way of the player to enemy
