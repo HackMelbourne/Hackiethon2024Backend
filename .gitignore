@@ -5,3 +5,4 @@
 *.pyc
 jsonfiles\p1.json
 jsonfiles\p2.json
+**/pytest_cache

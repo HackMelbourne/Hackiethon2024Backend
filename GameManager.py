@@ -255,7 +255,6 @@ def startGame(path1, path2):
         'projYCoord':[]
     }
     projectiles = []
-    print("PROJECTILES1", projectiles)
     
     tick = 0
     max_tick = timeLimit * movesPerSecond
@@ -374,4 +373,5 @@ def startGame(path1, path2):
         print('Tie!')
         return None
 
-startGame("p1", "p2")
+if __name__ == "__main__":
+    startGame("p1", "p2")
