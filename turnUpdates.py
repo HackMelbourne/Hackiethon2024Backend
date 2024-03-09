@@ -268,3 +268,4 @@ def update_stun(player):
 def update_recovery(player):
     if player._recovery > 0:
         player._recovery -= 1
+

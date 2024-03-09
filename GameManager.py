@@ -27,6 +27,82 @@ LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
 #player variables
 
+# plays out one turn without checking deaths
+def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
+    """
+    Plays out one turn without checking death. \\
+    Isolating so we can unit test.
+    """
+    knock1 = knock2 = 0
+        
+    #if midair, start falling/rising
+    updateMidair(player1)
+    updateMidair(player2)
+
+    # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
+    # if uncommented, length of projectile json would be half of player json
+    #playerToJson(player1, p1_json_dict, True)
+    #playerToJson(player2,p2_json_dict, True)
+    print("PROJECTILES", projectiles)
+    p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
+    p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
+    
+    p1_move = p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles)
+    p2_move = p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles)
+    if not p1_move:
+        p1_move = ("NoMove",)
+    if not p2_move:
+        p2_move = ("NoMove",)
+    player1._inputs.append(p1_move)
+    player2._inputs.append(p2_move)
+    
+    act1 = player1._action()
+    act2 = player2._action()
+                
+    knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
+                                        act1, act2, stun1, stun2, 
+                                        projectiles)
+    
+    
+    #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
+    #print(f"Moves : {len(player1._moves)}, {player1._moves}")
+    #print("After movement:")
+    #test.playerInfo(player1, path1, act1)
+    #test.playerInfo(player2, path2, act2)
+    # if there are projectiles, make them travel
+    projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
+                            knock1, stun1, knock2, stun2, player1, player2,
+                            p1_json_dict, p2_json_dict)
+    
+    
+    #only determine knockback and stun after attacks hit
+    #knock1 and stun1 = knockback and stun inflicted by player1 on player2
+    # print(f"k1 {knock1}, k2 {knock2}")
+    if knock1:
+        player2._xCoord += knock1
+        player2._stun = max(stun1, player2._stun)
+    if knock2:
+        player1._xCoord += knock2
+        player1._stun = max(stun2, player1._stun)
+        
+    #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+    # correct player positions if off screen/under ground        
+    test.correctPos(player1)
+    test.correctPos(player2)
+    
+    test.correct_orientation(player1, player2)
+    test.correctOverlap(player1, player2, knock1, knock2)
+        
+    updateCooldown(player1)
+    updateCooldown(player2)
+    
+    updateBuffs(player1)
+    updateBuffs(player2)
+    
+    p1_dead = check_death(player1)
+    p2_dead = check_death(player2)
+    return projectiles, stun1, stun2, p1_dead, p2_dead
+
 def setupGame(p1_script, p2_script):
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
@@ -179,6 +255,7 @@ def startGame(path1, path2):
         'projYCoord':[]
     }
     projectiles = []
+    print("PROJECTILES1", projectiles)
     
     tick = 0
     max_tick = timeLimit * movesPerSecond
@@ -187,84 +264,86 @@ def startGame(path1, path2):
     #instantiate the player scripts
     while game_running:
         
-        knock1 = knock2 = 0
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+        # knock1 = knock2 = 0
         
-        #if midair, start falling/rising
-        updateMidair(player1)
-        updateMidair(player2)
+        # #if midair, start falling/rising
+        # updateMidair(player1)
+        # updateMidair(player2)
 
-        # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
-        # if uncommented, length of projectile json would be half of player json
-        #playerToJson(player1, p1_json_dict, True)
-        #playerToJson(player2,p2_json_dict, True)
+        # # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
+        # # if uncommented, length of projectile json would be half of player json
+        # #playerToJson(player1, p1_json_dict, True)
+        # #playerToJson(player2,p2_json_dict, True)
         
-        p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
-        p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
+        # p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
+        # p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
         
-        p1_move = p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles)
-        p2_move = p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles)
-        if not p1_move:
-            p1_move = ("NoMove",)
-        if not p2_move:
-            p2_move = ("NoMove",)
-        player1._inputs.append(p1_move)
-        player2._inputs.append(p2_move)
+        # p1_move = p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles)
+        # p2_move = p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles)
+        # if not p1_move:
+        #     p1_move = ("NoMove",)
+        # if not p2_move:
+        #     p2_move = ("NoMove",)
+        # player1._inputs.append(p1_move)
+        # player2._inputs.append(p2_move)
         
-        act1 = player1._action()
-        act2 = player2._action()
+        # act1 = player1._action()
+        # act2 = player2._action()
                     
-        knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
-                                            act1, act2, stun1, stun2, 
-                                            projectiles)
+        # knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
+        #                                     act1, act2, stun1, stun2, 
+        #                                     projectiles)
         
         
-        #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
-        #print(f"Moves : {len(player1._moves)}, {player1._moves}")
-        #print("After movement:")
-        #test.playerInfo(player1, path1, act1)
-        #test.playerInfo(player2, path2, act2)
-        # if there are projectiles, make them travel
-        projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
-                                knock1, stun1, knock2, stun2, player1, player2,
-                                p1_json_dict, p2_json_dict)
+        # #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
+        # #print(f"Moves : {len(player1._moves)}, {player1._moves}")
+        # #print("After movement:")
+        # #test.playerInfo(player1, path1, act1)
+        # #test.playerInfo(player2, path2, act2)
+        # # if there are projectiles, make them travel
+        # projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
+        #                         knock1, stun1, knock2, stun2, player1, player2,
+        #                         p1_json_dict, p2_json_dict)
         
         
-        #only determine knockback and stun after attacks hit
-        #knock1 and stun1 = knockback and stun inflicted by player1 on player2
-        # print(f"k1 {knock1}, k2 {knock2}")
-        if knock1:
-            player2._xCoord += knock1
-            player2._stun = max(stun1, player2._stun)
-        if knock2:
-            player1._xCoord += knock2
-            player1._stun = max(stun2, player1._stun)
+        # #only determine knockback and stun after attacks hit
+        # #knock1 and stun1 = knockback and stun inflicted by player1 on player2
+        # # print(f"k1 {knock1}, k2 {knock2}")
+        # if knock1:
+        #     player2._xCoord += knock1
+        #     player2._stun = max(stun1, player2._stun)
+        # if knock2:
+        #     player1._xCoord += knock2
+        #     player1._stun = max(stun2, player1._stun)
             
-        #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
-        # correct player positions if off screen/under ground        
-        test.correctPos(player1)
-        test.correctPos(player2)
+        # #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+        # # correct player positions if off screen/under ground        
+        # test.correctPos(player1)
+        # test.correctPos(player2)
         
-        test.correct_orientation(player1, player2)
-        test.correctOverlap(player1, player2, knock1, knock2)
-        #print("After all projectile movement:")
-        test.playerInfo(player1, path1, act1)
-        test.playerInfo(player2, path2, act2)
-        #print(player1._moves[-1], player1._moveNum)
+        # test.correct_orientation(player1, player2)
+        # test.correctOverlap(player1, player2, knock1, knock2)
+        # #print("After all projectile movement:")
+        # test.playerInfo(player1, path1, act1)
+        # test.playerInfo(player2, path2, act2)
+        # #print(player1._moves[-1], player1._moveNum)
             
-        updateCooldown(player1)
-        updateCooldown(player2)
+        # updateCooldown(player1)
+        # updateCooldown(player2)
         
-        updateBuffs(player1)
-        updateBuffs(player2)
+        # updateBuffs(player1)
+        # updateBuffs(player2)
         
-        p1_dead = check_death(player1)
-        p2_dead = check_death(player2)
+
+        # p1_dead = check_death(player1)
+        # p2_dead = check_death(player2)
+
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
         
         playerToJson(player1, p1_json_dict)
         playerToJson(player2,p2_json_dict)
-        
         
     json.dump(p1_json_dict, player1_json)
     json.dump(p2_json_dict, player2_json)
