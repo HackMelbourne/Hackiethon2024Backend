@@ -7,17 +7,9 @@ from projectiles import *
 import json
 import os
 from turnUpdates import *
-<<<<<<< HEAD
-#import Submissions.Player1 as p1
-#import Submissions.Player2 as p2
-#import Submissions.Player3 as p1
-#import Submissions.Player5 as p2
-#import Submissions.Player4 as p2
-#import Submissions.promotional_ai1 as p1
-#import Submissions.promotional_ai2 as p2
+
 import Submissions.finalpromoai1 as p1
 import Submissions.finalpromoai2 as p2
-=======
 
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
@@ -38,7 +30,6 @@ DIST_FROM_MID = 1
 LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
 #player variables
->>>>>>> testingbranch
 
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
@@ -294,12 +285,7 @@ def startGame(path1, path2):
     #instantiate the player scripts
     while game_running:
         
-<<<<<<< HEAD
-        knock1 = knock2 = 0
-        #if midair, start falling/rising
-        updateMidair(player1)
-        updateMidair(player2)
-=======
+
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
         # knock1 = knock2 = 0
         
@@ -311,7 +297,6 @@ def startGame(path1, path2):
         # # if uncommented, length of projectile json would be half of player json
         # #playerToJson(player1, p1_json_dict, True)
         # #playerToJson(player2,p2_json_dict, True)
->>>>>>> testingbranch
         
         # p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
         # p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
@@ -324,16 +309,9 @@ def startGame(path1, path2):
         #     p2_move = ("NoMove",)
         # player1._inputs.append(p1_move)
         # player2._inputs.append(p2_move)
-        
-<<<<<<< HEAD
-        act1 = player1._action()
-        act2 = player2._action()
-        
-=======
+
         # act1 = player1._action()
         # act2 = player2._action()
->>>>>>> testingbranch
-                    
         # knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
         #                                     act1, act2, stun1, stun2, 
         #                                     projectiles)
@@ -344,24 +322,6 @@ def startGame(path1, path2):
             playerToJson(player1, p1_json_dict, not JSONFILL)
             playerToJson(player2,p2_json_dict, not JSONFILL)
         
-<<<<<<< HEAD
-        # if there are projectiles, make them travel
-        projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
-                                knock1, stun1, knock2, stun2, player1, player2,
-                                p1_json_dict, p2_json_dict)
-        
-        
-        
-        #only determine knockback and stun after attacks hit
-        #knock1 and stun1 = knockback and stun inflicted by player1 on player2
-        # print(f"k1 {knock1}, k2 {knock2}")
-        if knock1:
-            player2._xCoord += knock1
-            player2._stun = max(stun1, player2._stun)
-        if knock2:
-            player1._xCoord += knock2
-            player1._stun = max(stun2, player1._stun)
-=======
         # #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
         # #print(f"Moves : {len(player1._moves)}, {player1._moves}")
         # #print("After movement:")
@@ -382,7 +342,6 @@ def startGame(path1, path2):
         # if knock2:
         #     player1._xCoord += knock2
         #     player1._stun = max(stun2, player1._stun)
->>>>>>> testingbranch
             
         # #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
         # # correct player positions if off screen/under ground        
