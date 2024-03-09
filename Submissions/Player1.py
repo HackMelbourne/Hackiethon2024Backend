@@ -46,15 +46,5 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-
-        # uncomment below for scripted moves
-        #return scripted_moves()    
-        # uncomment below for calculated moves
-        #return full_assault(player, enemy)
-        #return eric_func(player, enemy)
-        #return leo_func(player, enemy)
-        #return spam_second()
-        #return winning_strategy(player, enemy)
-        return heavy_combo(player, enemy)
-        # return eric_func2()
+        return FORWARD
         

@@ -8,8 +8,8 @@ from Submissions.usefulFunctions import *
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = Hadoken
+PRIMARY_SKILL = OnePunchSkill
+SECONDARY_SKILL = Grenade
 
 #constants, for easier move return
 #movements
@@ -39,17 +39,33 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        # PRIMARY_SKILL = OnePunchSkill
+        # SECONDARY_SKILL = Grenade
 
-        # uncomment below for scripted moves
-        return scripted_moves()    
-        # uncomment below for calculated moves
-        #return full_assault(player, enemy)
-        # return full_parry(player, enemy)
-        # return NOMOVE
+        if get_pos(player)[0] == 0 or get_pos(player)[0] == 30:
+            return JUMP_FORWARD
+    
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
+
+        if (len(enemy_projectiles) > 0 and abs(get_proj_pos(enemy_projectiles[0])[0] - get_pos(player)[0]) < 3):
+            return JUMP
+        
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) <= prim_range(player):
+            if not primary_on_cooldown(player):
+                return PRIMARY
+            return BACK
+        
+        if abs(get_pos(player)[0] - get_pos(enemy)[0]) < 5:
+            return BACK
+        else:
+            return FORWARD
     
