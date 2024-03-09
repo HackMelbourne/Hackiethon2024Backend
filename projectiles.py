@@ -1,6 +1,6 @@
 import itertools
 from Skills import AttackSkill
-from test import LEFTBORDER, RIGHTBORDER
+from gameSettings import LEFTBORDER, RIGHTBORDER
 class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()

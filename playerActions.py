@@ -12,7 +12,7 @@ def move(player, enemy, action):
         else:
             # cooldown
             player._moves.append(("NoMove", "cooldown"))
-        return None      
+        return True      
     
     player._blocking = False
     player._block._regenShield()
@@ -36,14 +36,18 @@ def move(player, enemy, action):
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
+    return True
         
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
 def block(player, target, action):
+    print("player block activate")
     player._moves.append((action[0], "activate"))
     player._blocking = True
+    print(f"player block should be true, is {player._blocking}")
+    return True
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
@@ -98,6 +102,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     if (surehit or (abs(player_x-target_x) <= atk_range) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # if target is blocking
+        print(f"target blocking is {target._blocking}, attack is blockable: {blockable}")
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
             if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
@@ -258,7 +263,7 @@ def teleport(player, target, action):
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
-        return 0, 0
+        return True
     
     player._midStartup = False
 
@@ -268,7 +273,7 @@ def teleport(player, target, action):
     player._moves.append((action[0], "activate"))
     player._xCoord += distance * tp_direction * player._direction
     correctPos(player)
-    return None
+    return True
 
 # buffs damage and speed for player
 def super_saiyan(player, target, action):
@@ -280,7 +285,7 @@ def super_saiyan(player, target, action):
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
-        return 0, 0
+        return True
     
     player._midStartup = False
     
@@ -293,7 +298,7 @@ def super_saiyan(player, target, action):
     #changeSpeed(player, speedBuff)
     changeDamage(player, atkBuff)
     player._currentBuffDuration = duration
-    return None
+    return True
     
 # heals player for given amount of hp
 def meditate(player, target, action):
@@ -305,7 +310,7 @@ def meditate(player, target, action):
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
-        return 0, 0
+        return True
     
     player._midStartup = False
     
@@ -313,7 +318,7 @@ def meditate(player, target, action):
     player._moves.append((action[0], "activate"))
     player._hp += healVal
 
-    return None    
+    return True   
     
 # similar layout to dash_atk
 # TODO : has startup, add function to manage startups
@@ -385,9 +390,12 @@ def skill_cancel(player, target, action):
     player._skill_state = False
     player._midStartup = False
     player._moves[player._moveNum] = action
-    return None
+    return True
 # null function
-def nullFunc(player, target, action):
+def nullDef(player, target, action):
+    return False
+
+def nullAtk(player, target, action):
     return 0,0
 
 def nullProj(player, target, action):
