@@ -67,7 +67,9 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                                         act1, act2, stun1, stun2, 
                                         projectiles)
     
-    
+    if JSONFILL:
+        playerToJson(player1, p1_json_dict, not JSONFILL)
+        playerToJson(player2,p2_json_dict, not JSONFILL)
     #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
     #print(f"Moves : {len(player1._moves)}, {player1._moves}")
     #print("After movement:")
@@ -318,9 +320,6 @@ def startGame(path1, path2):
         
         # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
         # if fill set to true, ensure that proj json update fill also set to true
-        if JSONFILL:
-            playerToJson(player1, p1_json_dict, not JSONFILL)
-            playerToJson(player2,p2_json_dict, not JSONFILL)
         
         # #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
         # #print(f"Moves : {len(player1._moves)}, {player1._moves}")
