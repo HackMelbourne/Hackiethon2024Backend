@@ -7,10 +7,10 @@ import json
 import os
 from turnUpdates import *
 
-#import Submissions.Player1 as p1
-#import Submissions.Player2 as p2
-import Submissions.Player5 as p1
-import Submissions.Player6 as p2
+import Submissions.Player1 as p1
+import Submissions.Player2 as p2
+# import Submissions.Player5 as p1
+# import Submissions.Player6 as p2
 #import Submissions.Player4 as p2
 # import Submissions.promotional_ai1 as p1
 # import Submissions.promotional_ai2 as p2
