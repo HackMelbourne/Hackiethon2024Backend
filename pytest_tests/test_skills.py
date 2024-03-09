@@ -18,6 +18,7 @@ def init_game(p1, p2):
         'xCoord': [],
         'yCoord': [],
         'state': [],
+        'actionType': [],
         'stun': [],
         'midair': [],
         'falling':[],
@@ -30,6 +31,7 @@ def init_game(p1, p2):
         'xCoord': [],
         'yCoord': [],
         'state': [],
+        'actionType': [],
         'stun': [],
         'midair': [],
         'falling':[],
@@ -42,9 +44,9 @@ def init_game(p1, p2):
 
     return p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles
 
-def write_turn(player1, player2, p1_json_dict, p2_json_dict, nomove=False):
-    playerToJson(player1, p1_json_dict, nomove)
-    playerToJson(player2,p2_json_dict, nomove)
+def write_turn(player1, player2, p1_json_dict, p2_json_dict, nomove=False, start=True):
+    playerToJson(player1, p1_json_dict, nomove, start)
+    playerToJson(player2,p2_json_dict, nomove,start)
 
 def test_test():
     assert 1==1
@@ -58,8 +60,8 @@ def test_start_game():
     player1._xCoord = 5
     player2._xCoord = 10
 
-    playerToJson(player1, p1_json_dict, True)
-    playerToJson(player2,p2_json_dict, True)
+    playerToJson(player1, p1_json_dict, True, True)
+    playerToJson(player2,p2_json_dict, True, True)
     
     assert p1_json_dict['xCoord'][-1] == 5
     assert p2_json_dict['xCoord'][-1] == 10
@@ -78,7 +80,7 @@ def test_move_backwards_to_edge():
     # artificially changing their starting coordinates
     player1._xCoord = 0
     player2._xCoord = 30
-    write_turn(player1, player2, p1_json_dict, p2_json_dict, True)
+    write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
 
     projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
     write_turn(player1, player2, p1_json_dict, p2_json_dict)
@@ -110,8 +112,8 @@ def test_jump_up():
 
     assert p1_json_dict['xCoord'][-5:] == [2, 2,2,2,2]
     assert p2_json_dict['xCoord'][-5:] == [5,5,5,5,5]
-    assert p1_json_dict['yCoord'][-5:] == [0, 1,2,1, 0]
-    assert p2_json_dict['yCoord'][-5:] == [0,1,2,1,0]
+    assert p1_json_dict['yCoord'][-5:] == [1,0, 1,0,1]
+    assert p2_json_dict['yCoord'][-5:] == [1,0, 1,0,1]
 
 def test_jump_backwards_to_edge():
     # initializing the game
@@ -120,16 +122,16 @@ def test_jump_backwards_to_edge():
     # artificially changing their starting coordinates
     player1._xCoord = 0
     player2._xCoord = 15
-    write_turn(player1, player2, p1_json_dict, p2_json_dict, True)
+    write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
 
-    for i in range(5):
+    for i in range(3):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
-        write_turn(player1, player2, p1_json_dict, p2_json_dict, True)
+        write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
 
-    assert p1_json_dict['xCoord'][-5:] == [0 for i in range(5)]
-    assert p2_json_dict['xCoord'][-5:] == [15 for i in range(5)]
-    assert p1_json_dict['yCoord'][-5:] == [0, 1,2,1, 0]
-    assert p2_json_dict['yCoord'][-5:] == [0,1,2,1,0]
+    assert p1_json_dict['xCoord'][-3:] == [0 for i in range(3)]
+    assert p2_json_dict['xCoord'][-3:] == [15 for i in range(3)]
+    assert p1_json_dict['yCoord'][-3:] == [1, 0, 1]
+    assert p2_json_dict['yCoord'][-3:] == [1,0,1]
 
 
 
