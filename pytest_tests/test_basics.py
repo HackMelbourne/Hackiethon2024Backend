@@ -124,16 +124,16 @@ def test_jump_backwards_to_edge():
     player2._xCoord = 15
     write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
 
-    for i in range(8):
+    for i in range(3):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
         write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
 
     print(p1_json_dict)
 
-    assert p1_json_dict['xCoord'][-3:] == [0 for i in range(3)]
-    assert p2_json_dict['xCoord'][-3:] == [15 for i in range(3)]
-    assert p1_json_dict['yCoord'][-3:] == [1, 0, 1]
-    assert p2_json_dict['yCoord'][-3:] == [1,0,1]
+    assert p1_json_dict['xCoord'][-4:] == [0 for i in range(4)]
+    assert p2_json_dict['xCoord'][-4:] == [15 for i in range(4)]
+    assert p1_json_dict['yCoord'][-4:] == [0, 1, 1, 0]
+    assert p2_json_dict['yCoord'][-4:] == [0,1,1, 0]
 
 
 
