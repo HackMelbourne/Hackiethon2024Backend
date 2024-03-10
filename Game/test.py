@@ -1,8 +1,5 @@
 #checks if a "move" is valid
-LEFTBORDER = 0
-RIGHTBORDER = 15
-GOLEFT = -1
-GORIGHT = 1
+from Game.gameSettings import GOLEFT, GORIGHT, LEFTBORDER, RIGHTBORDER
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
@@ -12,7 +9,10 @@ def validMove(moveset, player, enemy):
     # *assuming the screen is 0-10
     elif (player._xCoord + player._direction * moveset[0] < LEFTBORDER or 
           player._xCoord + player._direction * moveset[0] > RIGHTBORDER):
-        return False
+        if moveset[1]:
+            return True
+        else:
+            return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
         return False
@@ -48,7 +48,14 @@ def correctOverlap(p1, p2, knock1, knock2):
             # rare overlap caused by air movement, move both away from each other
             p1._xCoord += p2._direction
             p2._xCoord += p1._direction
-            
+       
+       
+def correct_dir_pos(player1, player2, knock1, knock2):
+    correctPos(player1)
+    correctPos(player2)
+    
+    correct_orientation(player1, player2)
+    correctOverlap(player1, player2, knock1, knock2)
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):

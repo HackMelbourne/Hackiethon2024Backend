@@ -1,4 +1,4 @@
-from Skills import *
+from Game.Skills import *
 # use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction, primary, secondary, id):
@@ -22,7 +22,7 @@ class Player_Controller:
         self._defense = 0
         #midair attributes
         self._midair = False
-        self._jumpHeight = 2
+        self._jumpHeight = 1
         self._falling = False
         self._velocity = 0
         
@@ -118,3 +118,6 @@ class Player_Controller:
     
     def get_secondary_name(self):
         return self._secondarySkill._skillType
+    
+    def get_landed(self):
+        return self._move._cooldown > 0

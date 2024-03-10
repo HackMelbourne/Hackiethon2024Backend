@@ -3,6 +3,7 @@
 import pygame 
 from visualSprites import Sprite
 from parseJson import *
+#ensure this matches in game settings
 LEFTBORDER = 0
 RIGHTBORDER = 15
 

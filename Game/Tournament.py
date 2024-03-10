@@ -1,6 +1,6 @@
 import os
 import random
-from GameManager import startGame
+from Game.GameManager import startGame
 
 dir_path = os.path.join(os.getcwd(), "Submissions")
 player = os.listdir(dir_path)

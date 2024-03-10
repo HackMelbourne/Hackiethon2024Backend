@@ -1,18 +1,37 @@
-from test import validMove, correctPos
+from Game.test import validMove, correctPos
 from math import ceil
 
+from Game.gameSettings import HP
+
 def move(player, enemy, action):
-    moveAction = player._move._activateSkill(action[1])[1]
+    moveAction = player._move._activateSkill(action[1])
+    print(f"moveAction is {moveAction}")
+    if isinstance(moveAction, int):
+        # weird, but is on cooldown or startup
+        if moveAction == -1:
+            player._midStartup = True
+            player._moves.append((action[0], "startup"))
+        else:
+            # cooldown
+            player._moves.append(("NoMove", "cooldown"))
+        return True      
+    
     player._blocking = False
     player._block._regenShield()
+    moveAction = moveAction[1]
+    print(validMove(moveAction, player, enemy), not player._midair)
     if validMove(moveAction, player, enemy) and not player._midair:
+        print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
+            player._yCoord += 1
             if moveAction[0]:
                 # this is diagonal jump
                 player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
+                player._xCoord += player._velocity
+                correctPos(player)
         else:
             # no vertical logic, simple horizontal movement 
             print(player._direction, moveAction)
@@ -20,14 +39,18 @@ def move(player, enemy, action):
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
+    return True
         
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
 def block(player, target, action):
-    player._moves.append(action)
+    print("player block activate")
+    player._moves.append((action[0], "activate"))
     player._blocking = True
+    print(f"player block should be true, is {player._blocking}")
+    return True
 
 #returns the action if not on cooldown or mid-startup.
 # if on cd, return current cd, or -1 if mid startup
@@ -82,6 +105,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     if (surehit or (abs(player_x-target_x) <= atk_range) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # if target is blocking
+        print(f"target blocking is {target._blocking}, attack is blockable: {blockable}")
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
             if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
@@ -120,13 +144,13 @@ def attack(player,target, action):
                 # knockback buff
                 attack[4] += 2
                 
-            player._moves.append((action[0], ))
+            player._moves.append((action[0], "activate"))
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True
             player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
+            player._moves.append(("NoMove", "cooldown"))
     else:
         player._moves.append(("NoMove", None))
     return 0, 0
@@ -159,7 +183,7 @@ def fetchSkill(player, skillClass):
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._primarySkill._recovery
+            player._recovery += player._secondarySkill._recovery
         
     if returnVal == -2:
         print("Player does not have this skill")
@@ -196,16 +220,16 @@ def dash_atk(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
     
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
-    player._moves.append(action)
+    player._moves.append((action[0], "activate"))
 
     knockback, stun = attackHit(player, target, *skillInfo)
     player._xCoord += player._direction * skillInfo[1]
@@ -220,16 +244,15 @@ def uppercut(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
-    player._moves.append(action)
-    print(f"My : {player.get_pos()} enemy: {target.get_pos()}")
+    player._moves.append((action[0], "activate"))
     knockback, stun = attackHit(player, target, *skillInfo)
     correctPos(player)
     return knockback, stun
@@ -240,21 +263,20 @@ def teleport(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
-        return 0, 0
+            player._moves.append(("NoMove", "cooldown"))
+        return True
     
     player._midStartup = False
 
     distance = skillInfo[1]
     #tp_direction = action[1]  // can change later, this means input = "teleport", int
     tp_direction = -1
-    player._moves.append(action)
-
+    player._moves.append((action[0], "activate"))
     player._xCoord += distance * tp_direction * player._direction
     correctPos(player)
-    return None
+    return True
 
 # buffs damage and speed for player
 def super_saiyan(player, target, action):
@@ -263,21 +285,23 @@ def super_saiyan(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
-        return 0, 0
+            player._moves.append(("NoMove", "cooldown"))
+        return True
     
     player._midStartup = False
     
     speedBuff = skillInfo[1][0]
     atkBuff = skillInfo[1][1]
     duration = skillInfo[1][2]
-    player._moves.append(action)
-    changeSpeed(player, speedBuff)
+    player._moves.append((action[0], "activate"))
+    # turned off for now since startup and recovery so wack with super saiyan
+    # encumbered also turned off
+    #changeSpeed(player, speedBuff)
     changeDamage(player, atkBuff)
     player._currentBuffDuration = duration
-    return None
+    return True
     
 # heals player for given amount of hp
 def meditate(player, target, action):
@@ -286,18 +310,18 @@ def meditate(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
-        return 0, 0
+            player._moves.append(("NoMove", "cooldown"))
+        return True
     
     player._midStartup = False
     
     healVal = skillInfo[1]
-    player._moves.append(action)
-    player._hp += healVal
+    player._moves.append((action[0], "activate"))
+    player._hp = min(player._hp + healVal, HP)
 
-    return None    
+    return True   
     
 # similar layout to dash_atk
 # TODO : has startup, add function to manage startups
@@ -309,16 +333,15 @@ def one_punch(player, target, action):
     if isinstance(skillInfo, int):
         if skillInfo == -1:
             player._midStartup = True
-            player._moves.append(action)
+            player._moves.append((action[0], "startup"))
         else:
-            player._moves.append(("NoMove", None))
+            player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
     player._midStartup = False
     
     skillInfo = skillInfo[1:]
-    player._moves.append(action)
-
+    player._moves.append((action[0], "activate"))
     knockback, stun = attackHit(player, target, *skillInfo)
     return knockback, stun
         
@@ -347,15 +370,15 @@ def fetchProjectileSkill(player, projectileName, action):
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]
-            player._moves.append(action)
+            player._moves.append((action[0], "activate"))
             player._midStartup = False
             return skillInfo
         else:
             if skillInfo == -1:
                 player._midStartup = True
-                player._moves.append(action)
+                player._moves.append((action[0], "startup"))
             else:
-                player._moves.append(("NoMove", None))
+                player._moves.append(("NoMove", "cooldown"))
     return None
 
 
@@ -370,9 +393,12 @@ def skill_cancel(player, target, action):
     player._skill_state = False
     player._midStartup = False
     player._moves[player._moveNum] = action
-    return None
+    return True
 # null function
-def nullFunc(player, target, action):
+def nullDef(player, target, action):
+    return False
+
+def nullAtk(player, target, action):
     return 0,0
 
 def nullProj(player, target, action):

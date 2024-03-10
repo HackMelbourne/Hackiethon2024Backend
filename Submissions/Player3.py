@@ -1,14 +1,14 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = TeleportSkill
+SECONDARY_SKILL = BearTrap
 
 #constants, for easier move return
 #movements
@@ -29,6 +29,7 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
+
 
 class Script:
     def __init__(self):
@@ -62,5 +63,4 @@ class Script:
             return BACK
         else:
             return FORWARD
-        
     
