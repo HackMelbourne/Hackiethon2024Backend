@@ -135,13 +135,13 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=20, damage=10, xRange=5, 
+        super().__init__(startup=0, cooldown=8, damage=5, xRange=5, 
                          vertical=0, blockable=False, knockback=0, stun=2)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=20, damage=15, xRange = 1, 
+        super().__init__(startup=0, cooldown=5, damage=8, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
         
@@ -150,8 +150,9 @@ class UppercutSkill(AttackSkill):
 
 class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=2, cooldown=30, damage=20, xRange=1,
-                         vertical=0, blockable=False, knockback=4, stun=3)
+        super().__init__(startup=1, cooldown=8, damage=20, xRange=1,
+                         vertical=0, blockable=False, knockback=4, stun=4)
+
         self._skillType = "onepunch"
         self._recovery = 2 # bcs op
 
@@ -172,15 +173,16 @@ class Meditate(Skill):
 
 class TeleportSkill(Skill):
     def __init__(self, player=None):
-        super().__init__(skillType= "teleport", startup= 0, cooldown= 30, skillValue= 5)
+        # skillValue here means teleport distance
+        super().__init__(skillType= "teleport", startup= 0, cooldown= 6, skillValue= 5)
 
     def _activateSkill(self):
         return self._useSkill()
 
-# returns ("super_saiyan", (speedBuff, attackBuff, defenseBuff))
+# now just buffs attack, ignore speed stuff
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=30, speedBuff=2, attackBuff=2, 
+        super().__init__(startup=0, cooldown=40, speedBuff=2, attackBuff=2, 
                          duration=20)
         self._skillType = "super_saiyan"
 

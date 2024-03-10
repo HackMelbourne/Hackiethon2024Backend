@@ -5,7 +5,6 @@ from Game.gameSettings import HP
 
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
-    print(f"moveAction is {moveAction}")
     if isinstance(moveAction, int):
         # weird, but is on cooldown or startup
         if moveAction == -1:
@@ -19,37 +18,35 @@ def move(player, enemy, action):
     player._blocking = False
     player._block._regenShield()
     moveAction = moveAction[1]
-    print(validMove(moveAction, player, enemy), not player._midair)
+    # dont actually move until reach outside function
+    cached_move = [0,0]
     if validMove(moveAction, player, enemy) and not player._midair:
         print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
-            player._yCoord += 1
+            cached_move[1] += 1
             if moveAction[0]:
                 # this is diagonal jump
                 player._velocity = player._direction * moveAction[0] * player._speed
-                player._jumpHeight = 1 * player._speed
-                player._xCoord += player._velocity
-                correctPos(player)
+                cached_move[0] += player._velocity
+            player._jumpHeight = 1 * player._speed
+            player._airvelo = player._jumpHeight
         else:
             # no vertical logic, simple horizontal movement 
-            print(player._direction, moveAction)
-            player._xCoord += player._direction * moveAction[0] * player._speed   
+            cached_move[0] += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
-    return True
+    return cached_move
         
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
 def block(player, target, action):
-    print("player block activate")
     player._moves.append((action[0], "activate"))
     player._blocking = True
-    print(f"player block should be true, is {player._blocking}")
     return True
 
 #returns the action if not on cooldown or mid-startup.
@@ -68,7 +65,6 @@ def fetchAttack(player, attackType):
             player._recovery += player._primarySkill._recovery
     return returnVal
 
-# todo fix this, based on relative moves, not absolute
 def check_atk_combo(player, attack):
     if attack == "light":
         # go to previous move before heavy startup
@@ -186,10 +182,10 @@ def fetchSkill(player, skillClass):
             player._recovery += player._secondarySkill._recovery
         
     if returnVal == -2:
-        print("Player does not have this skill")
+        raise Exception("Player does not have this skill")
     return returnVal
     
-    
+# currently unused in super saiyan   
 def changeSpeed(player, speed):
     # if speed == 0, reset startups back to default
     player._primarySkill._reduceMaxStartup(speed)
@@ -202,6 +198,7 @@ def changeSpeed(player, speed):
     # when resetting back to normal speed, set player speed to 1 and use 
     # resetMaxStartup method
 
+# for super saiyan, increases damage dealt
 def changeDamage(player, buffValue):
     if player._primarySkill._skillType in (attack_actions | projectile_actions):
         player._primarySkill._damageBuff(buffValue)

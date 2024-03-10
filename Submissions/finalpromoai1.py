@@ -41,13 +41,18 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.moves = [BACK, BACK, BACK, BACK, BACK, BACK, BACK]
+        self.movesiter = iter(self.moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-
+        try:
+            return next(self.movesiter)
+        except StopIteration:
+            return NOMOVE
         # ken's ai
         # plan
         # landed: cant move, so block : might lead to parry
@@ -60,6 +65,8 @@ class Script:
         # if enemy charging up with heavy, ready to parry
         # if enemy 1 block away, ready to parry
         
+        
+        '''
         if not secondary_on_cooldown(player):
             return SECONDARY
         
@@ -116,6 +123,7 @@ class Script:
             return PRIMARY
         
         return HEAVY
+        '''
         
         
         
