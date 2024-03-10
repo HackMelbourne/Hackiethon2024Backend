@@ -9,7 +9,10 @@ def validMove(moveset, player, enemy):
     # *assuming the screen is 0-10
     elif (player._xCoord + player._direction * moveset[0] < LEFTBORDER or 
           player._xCoord + player._direction * moveset[0] > RIGHTBORDER):
-        return False
+        if moveset[1]:
+            return True
+        else:
+            return False
     #UPDATE: invalid if next to each other and moving towards the other
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
         return False

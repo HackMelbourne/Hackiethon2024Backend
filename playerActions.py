@@ -29,6 +29,7 @@ def move(player, enemy, action):
                 player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
                 player._xCoord += player._velocity
+                correctPos(player)
         else:
             # no vertical logic, simple horizontal movement 
             print(player._direction, moveAction)
