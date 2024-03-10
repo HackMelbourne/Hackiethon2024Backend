@@ -6,7 +6,7 @@ def validMove(moveset, player, enemy):
     if moveset[0] not in valid_moves or moveset[1] not in valid_moves:
         return False
     # check if out of bound 
-    # *assuming the screen is 0-10
+        print(player._xCoord + player._direction * moveset[0] > RIGHTBORDER)
     elif (player._xCoord + player._direction * moveset[0] < LEFTBORDER or 
           player._xCoord + player._direction * moveset[0] > RIGHTBORDER):
         if moveset[1]:
