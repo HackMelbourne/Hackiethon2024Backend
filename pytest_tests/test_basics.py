@@ -1,9 +1,9 @@
 
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path("test_basics.py").parent.parent))
 
-# from GameManager import execute_one_turn, setupGame'
 from Game.gameSettings import *
 from Game.test import *
 from Game.playerActions import *
@@ -11,6 +11,7 @@ from Game.turnUpdates import playerToJson
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
 
+from pytest_tests.helpers import artificially_move_player, init_game
 import pytest_tests.test_bots.MoveBackwards as backwards_bot
 import pytest_tests.test_bots.JumpBackwardsBot as jump_backwards_bot
 import pytest_tests.test_bots.JumpForwardsBot as jump_forwards_bot
@@ -18,54 +19,7 @@ import pytest_tests.test_bots.JumpBot as jump_bot
 import pytest_tests.test_bots.DoNothingBot as nothing_bot
 import pytest_tests.test_bots.ForwardsBot as forwards_bot
 import pytest_tests.test_bots.PunchOnceBot as punch_once_bot
-from Game.GameManager import setupGame, execute_one_turn
-
-def init_game(p1, p2):
-    p1_script = p1.Script()
-    p2_script = p2.Script()
-    player1, player2 = setupGame(p1_script, p2_script)
-    stun1 = stun2 = 0
-    p1_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-        }
-    p2_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-    }
-
-    projectiles = []
-
-    if JSONFILL:
-        playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL, start=True)
-        playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL, start=True)
-
-    return p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles
-
-# only adds 1 x to coords
-def artificially_move_player(player, x, p_json_dict):
-    player._xCoord = x
-
-    if JSONFILL:
-        playerToJson(player, p_json_dict, fill=JSONFILL, checkHurt = JSONFILL, start=True)
+from Game.GameManager import execute_one_turn
 
 def test_test():
     assert 1==1

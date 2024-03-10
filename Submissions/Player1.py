@@ -15,7 +15,7 @@ PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
-#movements
+# movements
 JUMP = ("move", (0,1))
 FORWARD = ("move", (1,0))
 BACK = ("move", (-1,0))
