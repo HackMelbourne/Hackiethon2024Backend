@@ -1,12 +1,20 @@
-# from GameManager import execute_one_turn, setupGame
-from Hackethon2024.turnUpdates import playerToJson
+import sys
+from pathlib import Path
+sys.path.append(str(Path("test_basics.py").parent.parent.parent.parent))
+print(sys.path)
+
+# from GameManager import execute_one_turn, setupGame'
+import Game
+from Game.gameSettings import *
+from Game.test import *
+from Game.playerActions import *
+from Game.turnUpdates import playerToJson
 import Submissions.Player1 as p1
 import Submissions.Player2 as p2
 import pytest_tests.test_bots.MoveBackwards as backwards_bot
 import pytest_tests.test_bots.JumpBackwardsBot as jump_backwards_bot
 import pytest_tests.test_bots.JumpBot as jump_bot
-import os, sys
-from Hackethon2024.GameManager import setupGame, execute_one_turn
+from Game.GameManager import setupGame, execute_one_turn
 
 def init_game(p1, p2):
     p1_script = p1.Script()
