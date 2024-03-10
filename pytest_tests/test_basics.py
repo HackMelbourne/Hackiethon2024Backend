@@ -1,10 +1,8 @@
 import sys
 from pathlib import Path
-sys.path.append(str(Path("test_basics.py").parent.parent.parent.parent))
-print(sys.path)
+sys.path.append(str(Path("test_basics.py").parent.parent))
 
 # from GameManager import execute_one_turn, setupGame'
-import Game
 from Game.gameSettings import *
 from Game.test import *
 from Game.playerActions import *

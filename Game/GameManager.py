@@ -1,7 +1,9 @@
-from Game.test import *
-import importlib
 import sys
 from pathlib import Path
+sys.path.append(str(Path("GameManager.py").parent))
+from Game.test import *
+import importlib
+
 from Game.playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
 from Game.gameSettings import *
 from Game.Skills import *
@@ -10,7 +12,6 @@ import json
 import os
 from Game.turnUpdates import *
 
-sys.path.append(str(Path("GameManager.py").parent.parent.parent))
 
 # import Submissions.finalpromoai1 as p1
 # import Submissions.finalpromoai2 as p2
