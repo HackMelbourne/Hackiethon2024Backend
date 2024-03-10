@@ -4,8 +4,8 @@ GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
 def proj_knockback(proj, player):
     knockback = 1
-    # checking for grenade physics
-    if proj._type == "grenade":
+    # checking physics for projectiles that can hit from behind
+    if proj._type == "grenade" or proj._type == "icewall":
         proj._direction = 1
         if player._xCoord < proj._xCoord:
             knockback = -1

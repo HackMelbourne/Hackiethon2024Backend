@@ -138,10 +138,10 @@ class ProjectileSkill(AttackSkill):
     
 class Hadoken(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
-        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6,0], [7,0]]
         self._stunself = False
     
     def _activateSkill(self):
@@ -161,7 +161,7 @@ class Hadoken(ProjectileSkill):
 # TODO while lasso projecile is up, caster cannot move
 class Lasso(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=3,
                                  blockable=True, knockback=-2, stun=0, 
                                  skillName="lasso")
         self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
@@ -183,7 +183,7 @@ class Lasso(ProjectileSkill):
         
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
@@ -205,8 +205,8 @@ class Boomerang(ProjectileSkill):
         
 class Grenade(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
-                                 blockable=False, knockback=3, stun=3, 
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=12,
+                                 blockable=False, knockback=3, stun=2, 
                                  skillName="grenade")
         self._path = [[1,1], [2,1], [3,1], [4,1]]
         self._stunself = False
@@ -228,7 +228,7 @@ class Grenade(ProjectileSkill):
     
 class BearTrap(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
                                  blockable=False, knockback=0, stun=3, 
                                  skillName="beartrap")
         self._path = [[1,0], [2,0]]
@@ -251,8 +251,8 @@ class BearTrap(ProjectileSkill):
         
 class IceWall(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=30, damage=10,
-                                 blockable=False, knockback=2, stun=1, 
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=20, damage=10,
+                                 blockable=False, knockback=2, stun=0, 
                                  skillName="icewall")
         self._path = [[1,0], [2,0], [3,0]]
         self._stunself = False

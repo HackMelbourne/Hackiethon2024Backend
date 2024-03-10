@@ -5,7 +5,6 @@ from Game.gameSettings import HP
 
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
-    print(f"moveAction is {moveAction}")
     if isinstance(moveAction, int):
         # weird, but is on cooldown or startup
         if moveAction == -1:

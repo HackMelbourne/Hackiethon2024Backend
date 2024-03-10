@@ -4,8 +4,8 @@ class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction, primary, secondary, id):
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
-        self._lightAtk = AttackSkill(0, 1, 5, 1, 0, True, 0, 1)
-        self._heavyAtk = AttackSkill(1, 4, 10, 1, 0, True, 2, 2)
+        self._lightAtk = AttackSkill(0, 1, 2, 1, 0, True, 0, 1)
+        self._heavyAtk = AttackSkill(1, 4, 3, 1, 0, True, 2, 2)
         self._block = BlockSkill(0, 0, 15, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
