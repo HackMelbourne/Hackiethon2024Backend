@@ -1,5 +1,10 @@
 #checks if a "move" is valid
 from Game.gameSettings import GOLEFT, GORIGHT, LEFTBORDER, RIGHTBORDER
+from Game.Skills import *
+from Game.projectiles import *
+
+primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, SuperSaiyanSkill]
+secondarySkills = [Hadoken, Lasso, Boomerang, Grenade, IceWall, BearTrap]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
@@ -65,3 +70,8 @@ def playerInfo(player, playerName, action):
     print(f"             SPEED: {player._speed}, ATKBUFF: {player._atkbuff}, DURATION: {player._currentBuffDuration}")
     print(f"INPUT ACTION: {action}")
     print(f"ACTUAL ACTION: {player._moves[player._moveNum - 1]}")
+    
+def check_valid_skills(primskill, secoskill):
+    print(primskill, primarySkills)
+    print(secoskill, secondarySkills)
+    return (primskill in primarySkills and secoskill in secondarySkills)

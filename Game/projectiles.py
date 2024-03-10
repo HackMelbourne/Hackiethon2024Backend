@@ -130,6 +130,7 @@ class ProjectileSkill(AttackSkill):
         self._player = player
         self._skillType = skillName
         self._recovery = 0
+        self._skillSlot = "secondary"
         
     def summonProjectile(self, path, size, trait, collision, timer):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 

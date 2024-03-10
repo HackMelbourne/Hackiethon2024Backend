@@ -10,6 +10,9 @@ class Skill:
         self._initMaxStartup = startup
         self._startupReducMult = 1
         
+        #default skill slot is primary, set to secondary in projectile skills
+        self._skillSlot = "primary"
+        
         #cooldown after skill is used
         self._maxCooldown = cooldown
         #current skill cooldown
@@ -179,7 +182,7 @@ class TeleportSkill(Skill):
     def _activateSkill(self):
         return self._useSkill()
 
-# now just buffs attack, ignore speed stuff
+# now just buffs attack, ignore speed
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=40, speedBuff=2, attackBuff=2, 

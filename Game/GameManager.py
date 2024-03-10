@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 import importlib
 import json
-import os
 sys.path.append(str(Path("GameManager.py").parent))
 
 from Game.test import *
@@ -140,6 +139,9 @@ def setupGame(p1_script, p2_script):
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
     player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
     player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+    # check if correct primary and secondary skills
+    assert(check_valid_skills(*p1_script.init_player_skills()))
+    assert(check_valid_skills(*p2_script.init_player_skills()))
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
@@ -214,17 +216,18 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # if a defensive action is taken, it has priority over damage moves/skills
     # defensive = any skill that does not deal damage
     cached_move_1 = cached_move_2 = None
+    print(f"Issue: {act1}")
     if act1:
         if act1[0] != "block":
             reset_block(player1)
         cached_move_1 = defense_actions.get(act1[0], nullDef)(player1, player2, act1)
-        if cached_move_1 != None:
+        if cached_move_1:
             act1 = None # prevent from going into attacks
     if act2:
         if act2[0] != "block":
             reset_block(player2)
         cached_move_2 = defense_actions.get(act2[0], nullDef)(player2, player1, act2)
-        if cached_move_2 != None:
+        if cached_move_2:
             act2 = None
         
     if isinstance(cached_move_1, list):
@@ -240,6 +243,8 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # if projectile is created, add to projectile list
     correctPos(player1)
     correctPos(player2)
+    
+    print(f"Issue: {act1}")
     if act1:
         knock1, stun1 = attack_actions.get(act1[0], nullAtk)(player1, player2, act1)
         proj_obj = projectile_actions.get(act1[0], nullProj)(player1, player2, act1)
@@ -327,6 +332,8 @@ def startGame(path1, path2, submissionpath):
         projectileToJson(None, p1_json_dict, False, fill=False)
         projectileToJson(None, p2_json_dict, False, fill=False)
         tick += 1
+        max_tick += 1
+        
     #instantiate the player scripts
     while game_running:
         
