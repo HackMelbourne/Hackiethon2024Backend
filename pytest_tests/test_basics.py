@@ -6,6 +6,7 @@ import pytest_tests.test_bots.JumpForwardsBot as jump_forwards_bot
 import pytest_tests.test_bots.JumpBot as jump_bot
 import pytest_tests.test_bots.DoNothingBot as nothing_bot
 import pytest_tests.test_bots.ForwardsBot as forwards_bot
+import pytest_tests.test_bots.PunchOnceBot as punch_once_bot
 from Hackethon2024.GameManager import setupGame, execute_one_turn
 
 def init_game(p1, p2):
@@ -191,7 +192,7 @@ def test_jump_forward():
 
     for i in range(3):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
-        write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
+        write_turn(player1, player2, p1_json_dict, p2_json_dict)
 
     print(p1_json_dict)
 
@@ -207,7 +208,28 @@ def test_players_collid_midair():
     pass
 
 def test_knockback_offstage():
-    pass
+    # initializing the game
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(nothing_bot, punch_once_bot)
+
+    # artificially changing their starting coordinates
+    player1._xCoord = 0
+    player2._xCoord = 1
+    write_turn(player1, player2, p1_json_dict, p2_json_dict, True, True)
+
+    # turn 1
+    projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+    write_turn(player1, player2, p1_json_dict, p2_json_dict)
+
+    # turn 2
+    projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+    write_turn(player1, player2, p1_json_dict, p2_json_dict)
+
+    # turn 3
+    projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+    write_turn(player1, player2, p1_json_dict, p2_json_dict)
+
+    print(p1_json_dict)
+    print(p2_json_dict)
 
 def test_heavy_cooldown():
     pass
