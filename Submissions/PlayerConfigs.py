@@ -25,6 +25,7 @@ class Player_Controller:
         self._jumpHeight = 1
         self._falling = False
         self._velocity = 0
+        self._airvelo = 0
         
         #direction player is facing
         self._direction = direction

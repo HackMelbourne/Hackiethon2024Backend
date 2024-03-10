@@ -19,26 +19,27 @@ def move(player, enemy, action):
     player._blocking = False
     player._block._regenShield()
     moveAction = moveAction[1]
-    print(validMove(moveAction, player, enemy), not player._midair)
+    # dont actually move until reach outside function
+    cached_move = [0,0]
     if validMove(moveAction, player, enemy) and not player._midair:
         print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
-            player._yCoord += 1
+            cached_move[1] += 1
             if moveAction[0]:
                 # this is diagonal jump
                 player._velocity = player._direction * moveAction[0] * player._speed
-                player._jumpHeight = 1 * player._speed
-                player._xCoord += player._velocity
+                cached_move[0] += player._velocity
+            player._jumpHeight = 1 * player._speed
+            player._airvelo = player._jumpHeight
         else:
             # no vertical logic, simple horizontal movement 
-            print(player._direction, moveAction)
-            player._xCoord += player._direction * moveAction[0] * player._speed   
+            cached_move[0] += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
-    return True
+    return cached_move
         
 def reset_block(player):
     player._block._regenShield()

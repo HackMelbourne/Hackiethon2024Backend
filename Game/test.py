@@ -14,7 +14,8 @@ def validMove(moveset, player, enemy):
         else:
             return False
     #UPDATE: invalid if next to each other and moving towards the other
-    elif (abs(player._xCoord - enemy._xCoord) == moveset[0]):
+    elif (abs(player._xCoord - enemy._xCoord) == moveset[0] and 
+          (player._yCoord + moveset[1]) == enemy._yCoord):
         return False
     return True
 
@@ -48,14 +49,16 @@ def correctOverlap(p1, p2, knock1, knock2):
             # rare overlap caused by air movement, move both away from each other
             p1._xCoord += p2._direction
             p2._xCoord += p1._direction
+        return True
+    return False
        
-       
+# returns if player collision occured       
 def correct_dir_pos(player1, player2, knock1, knock2):
     correctPos(player1)
     correctPos(player2)
     
     correct_orientation(player1, player2)
-    correctOverlap(player1, player2, knock1, knock2)
+    return correctOverlap(player1, player2, knock1, knock2)
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):

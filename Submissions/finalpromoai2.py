@@ -41,12 +41,18 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.moves = [FORWARD, JUMP_FORWARD, FORWARD, FORWARD]
+        self.movesiter = iter(self.moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        try:
+            return next(self.movesiter)
+        except StopIteration:
+            return NOMOVE
         # ken's ai
         # plan
         # landed: cant move, so block : might lead to parry
@@ -58,6 +64,11 @@ class Script:
         # if enemy is 4 blocks away: dash attack, else move if on cooldown
         # if enemy charging up with heavy, ready to parry
         # if enemy 1 block away, ready to parry
+        
+        
+        '''
+        if not secondary_on_cooldown(player):
+            return SECONDARY
         
         if get_landed(player):
             if self.get_x_distance(player, enemy) == 1:
@@ -75,14 +86,17 @@ class Script:
                 # only 1 tick on stun, so do light
                 return LIGHT
             else:
-                return LIGHT
+                # no stun, could potentially attack
+                if get_past_move(enemy, 1) == BLOCK:
+                    # fuck it attack
+                    return HEAVY
+                return BLOCK
         
         # at this point, player and enemy are at least 2 blocks apart
         if self.get_x_distance(player, enemy) < prim_range(player):
             # move
             # try to dodge projectiles
             if len(enemy_projectiles):
-                print(enemy_projectiles[0])
                 enem_proj = enemy_projectiles[0]
                 if (self.get_x_distance(player, enem_proj) <= 2 and 
                     self.check_dodge_proj(player, enemy, enem_proj)):
@@ -98,8 +112,8 @@ class Script:
                     if not primary_on_cooldown(player):
                         return PRIMARY
             else:
-                # no projectiles, jsut move closer
-                return NOMOVE
+                # no projectiles, just move closer
+                return FORWARD
         elif self.get_x_distance(player, enemy) ==  prim_range(player):
             if not primary_on_cooldown(player):
                 return PRIMARY
@@ -108,7 +122,8 @@ class Script:
             # dash attack just within range, use it for max efficiency
             return PRIMARY
         
-        return FORWARD
+        return HEAVY
+        '''
         
         
         
@@ -121,3 +136,5 @@ class Script:
             # projectile is in the way of the player to enemy
             return get_pos(player)[1] == get_pos(projobj)[1]
         return False
+        
+        

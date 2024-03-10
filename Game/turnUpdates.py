@@ -31,17 +31,20 @@ def updateMidair(player):
         player._falling = (player._yCoord >= player._jumpHeight * player._speed)
     # not yet at apex of jump
     if player._midair:
+        print(player.get_pos())
         if player._falling: 
             # specifically to check for diagonal jumps, ensure jump arc
             # like _ - - _
             check_point = player._jumpHeight
             print(player.get_past_move(check_point))
-            if player.get_past_move(check_point)[1] not in ((1,1), (-1,1)):
+            if ((player.get_past_move(check_point)[1] not in ((1,1), (-1,1))) or
+                                                    player._airvelo == 0):
                 player._yCoord -= GRAVITY
         else:
             player._yCoord += 1 * player._speed
         player._xCoord += player._velocity * player._speed
         updated = True
+        print(player.get_pos())
 
     # player has landed, reset midair attributes
     if player._yCoord <= 0 and player._falling: 
@@ -51,6 +54,7 @@ def updateMidair(player):
     
     if not player._midair:
         player._velocity = 0
+        player._airvelo = 0
         player._jumpheight = MAX_JUMP_HEIGHT
         
     return updated
@@ -297,7 +301,5 @@ def check_json_updated(name):
     print(f"{name} updated")
     
 def ifHurt(playerJson):
-    print(f"IF HIT BY PROJ :{playerJson['hp'][-1]} , {playerJson['hp'][-2]}")
-    print(f"If hit by atk: {playerJson['hp'][-1]} , {playerJson['hp'][-3]}")
     return ((playerJson["hp"][-1] < playerJson["hp"][-3]) or 
             (playerJson["hp"][-1] < playerJson["hp"][-2]))

@@ -16,9 +16,9 @@ from Game.turnUpdates import *
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "pytest_tests/test_bots"
-PATH1 = "DoNothingBot"
-PATH2 = "DoNothingBot"
+SUBMISSIONPATH = "Submissions"
+PATH1 = "finalpromoai1"
+PATH2 = "finalpromoai2"
 
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
@@ -45,13 +45,18 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     updateMidair(player1)
     updateMidair(player2)
     # post midair update correction
-    correct_dir_pos(player1, player2, knock1, knock2)
+    if (correct_dir_pos(player1, player2, knock1, knock2)):
+        # player collision occured
+        player1._velocity = 0
+        player1._airvelo = 0
+        player2._velocity = 0
+        player2._airvelo = 0   
 
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
     #playerToJson(player1, p1_json_dict, True)
     #playerToJson(player2,p2_json_dict, True)
-    print("PROJECTILES", projectiles)
+
     p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
     p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
     
@@ -78,7 +83,11 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     # post movement/attack position correction
     # this is after JSONFLL bcs movement of player into each other must still 
     # be recorded
-    correct_dir_pos(player1, player2, knock1, knock2)
+    if (correct_dir_pos(player1, player2, knock1, knock2)):
+        player1._velocity = 0
+        player1._airvelo = 0
+        player2._velocity = 0
+        player2._airvelo = 0   
 
     # if there are projectiles, make them travel
     projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
@@ -96,7 +105,11 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._stun = max(stun2, player1._stun)
         
     # final position correction, if any, due to projectiles      
-    correct_dir_pos(player1, player2, knock1, knock2)
+    if (correct_dir_pos(player1, player2, knock1, knock2)):
+        player1._velocity = 0
+        player1._airvelo = 0
+        player2._velocity = 0
+        player2._airvelo = 0   
         
     updateCooldown(player1)
     updateCooldown(player2)
@@ -190,18 +203,28 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # actions can only occur if the player is not stunned
     # if a defensive action is taken, it has priority over damage moves/skills
     # defensive = any skill that does not deal damage
+    cached_move_1 = cached_move_2 = None
     if act1:
         if act1[0] != "block":
             reset_block(player1)
-        if defense_actions.get(act1[0], nullDef)(player1, player2, act1):
+        cached_move_1 = defense_actions.get(act1[0], nullDef)(player1, player2, act1)
+        if cached_move_1 != None:
             act1 = None # prevent from going into attacks
     if act2:
         if act2[0] != "block":
             reset_block(player2)
-        if defense_actions.get(act2[0], nullDef)(player2, player1, act2):
+        cached_move_2 = defense_actions.get(act2[0], nullDef)(player2, player1, act2)
+        if cached_move_2 != None:
             act2 = None
         
-
+    if isinstance(cached_move_1, list):
+        # this is a movement
+        player1._xCoord += cached_move_1[0]
+        player1._yCoord += cached_move_1[1]
+    if isinstance(cached_move_2, list):
+        # this is a movement
+        player2._xCoord += cached_move_2[0]
+        player2._yCoord += cached_move_2[1]
     # then check if a damage dealing action is taken
     # if an attack lands, return knockback and stun caused by player
     # if projectile is created, add to projectile list
