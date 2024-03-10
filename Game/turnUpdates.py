@@ -1,5 +1,5 @@
-from playerActions import attackHit, changeDamage, changeSpeed, encumber
-from gameSettings import *
+from Game.playerActions import attackHit, changeDamage, changeSpeed, encumber
+from Game.gameSettings import *
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
 def proj_knockback(proj, player):

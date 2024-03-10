@@ -1,23 +1,24 @@
-from test import *
+from Game.test import *
 import importlib
 import sys
 from pathlib import Path
-from playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
-from gameSettings import *
-from Skills import *
-from projectiles import *
+from Game.playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
+from Game.gameSettings import *
+from Game.Skills import *
+from Game.projectiles import *
 import json
 import os
-from turnUpdates import *
-from gameSettings import *
+from Game.turnUpdates import *
 
 sys.path.append(str(Path("GameManager.py").parent.parent.parent))
 
-import Submissions.finalpromoai1 as p1
-import Submissions.finalpromoai2 as p2
+# import Submissions.finalpromoai1 as p1
+# import Submissions.finalpromoai2 as p2
 
-import Submissions.Player1 as p1
-import Submissions.Player2 as p2
+# import Submissions.Player1 as p1
+# import Submissions.Player2 as p2
+import pytest_tests.test_bots.DoNothingBot as p1
+import pytest_tests.test_bots.PunchOnceBot as p2
 # import Submissions.Player5 as p1
 # import Submissions.Player6 as p2
 #import Submissions.Player4 as p2
@@ -390,6 +391,7 @@ def startGame(path1, path2):
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
+    print("p1 HP:", player1._hp, " -- p2 HP:", player2._hp)
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
         return path1

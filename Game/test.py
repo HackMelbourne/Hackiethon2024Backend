@@ -1,5 +1,5 @@
 #checks if a "move" is valid
-from gameSettings import GOLEFT, GORIGHT, LEFTBORDER, RIGHTBORDER
+from Game.gameSettings import GOLEFT, GORIGHT, LEFTBORDER, RIGHTBORDER
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     #TODO prevent double jumps
