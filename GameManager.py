@@ -1,5 +1,6 @@
 import test
 import importlib
+from pathlib import Path
 from playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
 from gameSettings import *
 from Skills import *
@@ -7,6 +8,7 @@ from projectiles import *
 import json
 import os
 from turnUpdates import *
+from gameSettings import *
 
 import Submissions.finalpromoai1 as p1
 import Submissions.finalpromoai2 as p2
@@ -19,17 +21,7 @@ import Submissions.Player2 as p2
 # import Submissions.promotional_ai1 as p1
 # import Submissions.promotional_ai2 as p2
 
-#game settings
-timeLimit = 45
-movesPerSecond = 1
 
-#direction constants
-GORIGHT = 1
-GOLEFT = -1
-DIST_FROM_MID = 1
-LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
-RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
-#player variables
 
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
@@ -42,6 +34,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     #if midair, start falling/rising
     updateMidair(player1)
     updateMidair(player2)
+    # post midair update correction
+    test.correct_dir_pos(player1, player2, knock1, knock2)
 
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
@@ -66,6 +60,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
+    # post movement/attack position correction
+    test.correct_dir_pos(player1, player2, knock1, knock2)
     
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
@@ -92,12 +88,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._stun = max(stun2, player1._stun)
         
     #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
-    # correct player positions if off screen/under ground        
-    test.correctPos(player1)
-    test.correctPos(player2)
-    
-    test.correct_orientation(player1, player2)
-    test.correctOverlap(player1, player2, knock1, knock2)
+    # final position correction, if any, due to projectiles      
+    test.correct_dir_pos(player1, player2, knock1, knock2)
         
     updateCooldown(player1)
     updateCooldown(player2)
@@ -237,13 +229,17 @@ def startGame(path1, path2):
 
     #TODO dont hard code path use the player names and use os for current path
     # * Check if file exists if so delete it 
-    if(os.path.isfile("jsonfiles\p1.json")):
-        os.remove("jsonfiles\p1.json")
-    if(os.path.isfile("jsonfiles\p2.json")):
-        os.remove("jsonfiles\p2.json")
-        
-    player1_json = open("jsonfiles\p1.json", "a")
-    player2_json = open("jsonfiles\p2.json", "a")
+    player_json = Path("jsonfiles/")
+    if("p1.json" in player_json.glob('*.json')):
+        player1_json = Path("jsonfiles/p1.json")
+        print("found p1")
+    if("p1.json" in player_json.glob('*.json')):
+        player2_json = Path("jsonfiles/p2.json")
+        print("foudn p2")
+    player1_json = player_json / "p1.json"
+    player2_json = player_json / "p2.json"
+    player1_json.open("w")
+    player2_json.open("w")
     # structure the dict
     p1_json_dict = {
         'hp': [],
@@ -288,7 +284,9 @@ def startGame(path1, path2):
     while game_running:
         
 
-        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
+            player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
+            projectiles, stun1, stun2)
         # knock1 = knock2 = 0
         
         # #if midair, start falling/rising
@@ -370,12 +368,9 @@ def startGame(path1, path2):
         playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
         playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
         
-    json.dump(p1_json_dict, player1_json)
-    json.dump(p2_json_dict, player2_json)
+    player1_json.write_text(json.dumps(p1_json_dict))
+    player2_json.write_text(json.dumps(p2_json_dict))
         
-    player1_json.close()
-    player2_json.close()
-
     for key in p1_json_dict.keys():
         print(key)
         print(p1_json_dict[key])

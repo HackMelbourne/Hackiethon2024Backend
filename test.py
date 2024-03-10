@@ -48,7 +48,14 @@ def correctOverlap(p1, p2, knock1, knock2):
             # rare overlap caused by air movement, move both away from each other
             p1._xCoord += p2._direction
             p2._xCoord += p1._direction
-            
+       
+       
+def correct_dir_pos(player1, player2, knock1, knock2):
+    correctPos(player1)
+    correctPos(player2)
+    
+    correct_orientation(player1, player2)
+    correctOverlap(player1, player2, knock1, knock2)
 
 #for testing: prints player info
 def playerInfo(player, playerName, action):

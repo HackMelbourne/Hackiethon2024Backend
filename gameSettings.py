@@ -6,8 +6,8 @@ LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
 BUFFERTURNS = 1
 #game settings
-timeLimit = 30
-movesPerSecond = 4
+timeLimit = 45
+movesPerSecond = 1
 #direction constants
 GORIGHT = 1
 GOLEFT = -1
