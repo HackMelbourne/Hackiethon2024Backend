@@ -26,7 +26,7 @@ def updateCooldown(player):
 # updates current position of player if they are midair or started jumping
 def updateMidair(player):
     # check if player should be falling
-    updated = False
+    collided = False
     if not player._falling:
         player._falling = (player._yCoord >= player._jumpHeight * player._speed)
     # not yet at apex of jump
@@ -57,7 +57,7 @@ def updateMidair(player):
         player._airvelo = 0
         player._jumpheight = MAX_JUMP_HEIGHT
         
-    return updated
+    return collided
 
 def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['hp'].append(player._hp)

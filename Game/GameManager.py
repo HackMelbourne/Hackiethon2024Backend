@@ -33,6 +33,28 @@ def get_player_files(path1, path2, subpath):
     else:
         raise Exception("A file does not exist in " + subpath)
     
+def check_collision(player1, player2, knock1, knock2, checkMidair = False):
+    # post midair update correction
+    if (correct_dir_pos(player1, player2, knock1, knock2)):
+        # player collision occured
+        player1._velocity = 0
+        player1._airvelo = 0
+        player2._velocity = 0
+        player2._airvelo = 0  
+    elif checkMidair:
+        print("chyeck")
+        # check for midair moving towards each other
+        # midair, distance 1, velocity = direction
+        if ((player1._yCoord == player2._yCoord) and 
+            (abs(player1._xCoord - player2._xCoord) == 1) and
+            player1._velocity == player1._direction and 
+            player2._velocity == player2._direction):
+            # for sure
+            player1._velocity = 0
+            player1._airvelo = 0
+            player2._velocity = 0
+            player2._airvelo = 0
+            
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
     """
@@ -41,16 +63,12 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     """
     knock1 = knock2 = 0
         
-    #if midair, start falling/rising
+    #if midair, start falling/rising, and check if midair movement causes a collision
     updateMidair(player1)
+    check_collision(player1, player2, knock1, knock2)
     updateMidair(player2)
-    # post midair update correction
-    if (correct_dir_pos(player1, player2, knock1, knock2)):
-        # player collision occured
-        player1._velocity = 0
-        player1._airvelo = 0
-        player2._velocity = 0
-        player2._airvelo = 0   
+    check_collision(player1, player2, knock1, knock2)
+ 
 
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
@@ -83,12 +101,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     # post movement/attack position correction
     # this is after JSONFLL bcs movement of player into each other must still 
     # be recorded
-    if (correct_dir_pos(player1, player2, knock1, knock2)):
-        player1._velocity = 0
-        player1._airvelo = 0
-        player2._velocity = 0
-        player2._airvelo = 0   
-
+    check_collision(player1, player2, knock1, knock2)
     # if there are projectiles, make them travel
     projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                             knock1, stun1, knock2, stun2, player1, player2,
@@ -105,11 +118,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._stun = max(stun2, player1._stun)
         
     # final position correction, if any, due to projectiles      
-    if (correct_dir_pos(player1, player2, knock1, knock2)):
-        player1._velocity = 0
-        player1._airvelo = 0
-        player2._velocity = 0
-        player2._airvelo = 0   
+    check_collision(player1, player2, knock1, knock2, True)
         
     updateCooldown(player1)
     updateCooldown(player2)
