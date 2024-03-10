@@ -1,6 +1,8 @@
 from Game.test import validMove, correctPos
 from math import ceil
 
+from Game.gameSettings import HP
+
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
     print(f"moveAction is {moveAction}")
@@ -317,7 +319,7 @@ def meditate(player, target, action):
     
     healVal = skillInfo[1]
     player._moves.append((action[0], "activate"))
-    player._hp += healVal
+    player._hp = min(player._hp + healVal, HP)
 
     return True   
     

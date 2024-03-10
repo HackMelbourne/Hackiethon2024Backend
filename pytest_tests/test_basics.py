@@ -319,5 +319,11 @@ def test_higher_hp_win():
 def test_coin_flip_win():
     pass
 
+def test_block():
+    pass
+
+def test_parry():
+    pass
+
 
 
