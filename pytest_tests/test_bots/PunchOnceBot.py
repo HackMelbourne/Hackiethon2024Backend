@@ -1,6 +1,7 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
 
 # primary skill can be defensive or offensive
@@ -48,6 +49,7 @@ class Script:
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         if (abs(get_pos(player)[0] - get_pos(enemy)[0])) < 2 and not self.hasPunched:
+            self.hasPunched = True
             return HEAVY
         return FORWARD
         

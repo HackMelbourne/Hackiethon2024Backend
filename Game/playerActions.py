@@ -1,4 +1,4 @@
-from test import validMove, correctPos
+from Game.test import validMove, correctPos
 from math import ceil
 
 def move(player, enemy, action):

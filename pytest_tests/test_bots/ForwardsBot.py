@@ -1,6 +1,6 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
 
 # primary skill can be defensive or offensive

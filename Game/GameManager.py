@@ -1,29 +1,31 @@
-import test
-import importlib
+import sys
 from pathlib import Path
-from playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
-from gameSettings import *
-from Skills import *
-from projectiles import *
+sys.path.append(str(Path("GameManager.py").parent))
+from Game.test import *
+import importlib
+
+from Game.playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
+from Game.gameSettings import *
+from Game.Skills import *
+from Game.projectiles import *
 import json
 import os
-from turnUpdates import *
-from gameSettings import *
+from Game.turnUpdates import *
+
+
 
 # import Submissions.finalpromoai1 as p1
 # import Submissions.finalpromoai2 as p2
 
 # import Submissions.Player1 as p1
 # import Submissions.Player2 as p2
-# import pytest_tests.test_bots.DoNothingBot as p1
-import pytest_tests.test_bots.DoNothingBot as p2
-import Submissions.Player5 as p1
+import pytest_tests.test_bots.DoNothingBot as p1
+import pytest_tests.test_bots.PunchOnceBot as p2
+# import Submissions.Player5 as p1
 # import Submissions.Player6 as p2
 #import Submissions.Player4 as p2
 # import Submissions.promotional_ai1 as p1
 # import Submissions.promotional_ai2 as p2
-
-
 
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
@@ -37,7 +39,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     updateMidair(player1)
     updateMidair(player2)
     # post midair update correction
-    test.correct_dir_pos(player1, player2, knock1, knock2)
+    correct_dir_pos(player1, player2, knock1, knock2)
 
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
@@ -63,7 +65,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                                         act1, act2, stun1, stun2, 
                                         projectiles)
     # post movement/attack position correction
-    test.correct_dir_pos(player1, player2, knock1, knock2)
+    correct_dir_pos(player1, player2, knock1, knock2)
     
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
@@ -91,7 +93,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         
     #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
     # final position correction, if any, due to projectiles      
-    test.correct_dir_pos(player1, player2, knock1, knock2)
+    correct_dir_pos(player1, player2, knock1, knock2)
         
     updateCooldown(player1)
     updateCooldown(player2)
@@ -391,6 +393,7 @@ def startGame(path1, path2):
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
+    print("p1 HP:", player1._hp, " -- p2 HP:", player2._hp)
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
         return path1

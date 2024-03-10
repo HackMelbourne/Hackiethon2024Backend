@@ -1,4 +1,4 @@
-from Skills import *
+from Game.Skills import *
 # use as a template for player1 and player2
 class Player_Controller:
     def __init__(self, xCoord, yCoord, HP, direction, primary, secondary, id):

@@ -1,6 +1,6 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
