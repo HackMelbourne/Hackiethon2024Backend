@@ -1,5 +1,6 @@
 from playerActions import attackHit, changeDamage, changeSpeed, encumber
 from gameSettings import *
+from test import correctPos
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
 def proj_knockback(proj, player):
@@ -53,6 +54,7 @@ def updateMidair(player):
         player._velocity = 0
         player._jumpheight = MAX_JUMP_HEIGHT
         
+    correctPos(player)
     return updated
 
 def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
