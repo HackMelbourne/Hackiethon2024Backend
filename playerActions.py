@@ -36,6 +36,7 @@ def move(player, enemy, action):
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
+    correctPos(player)
     return True
         
 def reset_block(player):
