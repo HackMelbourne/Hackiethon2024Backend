@@ -31,7 +31,6 @@ def move(player, enemy, action):
                 player._velocity = player._direction * moveAction[0] * player._speed
                 player._jumpHeight = 1 * player._speed
                 player._xCoord += player._velocity
-                correctPos(player)
         else:
             # no vertical logic, simple horizontal movement 
             print(player._direction, moveAction)
@@ -46,10 +45,8 @@ def reset_block(player):
     player._blocking = False
     
 def block(player, target, action):
-    print("player block activate")
     player._moves.append((action[0], "activate"))
     player._blocking = True
-    print(f"player block should be true, is {player._blocking}")
     return True
 
 #returns the action if not on cooldown or mid-startup.
@@ -68,7 +65,6 @@ def fetchAttack(player, attackType):
             player._recovery += player._primarySkill._recovery
     return returnVal
 
-# todo fix this, based on relative moves, not absolute
 def check_atk_combo(player, attack):
     if attack == "light":
         # go to previous move before heavy startup
@@ -186,10 +182,10 @@ def fetchSkill(player, skillClass):
             player._recovery += player._secondarySkill._recovery
         
     if returnVal == -2:
-        print("Player does not have this skill")
+        raise Exception("Player does not have this skill")
     return returnVal
     
-    
+# currently unused in super saiyan   
 def changeSpeed(player, speed):
     # if speed == 0, reset startups back to default
     player._primarySkill._reduceMaxStartup(speed)
@@ -202,6 +198,7 @@ def changeSpeed(player, speed):
     # when resetting back to normal speed, set player speed to 1 and use 
     # resetMaxStartup method
 
+# for super saiyan, increases damage dealt
 def changeDamage(player, buffValue):
     if player._primarySkill._skillType in (attack_actions | projectile_actions):
         player._primarySkill._damageBuff(buffValue)

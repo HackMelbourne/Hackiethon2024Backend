@@ -1,36 +1,42 @@
 import sys
 from pathlib import Path
-sys.path.append(str(Path("GameManager.py").parent))
-from Game.test import *
 import importlib
+import json
+import os
+sys.path.append(str(Path("GameManager.py").parent))
 
+from Game.test import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions, nullDef, nullAtk, nullProj
 from Game.gameSettings import *
 from Game.Skills import *
 from Game.projectiles import *
-import json
-import os
 from Game.turnUpdates import *
 
+# SUBMISSIONPATH = "Submissions/"
+# PATH1 = "Player1"
+# PATH2 = "Player2"
 
+SUBMISSIONPATH = "pytest_tests/test_bots"
+PATH1 = "DoNothingBot"
+PATH2 = "DoNothingBot"
 
-# import Submissions.finalpromoai1 as p1
-# import Submissions.finalpromoai2 as p2
-
-# import Submissions.Player1 as p1
-# import Submissions.Player2 as p2
-import pytest_tests.test_bots.DoNothingBot as p1
-import pytest_tests.test_bots.DoNothingBot as p2
-# import Submissions.Player5 as p1
-# import Submissions.Player6 as p2
-#import Submissions.Player4 as p2
-# import Submissions.promotional_ai1 as p1
-# import Submissions.promotional_ai2 as p2
-
+def get_player_files(path1, path2, subpath):
+    submissionFiles = Path(subpath)
+    p1module = submissionFiles / (path1 + ".py")
+    p2module = submissionFiles / (path2 + ".py")
+    if p1module.is_file() and p2module.is_file():
+        subpath = subpath.replace('\\', '.')
+        subpath = subpath.replace('/', '.')
+        p1 = importlib.import_module(subpath + "." + path1)
+        p2 = importlib.import_module(subpath+ "." + path2)
+        return p1, p2
+    else:
+        raise Exception("A file does not exist in " + subpath)
+    
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
     """
-    Plays out one turn without checking death. \\
+    Plays out one turn without checking death.
     Isolating so we can unit test.
     """
     knock1 = knock2 = 0
@@ -64,17 +70,16 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
-    # post movement/attack position correction
-    correct_dir_pos(player1, player2, knock1, knock2)
     
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
         playerToJson(player2,p2_json_dict, not JSONFILL)
-    #print(f"Inputs: {player1._moveNum}, {player1._inputs}")
-    #print(f"Moves : {len(player1._moves)}, {player1._moves}")
-    #print("After movement:")
-    #test.playerInfo(player1, path1, act1)
-    #test.playerInfo(player2, path2, act2)
+        
+    # post movement/attack position correction
+    # this is after JSONFLL bcs movement of player into each other must still 
+    # be recorded
+    correct_dir_pos(player1, player2, knock1, knock2)
+
     # if there are projectiles, make them travel
     projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                             knock1, stun1, knock2, stun2, player1, player2,
@@ -83,7 +88,6 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     
     #only determine knockback and stun after attacks hit
     #knock1 and stun1 = knockback and stun inflicted by player1 on player2
-    # print(f"k1 {knock1}, k2 {knock2}")
     if knock1:
         player2._xCoord += knock1
         player2._stun = max(stun1, player2._stun)
@@ -91,7 +95,6 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._xCoord += knock2
         player1._stun = max(stun2, player1._stun)
         
-    #print(f"P1: {player1.get_pos()}, P2: {player2.get_pos()}")
     # final position correction, if any, due to projectiles      
     correct_dir_pos(player1, player2, knock1, knock2)
         
@@ -118,15 +121,17 @@ def setupGame(p1_script, p2_script):
     return player1,player2
 
 #------------------Adding to player1 and player2 move scripts for test---------
-# changes skills --  TODO finish
+#ALERT: only for logic and animation testing, not for actual use
 def swap_skills(player, new_prim, new_second):
     player._primarySkill = new_prim(player)
     player._secondarySkill = new_second(player)
     
+# resets player shield strength
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
+# carries out player actions, return any resulting after effects to main loop  
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
     print(act1, act2)
@@ -180,7 +185,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
             player2._moves.append(("NoMove", "NoMove"))
         reset_block(player2)
         act2 = None
-    #print(act1, act2)
+
     # nullFunc, nullProj = default functions that return (0,0) or None with params
     # actions can only occur if the player is not stunned
     # if a defensive action is taken, it has priority over damage moves/skills
@@ -200,7 +205,8 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # then check if a damage dealing action is taken
     # if an attack lands, return knockback and stun caused by player
     # if projectile is created, add to projectile list
-    print(act1, act2)
+    correctPos(player1)
+    correctPos(player2)
     if act1:
         knock1, stun1 = attack_actions.get(act1[0], nullAtk)(player1, player2, act1)
         proj_obj = projectile_actions.get(act1[0], nullProj)(player1, player2, act1)
@@ -214,12 +220,15 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
             projectiles.append(proj_obj)
         reset_block(player2)
 
+    correctPos(player1)
+    correctPos(player2)
+    
     player1._moveNum += 1
     player2._moveNum += 1
     
     return knock1, stun1, knock2, stun2, projectiles
                                           
-def startGame(path1, path2):
+def startGame(path1, path2, submissionpath):
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
     if isinstance(path1, str) and not isinstance(path2,str):
@@ -227,23 +236,20 @@ def startGame(path1, path2):
     if not isinstance(path1, str) and not isinstance(path2,str):
         return None
     
+    p1, p2 = get_player_files(path1, path2, submissionpath)
+        
     p1_script = p1.Script()
     p2_script = p2.Script()
     player1, player2 = setupGame(p1_script, p2_script)
 
     stun1 = stun2 = 0
 
-    #setMoves(player1, player2)
-
-    #TODO dont hard code path use the player names and use os for current path
-    # * Check if file exists if so delete it 
+    # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
     if("p1.json" in player_json.glob('*.json')):
         player1_json = Path("jsonfiles/p1.json")
-        print("found p1")
     if("p1.json" in player_json.glob('*.json')):
         player2_json = Path("jsonfiles/p2.json")
-        print("foudn p2")
     player1_json = player_json / "p1.json"
     player2_json = player_json / "p2.json"
     player1_json.open("w")
@@ -275,8 +281,8 @@ def startGame(path1, path2):
         'projXCoord':[],
         'projYCoord':[]
     }
-    projectiles = []
     
+    projectiles = []
     tick = 0
     max_tick = timeLimit * movesPerSecond
     game_running = True
@@ -321,6 +327,7 @@ def startGame(path1, path2):
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
     print("p1 HP:", player1._hp, " -- p2 HP:", player2._hp)
+    
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
         return path1
@@ -332,4 +339,4 @@ def startGame(path1, path2):
         return None
 
 if __name__ == "__main__":
-    startGame("p1", "p2")
+    startGame(PATH1, PATH2, SUBMISSIONPATH)
