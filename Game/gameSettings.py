@@ -1,10 +1,10 @@
-JSONFILL = False # set to True for midtick info, like hurt etc
+JSONFILL = True # set to True for midtick info, like hurt etc
 DIST_FROM_MID = 1
 LEFTBORDER = 0
 RIGHTBORDER = 15
 LEFTSTART = (RIGHTBORDER-LEFTBORDER)//2 - DIST_FROM_MID
 RIGHTSTART = (RIGHTBORDER-LEFTBORDER)//2 + DIST_FROM_MID
-BUFFERTURNS = 1
+BUFFERTURNS = 2
 #game settings
 timeLimit = 45
 movesPerSecond = 1
