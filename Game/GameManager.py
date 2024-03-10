@@ -170,6 +170,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         #print("p1 skill state")
         if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
             player1._skill_state = False
+            player1._midStartup = False
         else:
             act1 = player1._moves[-1]
             
@@ -177,9 +178,9 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         #print("p2 skill state")
         if player2._inputs[-1][0] in ("skill_cancel", "move", "block"):
             player2._skill_state = False
+            player2._midStartup = False
         else:
             act2 = player2._moves[-1]
-        print(act2)
         
     # exclusively for testing
     if act1[0] == "swap":
