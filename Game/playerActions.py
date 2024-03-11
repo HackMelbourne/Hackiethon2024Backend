@@ -21,7 +21,6 @@ def move(player, enemy, action):
     # dont actually move until reach outside function
     cached_move = [0,0]
     if validMove(moveAction, player, enemy) and not player._midair:
-        print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True

@@ -42,9 +42,7 @@ def correctPos(player):
 
 def correctOverlap(p1, p2, knock1, knock2):
     if p1.get_pos() == p2.get_pos():
-        print("Overlapping")
         # if p2 caused the knockback, move p1 1 xcoord away in p2 direction
-        print(knock2, knock1) 
         if knock2:
             p1._xCoord += p2._direction
         elif knock1:
@@ -72,6 +70,4 @@ def playerInfo(player, playerName, action):
     print(f"ACTUAL ACTION: {player._moves[player._moveNum - 1]}")
     
 def check_valid_skills(primskill, secoskill):
-    print(primskill, primarySkills)
-    print(secoskill, secondarySkills)
     return (primskill in primarySkills and secoskill in secondarySkills)
