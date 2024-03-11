@@ -56,6 +56,7 @@ def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['hp'].append(player._hp)
     jsonDict['xCoord'].append(player._xCoord)
     jsonDict['yCoord'].append(player._yCoord)
+    jsonDict['direction'].append(player._direction)
     if not fill:
 
         jsonDict['state'].append(player._moves[-1][0])

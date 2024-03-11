@@ -307,6 +307,7 @@ def startGame(path1, path2, submissionpath):
         'stun': [],
         'midair': [],
         'falling':[],
+        'direction':[],
         'ProjectileType': None,
         'projXCoord':[],
         'projYCoord':[]
@@ -320,6 +321,7 @@ def startGame(path1, path2, submissionpath):
         'stun': [],
         'midair': [],
         'falling':[],
+        'direction':[],
         'ProjectileType': None,
         'projXCoord':[],
         'projYCoord':[]
