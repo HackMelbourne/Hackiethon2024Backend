@@ -49,6 +49,8 @@ def setup():
     p2_moves = get_moves(right_file)
     p1_hp = get_info(left_file,'hp')
     p2_hp = get_info(right_file, 'hp')
+    p1_stuns = get_info(left_file, 'stun')
+    p2_stuns = get_info(right_file, 'stun')
 
     newp1_coords = configure_coords(p1_coords)
     newp2_coords = configure_coords(p2_coords)
@@ -63,10 +65,10 @@ def setup():
     
     all_sprites_list = pygame.sprite.Group() 
     
-    p1_ = Sprite(RED, 50, 50, newp1_coords, p1_coords, p1_moves, p1_hp) 
+    p1_ = Sprite(RED, 50, 50, newp1_coords, p1_coords, p1_moves, p1_hp, p1_stuns) 
     p1_.rect.x, p1_.rect.y = init_p1_coord
     
-    p2_ = Sprite(BLUE, 50, 50, newp2_coords, p2_coords, p2_moves, p2_hp) 
+    p2_ = Sprite(BLUE, 50, 50, newp2_coords, p2_coords, p2_moves, p2_hp, p2_stuns) 
     p2_.rect.x, p2_.rect.y = init_p2_coord
 
     all_sprites_list.add(p1_) 

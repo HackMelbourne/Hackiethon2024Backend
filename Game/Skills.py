@@ -1,6 +1,6 @@
 # Skill superclass
 class Skill:
-    def __init__(self, skillType, startup, cooldown, skillValue):
+    def __init__(self, skillType, startup, cooldown, skillValue, recovery=0):
         #skillType can be either "move", "attack" or "defend" (can add more)
         self._skillType = skillType
         
@@ -16,7 +16,7 @@ class Skill:
         self._cooldown = 0
         
         # this should be the same for most skills, can change in specific skills for balance
-        self._recovery = 0
+        self._recovery = recovery
         
         #skillValue for "move" is (xcoord, ycoord), "attack" is damage, etc
         self._skillValue = skillValue
@@ -84,7 +84,7 @@ class MoveSkill(Skill):
         self._cooldown = stuncd
         
 class AttackSkill(Skill):
-    def __init__(self, startup, cooldown, damage, xRange, vertical, blockable, knockback, stun):
+    def __init__(self, startup, cooldown, damage, xRange, vertical, blockable, knockback, stun, recovery=0):
         super().__init__("attack", startup, cooldown, damage)
         # xRange : horizontal reach, vertical : 0 can only hit if same yCoord,
         # vertical > 0 can hit same yCoord and above, vertical < 0 can hit below
@@ -94,6 +94,7 @@ class AttackSkill(Skill):
         self._knockback = knockback
         self._stun = stun
         self._initDamage = self._skillValue
+        self._recovery = recovery
         
     def _activateSkill(self):
         if self._cooldown > 0:
@@ -144,9 +145,6 @@ class UppercutSkill(AttackSkill):
         super().__init__(startup=0, cooldown=5, damage=8, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
-        
-#TODO add one_punch, super saiyan and meditate/heal playeractions
-#TODO add buff duration timer 
 
 class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):

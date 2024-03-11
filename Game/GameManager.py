@@ -32,7 +32,7 @@ def get_player_files(path1, path2, subpath):
     else:
         raise Exception("A file does not exist in " + subpath)
     
-def check_collision(player1, player2, knock1, knock2, checkMidair = False):
+def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopVelo = False):
     # post midair update correction
     if (correct_dir_pos(player1, player2, knock1, knock2)):
         # player collision occured
@@ -44,15 +44,15 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False):
         # check for midair moving towards each other
         # midair, distance 1, velocity = direction
         if ((player1._yCoord == player2._yCoord) and 
-            (abs(player1._xCoord - player2._xCoord) == 1) and
-            player1._velocity == player1._direction and 
-            player2._velocity == player2._direction):
+            (abs(player1._xCoord - player2._xCoord) == 1)
+            and (player1._direction != player2._direction)):
             # for sure
             player1._velocity = 0
-            player1._airvelo = 0
             player2._velocity = 0
-            player2._airvelo = 0
-            
+            if stopVelo: 
+                player1._airvelo = 0
+                player2._airvelo = 0
+                
 # plays out one turn without checking deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
     """
@@ -120,7 +120,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._stun = max(stun2, player1._stun)
         
     # final position correction, if any, due to projectiles      
-    check_collision(player1, player2, knock1, knock2, True)
+    check_collision(player1, player2, knock1, knock2, True, False)
         
     updateCooldown(player1)
     updateCooldown(player2)
@@ -349,7 +349,8 @@ def startGame(path1, path2, submissionpath):
 
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
-        charinput = str(input("Enter n to go to next turn: "))
+        #charinput = str(input("Enter n to go to next turn: "))
+        charinput = "n"
         
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))

@@ -42,7 +42,10 @@ class Script:
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         # scripting: do 4 moves at a time
-        self.moves = [JUMP_BACKWARD, NOMOVE, PRIMARY, FORWARD, JUMP_FORWARD]
+        self.moves = [JUMP_BACKWARD, NOMOVE, PRIMARY, FORWARD, 
+                      JUMP_FORWARD, LIGHT, LIGHT, NOMOVE,
+                      NOMOVE, BLOCK, LIGHT, LIGHT, 
+                      HEAVY, HEAVY, NOMOVE]
         self.movesiter = iter(self.moves)
         
     def init_player_skills(self):
