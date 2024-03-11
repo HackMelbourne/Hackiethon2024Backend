@@ -136,8 +136,8 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=8, damage=5, xRange=5, 
-                         vertical=0, blockable=False, knockback=0, stun=2)
+        super().__init__(startup=0, cooldown=5, damage=5, xRange=5, 
+                         vertical=0, blockable=False, knockback=1, stun=2)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):

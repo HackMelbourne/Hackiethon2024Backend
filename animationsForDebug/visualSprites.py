@@ -47,3 +47,25 @@ class Sprite(pygame.sprite.Sprite):
             print(f"next move:                        {self.moveData[self.moveNum + 1]}")
         except IndexError:
             return None
+        
+    def next_proj_move(self):
+        try:
+            next_pos = self.coords[self.moveNum]
+            self.rect.x = next_pos[0]
+            self.rect.y = next_pos[1]
+            print(f"{self.jsonCoords[self.moveNum]}")
+            self.moveNum += 1
+        except IndexError:
+            return None
+        
+    def prev_proj_move(self):
+        try:
+            self.moveNum -= 1
+            if self.moveNum < 0:
+                self.moveNum = 0
+            prev_pos = self.coords[self.moveNum]
+            self.rect.x = prev_pos[0]
+            self.rect.y = prev_pos[1]
+            print(f"{self.jsonCoords[self.moveNum]}")
+        except IndexError:
+            return None

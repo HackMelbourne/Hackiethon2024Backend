@@ -51,11 +51,18 @@ def setup():
     p2_hp = get_info(right_file, 'hp')
     p1_stuns = get_info(left_file, 'stun')
     p2_stuns = get_info(right_file, 'stun')
-
+    p1projcoords = get_coordinates(left_file, 'projXCoord', 'projYCoord')
+    p2projcoords = get_coordinates(right_file, 'projXCoord', 'projYCoord')
+    
     newp1_coords = configure_coords(p1_coords)
     newp2_coords = configure_coords(p2_coords)
+    newp1projcoords = configure_coords(p1projcoords)
+    newp2projcoords = configure_coords(p2projcoords)
+
     init_p1_coord = newp1_coords[0]
     init_p2_coord = newp2_coords[0]
+    initp1projcoords = newp1projcoords[0]
+    initp2projcoords = newp2projcoords[0]
 
 
     
@@ -70,15 +77,23 @@ def setup():
     
     p2_ = Sprite(BLUE, 50, 50, newp2_coords, p2_coords, p2_moves, p2_hp, p2_stuns) 
     p2_.rect.x, p2_.rect.y = init_p2_coord
+    
+    p1_proj = Sprite(BLACK, 60, 60, newp1projcoords, p2projcoords, p1_moves, p1_hp, p1_stuns) 
+    p1_proj.rect.x, p1_proj.rect.y = initp1projcoords
+    
+    p2_proj = Sprite(BLACK, 60, 60, newp2projcoords, p2projcoords, p2_moves, p2_hp, p2_stuns) 
+    p2_proj.rect.x, p2_proj.rect.y = initp2projcoords
 
     all_sprites_list.add(p1_) 
     all_sprites_list.add(p2_) 
+    all_sprites_list.add(p1_proj)
+    all_sprites_list.add(p2_proj)
 
     screen.fill(background_colour) 
     pygame.draw.rect(screen, BLACK, pygame.Rect(0, 300, WIDTH, 1000))
     pygame.display.flip()
     
-    return all_sprites_list, screen, p1_ , p2_
+    return all_sprites_list, screen, p1_ , p2_, p1_proj, p2_proj
  
 # reconfigure the coords to match the screen size    
 def configure_coords(coords):
@@ -92,7 +107,7 @@ def configure_coords(coords):
     return new_coords
 
 def gameLoop():
-    all_sprites_list, screen, p1, p2 = setup()
+    all_sprites_list, screen, p1, p2, p1proj, p2proj = setup()
     running = True
     turn = 0
     while running: 
@@ -103,9 +118,13 @@ def gameLoop():
                 if event.key == pygame.K_LEFT:
                     p1.prev_move()
                     p2.prev_move()
+                    p1proj.prev_proj_move()
+                    p2proj.prev_proj_move()
                 elif event.key == pygame.K_RIGHT:
                     p1.next_move()
                     p2.next_move()
+                    p1proj.next_proj_move()
+                    p2proj.next_proj_move()
                 
         all_sprites_list.update() 
         screen.fill(background_colour) 

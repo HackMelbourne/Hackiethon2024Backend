@@ -45,7 +45,10 @@ class Script:
         self.moves = [JUMP_BACKWARD, NOMOVE, PRIMARY, FORWARD, 
                       JUMP_FORWARD, LIGHT, LIGHT, NOMOVE,
                       NOMOVE, BLOCK, LIGHT, LIGHT, 
-                      HEAVY, HEAVY, NOMOVE]
+                      HEAVY, HEAVY, NOMOVE, FORWARD,
+                      FORWARD, NOMOVE, NOMOVE, SECONDARY,
+                      LIGHT, LIGHT, LIGHT, NOMOVE, FORWARD, FORWARD, FORWARD,
+                      LIGHT, LIGHT, HEAVY, HEAVY]
         self.movesiter = iter(self.moves)
         
     def init_player_skills(self):

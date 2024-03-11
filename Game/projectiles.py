@@ -120,6 +120,11 @@ class Projectile:
                 return True
         return False
     
+    # unique to lasso, knockback is dynamic based on distance from player
+    def _lasso_range(self):
+        proj_x = self.get_pos()[0]
+        return -(abs(self._player._xCoord - proj_x) - 1)
+    
 class ProjectileSkill(AttackSkill):
     def __init__(self, player, startup, cooldown, damage, blockable, knockback,
                  stun, skillName):
@@ -130,7 +135,7 @@ class ProjectileSkill(AttackSkill):
         self._player = player
         self._skillType = skillName
         self._recovery = 0
-        self._type = "projectile"
+        self._entityType = "projectile"
         
     def summonProjectile(self, path, size, trait, collision, timer):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 
@@ -144,6 +149,7 @@ class Hadoken(ProjectileSkill):
                                  skillName="hadoken")
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6,0], [7,0]]
         self._stunself = False
+        self._recovery = 1
     
     def _activateSkill(self):
         atk_info = super()._activateSkill()
@@ -163,7 +169,7 @@ class Hadoken(ProjectileSkill):
 class Lasso(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=3,
-                                 blockable=True, knockback=-2, stun=0, 
+                                 blockable=True, knockback=-2, stun=2, 
                                  skillName="lasso")
         self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
         self._stunself = True
@@ -173,11 +179,11 @@ class Lasso(ProjectileSkill):
         if isinstance(atk_info, int):
             return atk_info
         
-        projectile = self.summonProjectile(path=self._path, size=(1,1), 
+        self.projectile = self.summonProjectile(path=self._path, size=(1,1), 
                                            trait=None, collision=True, timer=0)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
-                "projectile": projectile}]
+                "projectile": self.projectile}]
     
     def path_range(self):
         return self._path[-1][0] - self._path[0][0]
@@ -189,6 +195,7 @@ class Boomerang(ProjectileSkill):
                                  skillName="boomerang")
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
         self._stunself = False
+        self._recovery
     
     def _activateSkill(self):
         atk_info = super()._activateSkill()

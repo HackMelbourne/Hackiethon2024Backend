@@ -75,20 +75,22 @@ def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['falling'].append(player._falling)
     #print(player._moves)
     
-
+def proj_json_record(jsonDict, projectile, travelling):
+    if travelling and projectile:
+        jsonDict['ProjectileType'] = projectile._type
+        jsonDict['projXCoord'].append(projectile._xCoord)
+        jsonDict['projYCoord'].append(projectile._yCoord)
+    else:
+        jsonDict['projXCoord'].append(-1)
+        jsonDict['projYCoord'].append(-1) 
+    
 # change fill to True if double
-def projectileToJson(projectile, jsonDict, travelling, fill=JSONFILL):
-    reps = 1
-    if fill:
-        reps = 2
-    for i in range(reps):
-        if travelling and projectile:
-            jsonDict['ProjectileType'] = projectile._type
-            jsonDict['projXCoord'].append(projectile._xCoord)
-            jsonDict['projYCoord'].append(projectile._yCoord)
-        else:
-            jsonDict['projXCoord'].append(-1)
-            jsonDict['projYCoord'].append(-1) 
+def projectileToJson(projectile, jsonDict, travelling, fill=JSONFILL, midtickhit=False):
+    proj_json_record(jsonDict, projectile, travelling)
+    if midtickhit:
+        proj_json_record(jsonDict, projectile, False)
+    else:
+        proj_json_record(jsonDict, projectile, travelling)
         
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
@@ -134,7 +136,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # player got hit, so remove projectile
             #print("hit player")
             projectiles[proj_index] = None # to set destroyed projectiles
-            projectileToJson(proj_obj, proj_json_dict, False)
+            projectileToJson(proj_obj, proj_json_dict, True, midtickhit=True)
             #check_json_updated(name)
             if proj_knock1:
                 player1._skill_state = False
@@ -207,7 +209,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
 
             # then pop the projectile if it hit or expires, else continue travel
             if proj_knock1 or proj_knock2 or proj_obj._size == (0,0):
-                projectileToJson(proj_obj, proj_json_dict, False)
+                if proj_knock1 or proj_knock2:
+                    projectileToJson(proj_obj, proj_json_dict, False, midtickhit=True)
+                else:
+                    projectileToJson(proj_obj, proj_json_dict, False)
                 #check_json_updated(name)
                 projectiles[proj_index] = None
                 # then unstun caster if the projectile skill has self stun
@@ -230,9 +235,11 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
 
 def proj_collision_check(proj, player):
     proj_obj = proj["projectile"]
-    knockback = stun = 0
-    if proj_obj._checkCollision(player):
+    if proj_obj._type == "lasso":
+        knockback = proj_obj._lasso_range()
+    else:
         knockback = proj["knockback"] * proj_knockback(proj_obj, player)
+    if proj_obj._checkCollision(player):
         knockback, stun = attackHit(proj_obj, player,
                                 proj["damage"],
                                 proj_obj._size[0],
@@ -241,6 +248,8 @@ def proj_collision_check(proj, player):
                                 knockback,
                                 proj["stun"],
                                 surehit=True)
+    else:
+        knockback = stun = 0
     return knockback, stun
 def current_proj(projectiles):
     print("Current projectiles: ")
