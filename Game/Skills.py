@@ -10,9 +10,6 @@ class Skill:
         self._initMaxStartup = startup
         self._startupReducMult = 1
         
-        #default skill slot is primary, set to secondary in projectile skills
-        self._skillSlot = "primary"
-        
         #cooldown after skill is used
         self._maxCooldown = cooldown
         #current skill cooldown
