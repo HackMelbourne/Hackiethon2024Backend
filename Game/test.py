@@ -3,7 +3,7 @@ from Game.gameSettings import GOLEFT, GORIGHT, LEFTBORDER, RIGHTBORDER
 from Game.Skills import *
 from Game.projectiles import *
 
-primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, SuperSaiyanSkill]
+primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, SuperSaiyanSkill, TeleportSkill]
 secondarySkills = [Hadoken, Lasso, Boomerang, Grenade, IceWall, BearTrap]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
@@ -70,4 +70,7 @@ def playerInfo(player, playerName, action):
     print(f"ACTUAL ACTION: {player._moves[player._moveNum - 1]}")
     
 def check_valid_skills(primskill, secoskill):
+    print(primskill in primarySkills)
+    print(secoskill in secondarySkills)
+    
     return (primskill in primarySkills and secoskill in secondarySkills)

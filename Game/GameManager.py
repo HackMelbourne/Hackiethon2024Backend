@@ -16,8 +16,10 @@ from Game.turnUpdates import *
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-PATH1 = "finalpromoai1"
-PATH2 = "finalpromoai2"
+#PATH1 = "finalpromoai1"
+#PATH2 = "finalpromoai2"
+PATH1 = "Player1"
+PATH2 = "Player2"
 
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
@@ -342,17 +344,13 @@ def startGame(path1, path2, submissionpath):
         max_tick += 1
         
     #instantiate the player scripts
-    # use this to test turn by turn
-    charinput = "n"
-    while game_running and charinput == "n":
+    while game_running:
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles, stun1, stun2)
 
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
-        #charinput = str(input("Enter n to go to next turn: "))
-        charinput = "n"
         
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))
