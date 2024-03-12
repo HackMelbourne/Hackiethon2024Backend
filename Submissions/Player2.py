@@ -1,7 +1,7 @@
 # bot code goes here
 from Game.Skills import *
 from Game.projectiles import *
-from Submissions.usefulFunctions import *
+from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
