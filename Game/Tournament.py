@@ -1,6 +1,6 @@
 import os
 import random
-from Game.GameManager import startGame
+from GameManager import startGame
 
 dir_path = os.path.join(os.getcwd(), "Submissions")
 player = os.listdir(dir_path)
@@ -50,7 +50,7 @@ def findWinner(node):
     left_winner = findWinner(node.left)
     right_winner = findWinner(node.right)
 
-    return startGame(left_winner, right_winner)
+    return startGame(left_winner, right_winner, "Submissions")
 
 def simulateTournament(players_list):
     root = buildBracket(players_list)
@@ -60,7 +60,7 @@ def simulateTournament(players_list):
     printBracket(root)
     winner = findWinner(root)
     print("\nThe winner is:", winner)
-
+    print(clean_player)
 
 
 simulateTournament(clean_player)

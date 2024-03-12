@@ -14,6 +14,7 @@ class Projectile:
         self._size = list(size)
         self._type = type
         self._timer = timer
+        self._entityType = "projectile"
         
         # True if projectile damages on hit during travel eg hadoken, lasso
         # False if prpojectile damages after travel eg ice wall, landmine
@@ -135,7 +136,6 @@ class ProjectileSkill(AttackSkill):
         self._player = player
         self._skillType = skillName
         self._recovery = 0
-        self._entityType = "projectile"
         
     def summonProjectile(self, path, size, trait, collision, timer):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 

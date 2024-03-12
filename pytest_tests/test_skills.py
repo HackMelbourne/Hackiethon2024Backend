@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path("test_basics.py").parent.parent))
 
 # from GameManager import execute_one_turn, setupGame'
-from Submissions.usefulFunctions import *
+from ScriptingHelp.usefulFunctions import *
 from pytest_tests.helpers import init_game
 from Game.gameSettings import *
 from Game.test import *

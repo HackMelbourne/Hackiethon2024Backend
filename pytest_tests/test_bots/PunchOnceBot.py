@@ -2,7 +2,7 @@
 
 from Game.Skills import *
 from Game.projectiles import *
-from Submissions.usefulFunctions import *
+from ScriptingHelp.usefulFunctions import *
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile

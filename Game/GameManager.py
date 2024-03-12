@@ -10,6 +10,7 @@ from Game.gameSettings import *
 from Game.Skills import *
 from Game.projectiles import *
 from Game.turnUpdates import *
+from Game.PlayerConfigs import Player_Controller
 
 # SUBMISSIONPATH = "Submissions/"
 # PATH1 = "Player1"
@@ -141,11 +142,9 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     return projectiles, stun1, stun2, p1_dead, p2_dead
 
 def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
-    
-    p1Import = importlib.import_module("Submissions.PlayerConfigs")
-    p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+   
+    player1 = Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
     # check if correct primary and secondary skills
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))
@@ -363,7 +362,7 @@ def startGame(path1, path2, submissionpath):
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
-    print("p1 HP:", player1._hp, " -- p2 HP:", player2._hp)
+    print(f"{path1} HP: {player1._hp} --  {path2} HP: {player2._hp}")
     
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
