@@ -272,6 +272,22 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if act2:
         print(f"P2 move {act2}")
     return knock1, stun1, knock2, stun2, projectiles
+
+def get_empty_json():
+    return {
+        'hp': [],
+        'xCoord': [],
+        'yCoord': [],
+        'state': [],
+        'actionType': [],
+        'stun': [],
+        'midair': [],
+        'falling':[],
+        'direction':[],
+        'ProjectileType': None,
+        'projXCoord':[],
+        'projYCoord':[]
+    }
                                           
 def startGame(path1, path2, submissionpath):
     if not isinstance(path1, str) and isinstance(path2,str):
@@ -300,34 +316,8 @@ def startGame(path1, path2, submissionpath):
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
-    p1_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'direction':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-        }
-    p2_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'direction':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-    }
+    p1_json_dict = get_empty_json()
+    p2_json_dict = get_empty_json()
     
     projectiles = []
     tick = 0

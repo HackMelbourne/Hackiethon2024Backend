@@ -1,4 +1,4 @@
-from Game.GameManager import setupGame
+from Game.GameManager import get_empty_json, setupGame
 from Game.gameSettings import JSONFILL
 from Game.turnUpdates import playerToJson
 
@@ -8,32 +8,8 @@ def init_game(p1, p2):
     p2_script = p2.Script()
     player1, player2 = setupGame(p1_script, p2_script)
     stun1 = stun2 = 0
-    p1_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-        }
-    p2_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-    }
+    p1_json_dict = get_empty_json()
+    p2_json_dict = get_empty_json()
 
     projectiles = []
 
