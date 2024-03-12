@@ -34,6 +34,7 @@ def init_game(p1, p2):
         'stun': [],
         'midair': [],
         'falling':[],
+        'direction':[],
         'ProjectileType': None,
         'projXCoord':[],
         'projYCoord':[]
@@ -47,6 +48,7 @@ def init_game(p1, p2):
         'stun': [],
         'midair': [],
         'falling':[],
+        'direction':[],
         'ProjectileType': None,
         'projXCoord':[],
         'projYCoord':[]
