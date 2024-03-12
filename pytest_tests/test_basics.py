@@ -19,6 +19,7 @@ import pytest_tests.test_bots.JumpBot as jump_bot
 import pytest_tests.test_bots.DoNothingBot as nothing_bot
 import pytest_tests.test_bots.ForwardsBot as forwards_bot
 import pytest_tests.test_bots.PunchOnceBot as punch_once_bot
+import pytest_tests.test_bots.PunchHeavyMultiBot as punch_heavy_multi_bot
 from Game.GameManager import execute_one_turn
 
 def test_test():
@@ -262,7 +263,20 @@ def test_player_jump_into_player_midair_at_edge():
     assert p2_json_dict['yCoord'][-7:] == [0, 1, 1, 1, 1,0, 0] 
 
 def test_heavy_cooldown():
-    pass
+    # initializing the game
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(nothing_bot, punch_heavy_multi_bot)
+
+    artificially_move_player(player1, 3, p1_json_dict)
+    artificially_move_player(player2, 15, p2_json_dict)
+
+    # execute turns
+    for i in range(2):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+        # print("P2 JSON DICT", p2_json_dict)
+
+
+    
+
 
 def test_death_win():
     pass
