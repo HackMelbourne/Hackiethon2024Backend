@@ -57,10 +57,10 @@ def simulateTournament(players_list):
     print("Initial Bracket:")
     # a bunch of nones are cuz the winners arent listed
     # the branch is printed sideways in a very weird :P
-    printBracket(root)
     winner = findWinner(root)
     print("\nThe winner is:", winner)
     print(clean_player)
+    printBracket(root)
 
 
 simulateTournament(clean_player)

@@ -17,10 +17,10 @@ from Game.PlayerConfigs import Player_Controller
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-#PATH1 = "finalpromoai1"
-#PATH2 = "finalpromoai2"
-PATH1 = "Player1"
-PATH2 = "Player2"
+PATH1 = "finalpromoai1"
+PATH2 = "finalpromoai2"
+#PATH1 = "Player1"
+#PATH2 = "Player2"
 
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
