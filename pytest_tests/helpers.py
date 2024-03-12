@@ -3,10 +3,10 @@ from Game.gameSettings import JSONFILL
 from Game.turnUpdates import playerToJson
 
 
-def init_game(p1, p2):
+def init_game(p1, p2, leftstart=7, rightstart=8):
     p1_script = p1.Script()
     p2_script = p2.Script()
-    player1, player2 = setupGame(p1_script, p2_script)
+    player1, player2 = setupGame(p1_script, p2_script, leftstart, rightstart)
     stun1 = stun2 = 0
     p1_json_dict = get_empty_json()
     p2_json_dict = get_empty_json()
