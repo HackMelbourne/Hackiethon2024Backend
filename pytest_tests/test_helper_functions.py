@@ -1,15 +1,15 @@
+from pprint import pprint
 import sys
 from pathlib import Path
 
 sys.path.append(str(Path("test_basics.py").parent.parent))
 
-# from GameManager import execute_one_turn, setupGame'
+from Game.GameManager import execute_one_turn, setupGame
 from Submissions.usefulFunctions import *
-from pytest_tests.helpers import init_game
+from pytest_tests.helpers import artificially_move_player, init_game
 from Game.gameSettings import *
 from Game.test import *
 from Game.playerActions import *
-from Game.turnUpdates import playerToJson
 import pytest_tests.test_bots.JumpBot as jump_bot
 
 def test_get_hp():
@@ -20,7 +20,22 @@ def test_get_hp():
     assert get_hp(player1) == 21
 
 def test_get_pos():
-    pass
+    # initializing the game
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_bot, jump_bot)
+
+    artificially_move_player(player1, 5, p1_json_dict)
+    artificially_move_player(player2, 8, p2_json_dict)
+
+    pos_list = [(5, 0), (5, 1), (5, 1)]
+    # execute turns
+    for i in range(3):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+        assert get_pos(player1) == pos_list[i]
+        
+
+    pprint(p1_json_dict)
+    pprint(p2_json_dict)
+
 
 def test_get_last_move():
     pass
