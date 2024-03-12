@@ -24,7 +24,8 @@ def get_player_files(path1, path2, subpath):
     p1module = submissionFiles / (path1 + ".py")
     p2module = submissionFiles / (path2 + ".py")
     if p1module.is_file() and p2module.is_file():
-        
+        subpath = subpath.replace('\\', '.')
+        subpath = subpath.replace('/', '.')
         p1 = importlib.import_module(subpath + "." + path1)
         p2 = importlib.import_module(subpath+ "." + path2)
         return p1, p2
