@@ -40,11 +40,15 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.hasJumped = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return JUMP
+        if not self.hasJumped:
+            self.hasJumped = True
+            return JUMP
+        return NOMOVE
         

@@ -19,6 +19,7 @@ import pytest_tests.test_bots.JumpBot as jump_bot
 import pytest_tests.test_bots.DoNothingBot as nothing_bot
 import pytest_tests.test_bots.ForwardsBot as forwards_bot
 import pytest_tests.test_bots.PunchOnceBot as punch_once_bot
+import pytest_tests.test_bots.PunchHeavyMultiBot as punch_heavy_multi_bot
 from Game.GameManager import execute_one_turn
 
 def test_test():
@@ -76,8 +77,8 @@ def test_jump_up():
 
     assert p1_json_dict['xCoord'][-7:] == [2 for i in range(7)]
     assert p2_json_dict['xCoord'][-7:] == [5 for i in range(7)]
-    assert p1_json_dict['yCoord'][-7:] == [0,1,1, 0, 0, 1,1]
-    assert p2_json_dict['yCoord'][-7:] == [0,1,1, 0, 0, 1, 1]
+    assert p1_json_dict['yCoord'][-7:] == [0,1,1, 1, 1,0, 0]
+    assert p2_json_dict['yCoord'][-7:] == [0,1,1, 1, 1, 0, 0]
 
 def test_jump_backwards_from_edge():
     # initializing the game
@@ -223,8 +224,8 @@ def test_players_collide_midair():
     artificially_move_player(player1, 5, p1_json_dict)
     artificially_move_player(player2, 8, p2_json_dict)
 
-    projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
-    projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+    for i in range(3):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
 
     assert p1_json_dict['xCoord'][-7:] == [5, 6, 6, 6, 6, 6, 6]
     assert p2_json_dict['xCoord'][-7:] == [8, 7, 7, 7, 7, 7, 7]
@@ -244,7 +245,7 @@ def test_player_jump_into_player_midair():
     assert p1_json_dict['xCoord'][-7:] == [5, 6, 5, 5, 5, 5, 5]
     assert p2_json_dict['xCoord'][-7:] == [6, 6, 7, 7, 7, 7, 7]
     assert p1_json_dict['yCoord'][-7:] == [0, 1, 1, 1, 1,0, 0]
-    assert p2_json_dict['yCoord'][-7:] == [0, 1, 1, 0, 0,0, 0] 
+    assert p2_json_dict['yCoord'][-7:] == [0, 1, 1, 1, 1,0, 0] 
 
 def test_player_jump_into_player_midair_at_edge():
     p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_forwards_bot, jump_bot, 14,15)
@@ -259,10 +260,23 @@ def test_player_jump_into_player_midair_at_edge():
     assert p1_json_dict['xCoord'][-7:] == [14, 15, 14, 14, 14, 14, 14]
     assert p2_json_dict['xCoord'][-7:] == [15 for i in range(7)]
     assert p1_json_dict['yCoord'][-7:] == [0, 1, 1, 1, 1,0, 0]
-    assert p2_json_dict['yCoord'][-7:] == [0, 1, 1, 0, 0,0, 0] 
+    assert p2_json_dict['yCoord'][-7:] == [0, 1, 1, 1, 1,0, 0] 
 
 def test_heavy_cooldown():
-    pass
+    # initializing the game
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(nothing_bot, punch_heavy_multi_bot)
+
+    artificially_move_player(player1, 3, p1_json_dict)
+    artificially_move_player(player2, 15, p2_json_dict)
+
+    # execute turns
+    for i in range(2):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+        # print("P2 JSON DICT", p2_json_dict)
+
+
+    
+
 
 def test_death_win():
     pass
@@ -279,5 +293,6 @@ def test_block():
 def test_parry():
     pass
 
-
+def no_jump_on_land():
+    pass
 
