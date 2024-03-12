@@ -1,7 +1,7 @@
 from Game.test import validMove, correctPos
 from math import ceil
 
-from Game.gameSettings import HP
+from Game.gameSettings import HP, PARRYSTUN
 
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
@@ -21,7 +21,6 @@ def move(player, enemy, action):
     # dont actually move until reach outside function
     cached_move = [0,0]
     if validMove(moveAction, player, enemy) and not player._midair:
-        print("move valid")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
@@ -105,7 +104,8 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
         if(target._blocking and blockable):
             #parry if block is frame perfect: the target blocks as attack comes out
             if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
-                player._stun = 2
+                if player._entityType == "player":
+                    player._stun = PARRYSTUN
             elif target._blocking:
                 #target is stunned if their shield breaks from damage taken
                 target._stun += target._block._shieldDmg(damage)
@@ -141,6 +141,10 @@ def attack(player,target, action):
                 attack[4] += 2
                 
             player._moves.append((action[0], "activate"))
+            if action[0] == "light":
+                player._recovery = player._lightAtk._recovery
+            else:
+                player._recovery = player._heavyAtk._recovery
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True

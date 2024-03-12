@@ -1,8 +1,8 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
-from playerActions import defense_actions, attack_actions, projectile_actions
+from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -12,8 +12,8 @@ from playerActions import defense_actions, attack_actions, projectile_actions
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = DashAttackSkill
-SECONDARY_SKILL = Hadoken
+PRIMARY_SKILL = SuperSaiyanSkill
+SECONDARY_SKILL = Lasso
 
 #constants, for easier move return
 #movements
@@ -41,7 +41,14 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = [BACK, BACK, BACK, BACK, BACK, BACK, BACK]
+        # scripting: do 4 moves at a time
+        self.moves = [JUMP_BACKWARD, NOMOVE, PRIMARY, FORWARD, 
+                      JUMP_FORWARD, LIGHT, LIGHT, NOMOVE,
+                      NOMOVE, BLOCK, LIGHT, LIGHT, 
+                      HEAVY, HEAVY, NOMOVE, FORWARD,
+                      FORWARD, NOMOVE, NOMOVE, SECONDARY,
+                      LIGHT, LIGHT, LIGHT, NOMOVE, FORWARD, FORWARD, FORWARD,
+                      LIGHT, LIGHT, HEAVY, HEAVY]
         self.movesiter = iter(self.moves)
         
     def init_player_skills(self):

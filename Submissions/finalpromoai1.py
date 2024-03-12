@@ -1,8 +1,8 @@
 # bot code goes here
-from Skills import *
-from projectiles import *
+from Game.Skills import *
+from Game.projectiles import *
 from Submissions.usefulFunctions import *
-from playerActions import defense_actions, attack_actions, projectile_actions
+from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -41,7 +41,13 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = [BACK, BACK, BACK, BACK, BACK, BACK, BACK]
+        self.moves = [BACK, SECONDARY, FORWARD, FORWARD,
+                      JUMP, HEAVY, HEAVY, NOMOVE,
+                      FORWARD, LIGHT, NOMOVE, NOMOVE, 
+                      NOMOVE, NOMOVE, NOMOVE, PRIMARY,
+                      SECONDARY, NOMOVE, NOMOVE, FORWARD,
+                      LIGHT,LIGHT,LIGHT,NOMOVE,PRIMARY, FORWARD,
+                      FORWARD, HEAVY, HEAVY, NOMOVE, FORWARD, LIGHT]
         self.movesiter = iter(self.moves)
         
     def init_player_skills(self):
