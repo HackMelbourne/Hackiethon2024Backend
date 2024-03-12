@@ -10,16 +10,17 @@ from Game.gameSettings import *
 from Game.Skills import *
 from Game.projectiles import *
 from Game.turnUpdates import *
+from Game.PlayerConfigs import Player_Controller
 
 # SUBMISSIONPATH = "Submissions/"
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-#PATH1 = "finalpromoai1"
-#PATH2 = "finalpromoai2"
-PATH1 = "Player1"
-PATH2 = "Player2"
+PATH1 = "finalpromoai1"
+PATH2 = "finalpromoai2"
+#PATH1 = "Player1"
+#PATH2 = "Player2"
 
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
@@ -39,9 +40,9 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
     if (correct_dir_pos(player1, player2, knock1, knock2)):
         # player collision occured
         player1._velocity = 0
-        player1._airvelo = 0
+        #player1._airvelo = 0
         player2._velocity = 0
-        player2._airvelo = 0  
+        #player2._airvelo = 0  
     elif checkMidair:
         # check for midair moving towards each other
         # midair, distance 1, velocity = direction
@@ -140,12 +141,10 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
 
     return projectiles, stun1, stun2, p1_dead, p2_dead
 
-def setupGame(p1_script, p2_script):
-    
-    p1Import = importlib.import_module("Submissions.PlayerConfigs")
-    p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
+   
+    player1 = Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
     # check if correct primary and secondary skills
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))
@@ -272,6 +271,22 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     if act2:
         print(f"P2 move {act2}")
     return knock1, stun1, knock2, stun2, projectiles
+
+def get_empty_json():
+    return {
+        'hp': [],
+        'xCoord': [],
+        'yCoord': [],
+        'state': [],
+        'actionType': [],
+        'stun': [],
+        'midair': [],
+        'falling':[],
+        'direction':[],
+        'ProjectileType': None,
+        'projXCoord':[],
+        'projYCoord':[]
+    }
                                           
 def startGame(path1, path2, submissionpath):
     if not isinstance(path1, str) and isinstance(path2,str):
@@ -300,34 +315,8 @@ def startGame(path1, path2, submissionpath):
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
-    p1_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'direction':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-        }
-    p2_json_dict = {
-        'hp': [],
-        'xCoord': [],
-        'yCoord': [],
-        'state': [],
-        'actionType': [],
-        'stun': [],
-        'midair': [],
-        'falling':[],
-        'direction':[],
-        'ProjectileType': None,
-        'projXCoord':[],
-        'projYCoord':[]
-    }
+    p1_json_dict = get_empty_json()
+    p2_json_dict = get_empty_json()
     
     projectiles = []
     tick = 0
@@ -373,7 +362,7 @@ def startGame(path1, path2, submissionpath):
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
-    print("p1 HP:", player1._hp, " -- p2 HP:", player2._hp)
+    print(f"{path1} HP: {player1._hp} --  {path2} HP: {player2._hp}")
     
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")

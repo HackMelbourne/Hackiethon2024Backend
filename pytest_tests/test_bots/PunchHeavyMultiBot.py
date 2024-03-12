@@ -1,8 +1,8 @@
 # bot code goes here
+
 from Game.Skills import *
 from Game.projectiles import *
-from Submissions.usefulFunctions import *
-from Game.playerActions import defense_actions, attack_actions, projectile_actions
+from ScriptingHelp.usefulFunctions import *
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -41,21 +41,12 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.hasPunched = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-
-        # uncomment below for scripted moves
-        #return scripted_moves()    
-        # uncomment below for calculated moves
-        #return full_assault(player, enemy)
-        #return eric_func(player, enemy)
-        #return leo_func(player, enemy)
-        #return spam_second()
-        #return winning_strategy(player, enemy)
-        return JUMP_BACKWARD
-        # return eric_func2()
+        return HEAVY
         

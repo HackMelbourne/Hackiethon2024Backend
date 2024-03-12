@@ -2,12 +2,17 @@
 from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
+
+# primary skill can be defensive or offensive
+# secondary skills involve summoning a projectile
+
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
+# currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = Lasso
+PRIMARY_SKILL = OnePunchSkill
+SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
 #movements
@@ -22,38 +27,26 @@ LIGHT = ("light",)
 HEAVY = ("heavy",)
 BLOCK = ("block",)
 
-# skills
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
+# for testing
+moves = SECONDARY,
+moves_iter = iter(moves)
 
-# Don't touch
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.hasCancelled = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        # PRIMARY_SKILL is UppercutSkill
-        # SECONDARY SKILL is IceWall
-        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
-
-        if prim_range(player) <= distance:
-            if not primary_on_cooldown(player):
-                return PRIMARY
-
-        if not secondary_on_cooldown(player):
-            return SECONDARY
-
-        if distance == 1:
-            if not heavy_on_cooldown(player):
-                return HEAVY
-            return LIGHT
-
-        return FORWARD
+        if not self.hasCancelled and abs(get_pos(player)[0] - get_pos(enemy)[0]) < prim_range(player):
+            
+        

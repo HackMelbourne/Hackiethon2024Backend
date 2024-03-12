@@ -34,7 +34,7 @@ def updateMidair(player):
             # specifically to check for diagonal jumps, ensure jump arc
             # like _ - - _
             check_point = player._jumpHeight
-            if ((player.get_past_move(check_point)[1][1] != 1) or
+            if ((player.get_past_move(check_point)[1] not in ((0,1), (1,1), (-1,1))) or
                                                     player._airvelo == 0):
                 player._yCoord -= GRAVITY
         else:
@@ -42,10 +42,12 @@ def updateMidair(player):
         player._xCoord += player._velocity * player._speed
 
     # player has landed, reset midair attributes
-    if player._yCoord <= 0 and player._falling: 
+    if player._yCoord == 0 and player._falling: 
         player._midair = player._falling = False
         # set a movestun to the player so that they cant jump away right after
         player._move._movestun_on_fall(1)
+        print("player move cooldown")
+        print(player._move._cooldown)
     
     if not player._midair:
         player._velocity = 0

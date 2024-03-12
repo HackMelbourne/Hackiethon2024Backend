@@ -65,6 +65,8 @@ def fetchAttack(player, attackType):
     return returnVal
 
 def check_atk_combo(player, attack):
+    if len(player._moves) < 3:
+        return False
     if attack == "light":
         # go to previous move before heavy startup
         prev_move_pos = go_to_prev_atk(player, ("light", "startup"), -1)
