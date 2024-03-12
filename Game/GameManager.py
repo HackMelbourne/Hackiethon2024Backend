@@ -140,12 +140,12 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
 
     return projectiles, stun1, stun2, p1_dead, p2_dead
 
-def setupGame(p1_script, p2_script):
+def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
     
     p1Import = importlib.import_module("Submissions.PlayerConfigs")
     p2Import = importlib.import_module("Submissions.PlayerConfigs")     
-    player1 = p1Import.Player_Controller(LEFTSTART,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
-    player2 = p2Import.Player_Controller(RIGHTSTART,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+    player1 = p1Import.Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = p2Import.Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
     # check if correct primary and secondary skills
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))

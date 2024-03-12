@@ -13,7 +13,7 @@ from Game.turnUpdates import playerToJson
 import pytest_tests.test_bots.JumpBot as jump_bot
 
 def test_get_hp():
-    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_bot, jump_bot)
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_bot, jump_bot, 7, 8)
     assert get_hp(player1) == HP
 
     player1._hp = 21
