@@ -42,10 +42,12 @@ def updateMidair(player):
         player._xCoord += player._velocity * player._speed
 
     # player has landed, reset midair attributes
-    if player._yCoord <= 0 and player._falling: 
+    if player._yCoord == 0 and player._falling: 
         player._midair = player._falling = False
         # set a movestun to the player so that they cant jump away right after
         player._move._movestun_on_fall(1)
+        print("player move cooldown")
+        print(player._move._cooldown)
     
     if not player._midair:
         player._velocity = 0

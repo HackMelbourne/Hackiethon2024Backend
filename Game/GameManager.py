@@ -39,9 +39,9 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
     if (correct_dir_pos(player1, player2, knock1, knock2)):
         # player collision occured
         player1._velocity = 0
-        player1._airvelo = 0
+        #player1._airvelo = 0
         player2._velocity = 0
-        player2._airvelo = 0  
+        #player2._airvelo = 0  
     elif checkMidair:
         # check for midair moving towards each other
         # midair, distance 1, velocity = direction
