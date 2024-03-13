@@ -11,7 +11,7 @@ from ScriptingHelp.usefulFunctions import *
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
+PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -42,8 +42,7 @@ class Script:
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         self.hasWalked = False
-        self.hasCancelled = False
-        self.hasAttacked = False
+        self.hasTeleported = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
@@ -53,11 +52,7 @@ class Script:
         if not self.hasWalked:
             self.hasWalked = True
             return FORWARD 
-        if not self.hasAttacked:
-            self.hasAttacked = True
-            return HEAVY
-        if not self.hasCancelled:
-            self.hasCancelled = True
-            return CANCEL
-        return NOMOVE       
-        
+        if not self.hasTeleported:
+            self.hasTeleported = True
+            return PRIMARY
+        return NOMOVE     

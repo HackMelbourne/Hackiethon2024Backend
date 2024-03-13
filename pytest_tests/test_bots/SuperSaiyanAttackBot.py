@@ -11,7 +11,7 @@ from ScriptingHelp.usefulFunctions import *
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
+PRIMARY_SKILL = SuperSaiyanSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -42,22 +42,16 @@ class Script:
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         self.hasWalked = False
-        self.hasCancelled = False
-        self.hasAttacked = False
+        self.hasSaiyaned = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        if not self.hasWalked:
-            self.hasWalked = True
-            return FORWARD 
-        if not self.hasAttacked:
-            self.hasAttacked = True
-            return HEAVY
-        if not self.hasCancelled:
-            self.hasCancelled = True
-            return CANCEL
-        return NOMOVE       
-        
+        if not self.hasSaiyaned:
+            self.hasSaiyaned = True
+            return PRIMARY
+        if (abs(get_pos(player)[0] - get_pos(enemy)[0]) < 2):
+            return LIGHT  
+        return FORWARD
