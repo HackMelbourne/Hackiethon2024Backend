@@ -21,12 +21,12 @@ def test_get_hp():
 
 def test_get_pos():
     # initializing the game
-    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_bot, jump_bot)
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(jump_bot, jump_bot, 5, 8)
 
     artificially_move_player(player1, 5, p1_json_dict)
     artificially_move_player(player2, 8, p2_json_dict)
 
-    pos_list = [(5, 0), (5, 1), (5, 1)]
+    pos_list = [(5, 1), (5, 1), (5, 0)]
     # execute turns
     for i in range(3):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)

@@ -395,8 +395,9 @@ def encumber(player):
 def skill_cancel(player, target, action):
     player._skill_state = False
     player._midStartup = False
-    player._moves[player._moveNum] = action
+    player._moves.append(("skill_cancel", "skill_cancel"))
     return True
+
 # null function
 def nullDef(player, target, action):
     return False

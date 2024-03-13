@@ -70,7 +70,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     updateMidair(player2)
     check_collision(player1, player2, knock1, knock2)
  
-    print(f"Post midair movement: P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+    #print(f"Post midair movement: P1: {player1.get_pos()}, P2: {player2.get_pos()}")
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
     #playerToJson(player1, p1_json_dict, True)
@@ -91,13 +91,13 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     act1 = player1._action()
     act2 = player2._action()
     
-    print(f"Pre action HP:  P1: {player1._hp}, P2: {player2._hp}")
+    #print(f"Pre action HP:  P1: {player1._hp}, P2: {player2._hp}")
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
     
-    print("Post action, pre fill tick")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, pre fill tick")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
         playerToJson(player2,p2_json_dict, not JSONFILL)
@@ -111,8 +111,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
     
-    print("Post action, post collision/proj check")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, post collision/proj check")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     #only determine knockback and stun after attacks hit
     #knock1 and stun1 = knockback and stun inflicted by player1 on player2
     if knock1:
@@ -134,8 +134,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     p1_dead = check_death(player1)
     p2_dead = check_death(player2)
 
-    print("Post action, post tick fill")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, post tick fill")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
     playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
 
