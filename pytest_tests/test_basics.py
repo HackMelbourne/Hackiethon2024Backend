@@ -408,3 +408,6 @@ def test_no_jump_on_land():
     assert p1_json_dict['xCoord'][-n:] == [5 for i in range(n)]
     assert p1_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0]
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'move', 'move', 'NoMove', 'NoMove', 'NoMove', 'NoMove','NoMove', 'NoMove']
+
+def test_combo_attack():
+    pass
