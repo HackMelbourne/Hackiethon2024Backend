@@ -31,6 +31,7 @@ BLOCK = ("block",)
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
 
+SECONDARYREV = (SECONDARY[0], True)
 # no move, aka no input
 NOMOVE = "NoMove"
 # for testing

@@ -327,8 +327,8 @@ def startGame(path1, path2, submissionpath):
     for i in range(BUFFERTURNS * 2): # 2 since fill ticks
         playerToJson(player1, p1_json_dict, fill=True, start=True)
         playerToJson(player2, p2_json_dict, fill=True, start=True)
-        projectileToJson(None, p1_json_dict, False, fill=False)
-        projectileToJson(None, p2_json_dict, False, fill=False)
+        projectileToJson(None, p1_json_dict, False, fill=True)
+        projectileToJson(None, p2_json_dict, False, fill=True)
         tick += 1
         max_tick += 1
         

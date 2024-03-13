@@ -88,12 +88,13 @@ def proj_json_record(jsonDict, projectile, travelling):
         jsonDict['projYCoord'].append(-1) 
     
 # change fill to True if double
-def projectileToJson(projectile, jsonDict, travelling, fill=JSONFILL, midtickhit=False):
+def projectileToJson(projectile, jsonDict, travelling, fill=False, midtickhit=False):
     proj_json_record(jsonDict, projectile, travelling)
-    if midtickhit:
-        proj_json_record(jsonDict, projectile, False)
-    else:
-        proj_json_record(jsonDict, projectile, travelling)
+    if not fill:
+        if midtickhit:
+            proj_json_record(jsonDict, projectile, False)
+        else:
+            proj_json_record(jsonDict, projectile, travelling)
         
 def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     p1_dict, p2_dict):
@@ -110,6 +111,8 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         #check_json_updated("p2")
     
     num_proj = len(projectiles)  
+    print(projectiles)
+    print(p1_dict)
     # now check for existing projectiles
     for proj_index in range(num_proj):
         proj_info = projectiles[proj_index]
@@ -121,11 +124,9 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         if proj_obj._player._id == 1:
             proj_json_dict = p1_dict
             enemy_proj_dict = p2_dict
-            name = "p1"
         else:
             proj_json_dict = p2_dict
             enemy_proj_dict = p1_dict
-            name = "p2"
         
         #print(f"Current: {proj_obj._player._id}")
         # a bit finicky, but this part checks if anything moves into projectile before travelling
