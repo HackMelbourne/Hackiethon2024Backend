@@ -1,3 +1,16 @@
+from pprint import pprint
+import sys
+from pathlib import Path
+from Game.GameManager import execute_one_turn
+from pytest_tests.helpers import init_game
+from Game.gameSettings import HP
+
+sys.path.append(str(Path("test_basics.py").parent.parent))
+import pytest_tests.test_bots.JumpBot as jump_bot
+import pytest_tests.test_bots.HadokenOnceBot as hadoken_once_bot
+import pytest_tests.test_bots.DoNothingBot as nothing_bot
+
+
 def test_projectile_skill_cancel():
     pass
 
@@ -30,6 +43,28 @@ def test_grenade():
     pass
 
 def test_hadoken():
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(hadoken_once_bot, nothing_bot, 4, 8)
+    
+    assert p1_json_dict['xCoord'][-1] == 4
+    assert p2_json_dict['xCoord'][-1] == 7
+
+    for i in range(3):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+
+    pprint(p1_json_dict)
+    pprint(p2_json_dict)
+
+    n = 7
+    assert p1_json_dict['xCoord'][-n:] == [4, 5, 5, 5, 5, 5, 5]
+    assert p2_json_dict['xCoord'][-n:] == [7, 7, 7, 7, 7, 7, 7]
+    assert p1_json_dict['yCoord'][-n:] == [0] * n
+    assert p2_json_dict['yCoord'][-n:] == [0] * n 
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+
+    assert p2_json_dict['hp'][-1] < HP
+
+def test_hadoken_ends():
     pass
 
 def test_bear_trap_on_ground():

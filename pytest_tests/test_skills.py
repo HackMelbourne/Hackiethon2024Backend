@@ -22,6 +22,7 @@ import pytest_tests.test_bots.UppercutOnceBot as uppercut_once_bot
 import pytest_tests.test_bots.BlockOnceBot as block_once_bot
 import pytest_tests.test_bots.PermaBlockBot as perma_block_bot
 import pytest_tests.test_bots.MeditateOnceBot as meditate_once_bot
+import pytest_tests.test_bots.PermaMeditateBot as perma_meditate_bot
 
 def test_skill_cancel():
     p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(one_punch_cancel_bot, nothing_bot, 6, 8)
@@ -122,7 +123,20 @@ def test_parry_unblockable_skill():
     assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move'] + ['block'] * (4)
 
 def test_skill_cooldown():
-    pass
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(perma_meditate_bot, nothing_bot, 6, 9)
+
+    # executes turns
+    for i in range(3):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+    
+    n = 7
+    assert p1_json_dict['xCoord'][-n:] == [6] * n
+    assert p1_json_dict['yCoord'][-n:] == [0] * n
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'meditate', 'meditate', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+
+    assert p2_json_dict['xCoord'][-n:] == [9] * n
+    assert p2_json_dict['yCoord'][-n:] == [0] * n
+    assert p2_json_dict['state'][-n:] == ['NoMove'] * n
 
 def test_teleport_onto_player():
     pass
@@ -309,9 +323,6 @@ def test_teleport_dodges_hadoken():
     pass
 
 def test_uppercut_at_same_time():
-    pass
-
-def test_repeat_skill():
     pass
 
 def test_teleport_into_hadoken():
