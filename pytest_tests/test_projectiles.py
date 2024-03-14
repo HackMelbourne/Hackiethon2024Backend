@@ -67,6 +67,15 @@ def test_hadoken():
 def test_hadoken_ends():
     pass
 
+def test_hadoken_at_edge():
+    pass
+
+def test_lasso_at_edge():
+    pass
+
+def test_bear_trap_at_edge():
+    pass
+
 def test_bear_trap_on_ground():
     pass
 
@@ -92,4 +101,7 @@ def test_lasso_breaks_ice_wall():
     pass
 
 def test_ice_wall_breaks_ice_wall():
+    pass
+
+def test_ice_wall_squishes_player_at_edge():
     pass
