@@ -16,9 +16,9 @@ from Game.PlayerConfigs import Player_Controller
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "Submissions"
-PATH1 = "finalpromoai1"
-PATH2 = "finalpromoai2"
+SUBMISSIONPATH = "pytest_tests/test_bots"
+PATH1 = "SuperSaiyanAttackBot"
+PATH2 = "DoNothingBot"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -26,6 +26,8 @@ def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
     p1module = submissionFiles / (path1 + ".py")
     p2module = submissionFiles / (path2 + ".py")
+    p = submissionFiles.glob("*")
+    print([x for x in p if x.is_file()])
     if p1module.is_file() and p2module.is_file():
         subpath = subpath.replace('\\', '.')
         subpath = subpath.replace('/', '.')
@@ -306,12 +308,15 @@ def startGame(path1, path2, submissionpath):
 
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
-    if("p1.json" in player_json.glob('*.json')):
-        player1_json = Path("jsonfiles/p1.json")
-    if("p1.json" in player_json.glob('*.json')):
-        player2_json = Path("jsonfiles/p2.json")
-    player1_json = player_json / "p1.json"
-    player2_json = player_json / "p2.json"
+    # check for battle json
+    p1vp2 = f"{path1} vs {path2}.json"
+    p2vp1 = f"{path2} vs {path1}.json"
+    if(p1vp2 in player_json.glob('*.json')):
+        player1_json = Path(f"jsonfiles/{p1vp2}")
+    if(p2vp1 in player_json.glob('*.json')):
+        player2_json = Path(f"jsonfiles/{p2vp1}")
+    player1_json = player_json / p1vp2
+    player2_json = player_json / p2vp1
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
