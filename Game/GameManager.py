@@ -290,7 +290,7 @@ def get_empty_json():
         'projYCoord':[]
     }
                                           
-def startGame(path1, path2, submissionpath):
+def startGame(path1, path2, submissionpath, roundNum):
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
     if isinstance(path1, str) and not isinstance(path2,str):
@@ -312,14 +312,14 @@ def startGame(path1, path2, submissionpath):
     p1vp2 = f"{path1} vs {path2}"
     p2vp1 = f"{path2} vs {path1}"
     # create new battle file with player jsons
-    new_battle = player_json / f"{p1vp2}"
-    player1_json = new_battle / f"{path1}AsP1.json"
-    player2_json = new_battle / f"{path2}AsP2.json"
+    new_battle = player_json / f"Round {roundNum}"
+    player1_json = new_battle / "p1.json"
+    player2_json = new_battle / "p2.json"
     # get list of battles 
     files = player_json.glob("*")
     battles = [x for x in files if x.is_dir()]   
     # check if this battle has not happened before
-    if p1vp2 not in battles and p2vp1 not in battles:
+    if f"Round {roundNum}" not in battles:
         player1_json.parent.mkdir(parents=True, exist_ok=True)
         player2_json.parent.mkdir(parents=True, exist_ok=True)
         
@@ -386,4 +386,4 @@ def startGame(path1, path2, submissionpath):
         return None
 
 if __name__ == "__main__":
-    startGame(PATH1, PATH2, SUBMISSIONPATH)
+    startGame(PATH1, PATH2, SUBMISSIONPATH, 0)
