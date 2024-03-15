@@ -17,8 +17,8 @@ from Game.PlayerConfigs import Player_Controller
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-PATH1 = "finalpromoai1"
-PATH2 = "finalpromoai2"
+PATH1 = "Player1"
+PATH2 = "Player2"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -309,8 +309,8 @@ def startGame(path1, path2, submissionpath):
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
     # check for battle json
-    p1vp2 = f"{path1} vs {path2}.json"
-    p2vp1 = f"{path2} vs {path1}.json"
+    p1vp2 = f"{path1} vs {path2}"
+    p2vp1 = f"{path2} vs {path1}"
     # create new battle file with player jsons
     new_battle = player_json / f"{p1vp2}"
     player1_json = new_battle / f"{path1}AsP1.json"
