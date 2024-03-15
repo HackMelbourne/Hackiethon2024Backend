@@ -16,9 +16,9 @@ from Game.PlayerConfigs import Player_Controller
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "pytest_tests/test_bots"
-PATH1 = "SuperSaiyanAttackBot"
-PATH2 = "DoNothingBot"
+SUBMISSIONPATH = "Submissions"
+PATH1 = "finalpromoai1"
+PATH2 = "finalpromoai2"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -311,12 +311,18 @@ def startGame(path1, path2, submissionpath):
     # check for battle json
     p1vp2 = f"{path1} vs {path2}.json"
     p2vp1 = f"{path2} vs {path1}.json"
-    if(p1vp2 in player_json.glob('*.json')):
-        player1_json = Path(f"jsonfiles/{p1vp2}")
-    if(p2vp1 in player_json.glob('*.json')):
-        player2_json = Path(f"jsonfiles/{p2vp1}")
-    player1_json = player_json / p1vp2
-    player2_json = player_json / p2vp1
+    # create new battle file with player jsons
+    new_battle = player_json / f"{p1vp2}"
+    player1_json = new_battle / f"{path1}AsP1.json"
+    player2_json = new_battle / f"{path2}AsP2.json"
+    # get list of battles 
+    files = player_json.glob("*")
+    battles = [x for x in files if x.is_dir()]   
+    # check if this battle has not happened before
+    if p1vp2 not in battles and p2vp1 not in battles:
+        player1_json.parent.mkdir(parents=True, exist_ok=True)
+        player2_json.parent.mkdir(parents=True, exist_ok=True)
+        
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
