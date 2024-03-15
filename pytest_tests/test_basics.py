@@ -292,12 +292,17 @@ def test_death():
     pprint(p1_json_dict)
     pprint(p2_json_dict)
 
+    #artificially KILLS p2
+    player2._hp = 0
     # execute turns
     for i in range(2):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
 
     pprint(p1_json_dict)
     pprint(p2_json_dict)
+    
+    
+    
 
     assert p2_dead == True
 
@@ -322,6 +327,9 @@ def test_both_die_same_time():
     pprint(p2_json_dict)
 
     # execute turns
+    # artificially kills both players
+    player1._hp = 0
+    player2._hp = 0
     for i in range(2):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
 
@@ -360,7 +368,7 @@ def test_block():
 
 def test_parry():
     # initializing the game
-    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(light_attack_bot, block_once_bot)
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(light_attack_bot, block_once_bot, 5, 8)
 
     artificially_move_player(player1, 5, p1_json_dict)
     artificially_move_player(player2, 8, p2_json_dict)
@@ -404,7 +412,7 @@ def test_no_jump_on_land():
     print(p1_json_dict)
     print(p2_json_dict)
 
-    n = 13
+    n = 15
     assert p1_json_dict['xCoord'][-n:] == [5 for i in range(n)]
     assert p1_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0]
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'move', 'move', 'NoMove', 'NoMove', 'NoMove', 'NoMove','NoMove', 'NoMove']

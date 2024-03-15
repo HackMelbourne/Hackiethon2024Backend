@@ -71,7 +71,7 @@ def test_grenade():
     pass
 
 def test_hadoken():
-    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(hadoken_once_bot, nothing_bot, 4, 8)
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(hadoken_once_bot, nothing_bot, 4, 7)
     
     assert p1_json_dict['xCoord'][-1] == 4
     assert p2_json_dict['xCoord'][-1] == 7

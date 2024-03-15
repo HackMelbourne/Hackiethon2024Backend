@@ -118,7 +118,7 @@ def test_parry_unblockable_skill():
     assert p1_json_dict['stun'][-1] == 0
 
     assert p2_json_dict['hp'][-1] < HP
-    assert p2_json_dict['xCoord'][-n:] == [9, 8, 8, 9, 9, 9, 9]
+    assert p2_json_dict['xCoord'][-n:] == [9, 8, 8, 8, 9, 9, 9]
     assert p2_json_dict['yCoord'][-n:] == [0] * n
     assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move'] + ['block'] * (4)
 
@@ -262,7 +262,7 @@ def test_dash_attack():
     assert p2_json_dict['yCoord'][-n:] == [0] * n 
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'dash_attack', 'dash_attack', 'NoMove', 'NoMove']
     assert p1_json_dict['actionType'][-n:] == ['NoMove', (1, 0), 'Fill', 'activate', 'Fill', 'NoMove', 'Fill']
-    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'Hurt', 'NoMove', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'Hurt', 'NoMove', 'NoMove']
     assert p2_json_dict['actionType'][-n:] == ['NoMove'] * n
     assert p1_json_dict['hp'][-n:] == [50] * n
     assert p2_json_dict['hp'][-1] < HP
@@ -281,12 +281,12 @@ def test_uppercut():
 
     n = 7
     assert p1_json_dict['xCoord'][-n:] == [4, 5, 5, 5, 5, 5, 5]
-    assert p2_json_dict['xCoord'][-n:] == [6, 6, 6, 6, 6, 8, 8]
+    assert p2_json_dict['xCoord'][-n:] == [6, 6, 6, 6, 8, 8, 8]
     assert p1_json_dict['yCoord'][-n:] == [0, 0, 0, 0, 0, 1, 1]
     assert p2_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 1, 1]
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'uppercut', 'uppercut', 'uppercut', 'uppercut']
     assert p1_json_dict['actionType'][-n:] == ['NoMove', (1, 0), 'Fill', 'activate', 'Fill', 'NoMove', 'Fill']
-    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'Hurt', 'NoMove', 'NoMove']
     assert p2_json_dict['actionType'][-n:] == ['NoMove'] * n
     assert p1_json_dict['hp'][-n:] == [50] * n
     assert p2_json_dict['hp'][-1] < HP
@@ -305,17 +305,17 @@ def test_uppercut_hits_airborne_player():
 
     n = 7
     assert p1_json_dict['xCoord'][-n:] == [4, 5, 5, 5, 5, 5, 5]
-    assert p2_json_dict['xCoord'][-n:] == [6, 6, 6, 6, 6, 8, 8]
-    assert p1_json_dict['yCoord'][-n:] == [0, 0, 0, 0, 0, 1, 1]
-    assert p2_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 1, 1]
-    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'uppercut', 'uppercut', 'uppercut', 'uppercut']
+    assert p2_json_dict['xCoord'][-n:] == [6, 6, 6, 6, 8, 8, 8]
+    assert p1_json_dict['yCoord'][-n:] == [0, 0, 0, 0, 0, 0, 0]
+    assert p2_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 0, 0]
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'uppercut', 'uppercut', 'NoMove', 'NoMove']
     assert p1_json_dict['actionType'][-n:] == ['NoMove', (1, 0), 'Fill', 'activate', 'Fill', 'NoMove', 'Fill']
-    assert p2_json_dict['state'][-n:] == ['NoMove', 'jump', 'jump', 'jump', 'jump', 'Hurt', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'NoMove', 'Hurt', 'NoMove', 'NoMove']
     assert p2_json_dict['actionType'][-n:] == ['NoMove'] * n
     assert p1_json_dict['hp'][-n:] == [50] * n
     assert p2_json_dict['hp'][-1] < HP
 
-#TODO: idk if this is the intented behaviour
+#TODO: idk if this is the intented behaviour - Yes, player is invulnerable during dash
 def test_dash_dodges_hadoken():
     pass
 

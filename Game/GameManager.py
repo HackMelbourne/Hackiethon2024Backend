@@ -16,9 +16,9 @@ from Game.PlayerConfigs import Player_Controller
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "Submissions"
-PATH1 = "finalpromoai1"
-PATH2 = "finalpromoai2"
+SUBMISSIONPATH = "pytest_tests/test_bots"
+PATH1 = "SuperSaiyanAttackBot"
+PATH2 = "DoNothingBot"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -26,6 +26,8 @@ def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
     p1module = submissionFiles / (path1 + ".py")
     p2module = submissionFiles / (path2 + ".py")
+    p = submissionFiles.glob("*")
+    print([x for x in p if x.is_file()])
     if p1module.is_file() and p2module.is_file():
         subpath = subpath.replace('\\', '.')
         subpath = subpath.replace('/', '.')
@@ -70,7 +72,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     updateMidair(player2)
     check_collision(player1, player2, knock1, knock2)
  
-    print(f"Post midair movement: P1: {player1.get_pos()}, P2: {player2.get_pos()}")
+    #print(f"Post midair movement: P1: {player1.get_pos()}, P2: {player2.get_pos()}")
     # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
     # if uncommented, length of projectile json would be half of player json
     #playerToJson(player1, p1_json_dict, True)
@@ -91,13 +93,13 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     act1 = player1._action()
     act2 = player2._action()
     
-    print(f"Pre action HP:  P1: {player1._hp}, P2: {player2._hp}")
+    #print(f"Pre action HP:  P1: {player1._hp}, P2: {player2._hp}")
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
     
-    print("Post action, pre fill tick")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, pre fill tick")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
         playerToJson(player2,p2_json_dict, not JSONFILL)
@@ -111,8 +113,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
     
-    print("Post action, post collision/proj check")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, post collision/proj check")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     #only determine knockback and stun after attacks hit
     #knock1 and stun1 = knockback and stun inflicted by player1 on player2
     if knock1:
@@ -134,8 +136,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     p1_dead = check_death(player1)
     p2_dead = check_death(player2)
 
-    print("Post action, post tick fill")
-    print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    #print("Post action, post tick fill")
+    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
     playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
 
@@ -306,12 +308,15 @@ def startGame(path1, path2, submissionpath):
 
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
-    if("p1.json" in player_json.glob('*.json')):
-        player1_json = Path("jsonfiles/p1.json")
-    if("p1.json" in player_json.glob('*.json')):
-        player2_json = Path("jsonfiles/p2.json")
-    player1_json = player_json / "p1.json"
-    player2_json = player_json / "p2.json"
+    # check for battle json
+    p1vp2 = f"{path1} vs {path2}.json"
+    p2vp1 = f"{path2} vs {path1}.json"
+    if(p1vp2 in player_json.glob('*.json')):
+        player1_json = Path(f"jsonfiles/{p1vp2}")
+    if(p2vp1 in player_json.glob('*.json')):
+        player2_json = Path(f"jsonfiles/{p2vp1}")
+    player1_json = player_json / p1vp2
+    player2_json = player_json / p2vp1
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
@@ -327,8 +332,8 @@ def startGame(path1, path2, submissionpath):
     for i in range(BUFFERTURNS * 2): # 2 since fill ticks
         playerToJson(player1, p1_json_dict, fill=True, start=True)
         playerToJson(player2, p2_json_dict, fill=True, start=True)
-        projectileToJson(None, p1_json_dict, False, fill=False)
-        projectileToJson(None, p2_json_dict, False, fill=False)
+        projectileToJson(None, p1_json_dict, False, fill=True)
+        projectileToJson(None, p2_json_dict, False, fill=True)
         tick += 1
         max_tick += 1
         
