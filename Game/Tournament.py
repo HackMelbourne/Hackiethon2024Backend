@@ -11,6 +11,7 @@ for i in player:
         clean_player.append(i[:-3])
 print(clean_player)
 
+roundNum = 1
 
 
 class TournamentNode:
@@ -40,6 +41,7 @@ def printBracket(node, depth=0):
     
 
 def findWinner(node):
+    global roundNum
     if not node:
         return None
 
@@ -50,7 +52,9 @@ def findWinner(node):
     left_winner = findWinner(node.left)
     right_winner = findWinner(node.right)
 
-    return startGame(left_winner, right_winner, "Submissions")
+    retval = startGame(left_winner, right_winner, "Submissions", roundNum)
+    roundNum += 1
+    return retval
 
 def simulateTournament(players_list):
     root = buildBracket(players_list)
