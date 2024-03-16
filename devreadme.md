@@ -1,7 +1,7 @@
 to use pytest,
 
 ```
-pip install requirements.txt -r
+pip install -r requirements.txt
 pytest-watch --runner="pytest --testmon"
 ```
 

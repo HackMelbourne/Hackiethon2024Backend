@@ -16,9 +16,9 @@ from Game.PlayerConfigs import Player_Controller
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "pytest_tests/test_bots"
-PATH1 = "SuperSaiyanAttackBot"
-PATH2 = "DoNothingBot"
+SUBMISSIONPATH = "Submissions"
+PATH1 = "Player6"
+PATH2 = "Player5"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 

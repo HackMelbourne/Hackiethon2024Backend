@@ -204,6 +204,9 @@ def test_grenade():
 def test_teleport_hadoken_combo():
     pass
 
+def test_hadoken_in_air():
+    pass
+
 def test_hadoken():
     p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(hadoken_once_bot, nothing_bot, 4, 7)
     
@@ -272,7 +275,27 @@ def test_hadoken_hits_end():
     assert p2_json_dict['hp'][-1] < HP
 
 def test_hadoken_at_edge():
-    pass
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(hadoken_once_bot, jump_bot, 12, 15)
+    
+    assert p1_json_dict['xCoord'][-1] == 13
+    assert p2_json_dict['xCoord'][-1] == 15
+
+    turns = 4
+    for i in range(turns):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+
+    pprint(p1_json_dict)
+    pprint(p2_json_dict)
+
+    n = 2*turns +1 
+    assert p1_json_dict['xCoord'][-n:] == [13] + [14] * (n-1)
+    assert p2_json_dict['xCoord'][-n:] == [15] * n
+    assert p1_json_dict['yCoord'][-n:] == [0] * n
+    assert p2_json_dict['yCoord'][-n:] == [0, 1, 1, 1, 1, 0, 0, 0, 0]
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover','NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'jump', 'jump', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+    assert p1_json_dict['hp'][-n:] == [HP] * n
+    assert p2_json_dict['hp'][-n:] == [HP] * n
 
 def test_lasso_at_edge():
     pass
