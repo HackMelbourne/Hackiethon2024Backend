@@ -17,8 +17,8 @@ from Game.PlayerConfigs import Player_Controller
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-PATH1 = "Player1"
-PATH2 = "Player2"
+PATH1 = "Player5"
+PATH2 = "Player6"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -65,7 +65,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     Isolating so we can unit test.
     """
     knock1 = knock2 = 0
-        
+    print(projectiles)
+
     #if midair, start falling/rising, and check if midair movement causes a collision
     updateMidair(player1)
     check_collision(player1, player2, knock1, knock2)
@@ -99,7 +100,6 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
-    print(len(projectiles))
     #print("Post action, pre fill tick")
     #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     

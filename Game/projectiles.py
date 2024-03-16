@@ -8,6 +8,7 @@ class Projectile:
     def __init__(self, player, path, size, type, trait, collision, timer, collisionHp = 2):
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
+        print(path)
         self._direction = player._direction
         self._initdirection = self._direction
         self._distance = 0
@@ -31,27 +32,15 @@ class Projectile:
         self._path = list(path)
         self._pathIndex = 0
         
-        
+        print(player._direction, self._path)
         for i in range(len(self._path)):
             self._path[i][0] = self._direction * self._path[i][0]
-        print(player._direction, self._path)
-        
-        
             
         self._xCoord = player._xCoord + path[0][0]
         self._yCoord = player._yCoord + path[0][1]
         
-        if self._trait == "return":
-            rev_path = []
-            for i in range(2, len(self._path) + 1):
-                rev_path.append([self._path[-i][0], self._path[-i][1]])
-            self._path += rev_path
-            self._trait = None
-            self._direction *= -1
             
     def _travel(self):
-        print(self._pathIndex)
-        print(self._path)
         if 0 < self._pathIndex < len(self._path):
             pos = self._path[self._pathIndex]
             self._xCoord += pos[0] - self._path[self._pathIndex - 1][0]
@@ -73,6 +62,14 @@ class Projectile:
         if not self._trait:
             # pop
             self._size = (0, 0)
+        
+        if self._trait == "return":
+            rev_path = []
+            for i in range(2, len(self._path) + 1):
+                rev_path.append([self._path[-i][0], self._path[-i][1]])
+            self._path += rev_path
+            self._trait = None
+            self._direction *= self._initdirection * -1
                 
         elif self._trait == "timer":
             # stay at current position for given time to live
@@ -146,7 +143,7 @@ class ProjectileSkill(AttackSkill):
         self._player = player
         self._skillType = skillName
         self._path = []
-        self._recovery = 0
+        self._recovery = 1
         
     def summonProjectile(self, path, size, trait, collision, timer, colHp = 2):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 
@@ -165,11 +162,12 @@ class Hadoken(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
-        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6,0], [7,0]]
         self._stunself = False
-        self._recovery = 1
-    
+    def init_path(self):
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6,0], [7,0]]
+        
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
@@ -197,14 +195,18 @@ class Lasso(ProjectileSkill):
                                  skillName="lasso")
         self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
         self._stunself = True
-    
+        self._recovery = 0
+
+    def init_path(self):
+        self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
+        
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
             return atk_info
-        
         self.projectile = self.summonProjectile(path=travelPath, size=(1,1), 
                                            trait=None, collision=True, timer=0,
                                            colHp=2)
@@ -223,11 +225,13 @@ class Boomerang(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
-        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
         self._stunself = False
-        self._recovery
     
+    def init_path(self):
+        self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
+        
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
@@ -240,11 +244,12 @@ class Boomerang(ProjectileSkill):
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
-    
+            
     def path_range(self):
         return self._path[-1][0] - self._path[0][0]
     
     def _revActivate(self):
+        print('REVERSE')
         return self._activateSkill(self._reversePath())
         
 class Grenade(ProjectileSkill):
@@ -252,10 +257,15 @@ class Grenade(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=12,
                                  blockable=False, knockback=3, stun=2, 
                                  skillName="grenade")
-        self._path = [[1,1], [2,1], [3,1], [4,1]]
+        
         self._stunself = False
+        self._recovery = 0
     
+    def init_path(self):
+         self._path = [[1,1], [2,1], [3,1], [4,1]]   
+         
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
@@ -280,10 +290,14 @@ class BearTrap(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
                                  blockable=False, knockback=0, stun=3, 
                                  skillName="beartrap")
-        self._path = [[1,0], [2,0]]
+        
         self._stunself = False
         
+    def init_path(self):
+        self._path = [[1,0], [2,0]]
+        
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
@@ -308,10 +322,13 @@ class IceWall(ProjectileSkill):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=20, damage=10,
                                  blockable=False, knockback=2, stun=0, 
                                  skillName="icewall")
-        self._path = [[1,0], [2,0], [3,0]]
         self._stunself = False
         
+    def init_path(self):
+        self._path = [[1,0], [2,0], [3,0]]
+        
     def _activateSkill(self, travelPath=None):
+        self.init_path()
         if not travelPath:
             travelPath = self._path
         atk_info = super()._activateSkill()
