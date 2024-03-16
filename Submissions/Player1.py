@@ -41,6 +41,8 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.moves = SECONDARY,
+        self.moves_iter = iter(moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary

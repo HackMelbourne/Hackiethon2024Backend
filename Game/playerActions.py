@@ -20,7 +20,9 @@ def move(player, enemy, action):
     moveAction = moveAction[1]
     # dont actually move until reach outside function
     cached_move = [0,0]
+    print(action)
     if validMove(moveAction, player, enemy) and not player._midair:
+        print("valid move")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
@@ -37,6 +39,7 @@ def move(player, enemy, action):
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
+    print(player._moves)
     return cached_move
         
 def reset_block(player):

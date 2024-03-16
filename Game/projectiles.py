@@ -60,7 +60,8 @@ class Projectile:
             if self._trait == "timer" and self._yCoord > 0:
                 self._yCoord -= 1
                 
-        elif self._pathIndex >= len(self._path):
+        elif self._pathIndex >= len(self._path) or ((self._xCoord == LEFTBORDER) 
+                                            or (self._xCoord == RIGHTBORDER)):
             # has reached end of path, so do effects based on trait
             self._do_trait()
             
@@ -94,6 +95,9 @@ class Projectile:
                 self._trait = "explode"
                 # allow to destroy proj and players
                 self._collisionHp = 10
+        
+        self._path = [] # since no longer moving
+        
 
               
     def get_pos(self):
@@ -173,7 +177,8 @@ class Hadoken(ProjectileSkill):
             return atk_info
         
         projectile = self.summonProjectile(path = travelPath, size=(1,1), 
-                                           trait=None, collision=True, timer=0)
+                                           trait=None, collision=True, timer=0,
+                                           colHp= 3)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
@@ -201,7 +206,8 @@ class Lasso(ProjectileSkill):
             return atk_info
         
         self.projectile = self.summonProjectile(path=travelPath, size=(1,1), 
-                                           trait=None, collision=True, timer=0)
+                                           trait=None, collision=True, timer=0,
+                                           colHp=2)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": self.projectile}]
@@ -229,7 +235,8 @@ class Boomerang(ProjectileSkill):
             return atk_info
         
         projectile = self.summonProjectile(path = travelPath, size=(1,1), 
-                                           trait="return", collision=True, timer=0)
+                                           trait="return", collision=True, timer=0,
+                                           colHp=3)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
@@ -285,7 +292,7 @@ class BearTrap(ProjectileSkill):
         
         projectile = self.summonProjectile(path = travelPath, size=(1,1), 
                                            trait="timer", 
-                                           collision=False, timer=5)
+                                           collision=False, timer=5, colHp=2)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
@@ -313,7 +320,7 @@ class IceWall(ProjectileSkill):
         
         projectile = self.summonProjectile(path = travelPath, size=(1,3), 
                                            trait="timer", 
-                                           collision=True, timer=10)
+                                           collision=True, timer=10, colHp=3)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]

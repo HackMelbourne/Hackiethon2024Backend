@@ -5,7 +5,7 @@ DIST_FROM_MID = 0.5 if (RIGHTBORDER-LEFTBORDER)%2 else 1
 BUFFERTURNS = 1
 HP = 50
 #game settings
-timeLimit = 19
+timeLimit = 10
 movesPerSecond = 1
 #direction constants
 GORIGHT = 1
