@@ -21,6 +21,7 @@ def move(player, enemy, action):
     # dont actually move until reach outside function
     cached_move = [0,0]
     if validMove(moveAction, player, enemy) and not player._midair:
+        print("valid move")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
@@ -176,6 +177,7 @@ def fetchSkill(player, skillClass, reversed=False):
             player._recovery += player._primarySkill._recovery
             
     elif player._secondarySkill._skillType == skillClass:
+        print("made it hya")
         player._primarySkill._resetStartup()
         player._heavyAtk._resetStartup()
         player._lightAtk._resetStartup()
@@ -185,6 +187,7 @@ def fetchSkill(player, skillClass, reversed=False):
             returnVal = player._secondarySkill._revActivate()
         else:
             returnVal = player._secondarySkill._activateSkill()
+        print(returnVal)
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
@@ -375,12 +378,15 @@ def icewall(player, target, action):
 
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
+        print("made it here")
         skillInfo = fetchSkill(player, projectileName, action[1])
+        print(f"SKillinfo is: {skillInfo}")
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]
             player._moves.append((action[0], "activate"))
             player._midStartup = False
+            print(skillInfo["projectile"]._path)
             return skillInfo
         else:
             if skillInfo == -1:

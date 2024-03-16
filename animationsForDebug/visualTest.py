@@ -7,7 +7,7 @@ from parseJson import *
 LEFTBORDER = 0
 RIGHTBORDER = 15
 
-MULTIPLIER = 80
+MULTIPLIER = 50
  
 WIDTH = (RIGHTBORDER - LEFTBORDER) * 80
 HEIGHT = 500 
@@ -27,7 +27,7 @@ background_colour = (234, 212, 252)
 def setup():
     # Define the dimensions of 
     # screen object(width,height) 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT)) 
+    screen = pygame.display.set_mode((WIDTH+50, HEIGHT)) 
     
     # Set the caption of the screen 
     pygame.display.set_caption('Visual testing') 

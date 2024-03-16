@@ -139,6 +139,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             # player got hit, so remove projectile
             projectiles[proj_index] = None # to set destroyed projectiles
             projectileToJson(proj_obj, proj_json_dict, True, midtickhit=True)
+            proj_obj = None
             #check_json_updated(name)
             if proj_knock1:
                 player1._skill_state = False
@@ -149,14 +150,14 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         # if exists, then travel
         proj_obj._travel()
         # first check if the projectile already travelled its range or offscreen
-        if (proj_obj._size == (0,0) or (proj_info["self_stun"] and 
-                            proj_obj._player._moves[-1][0] == "skill_cancel")):
+        if (proj_obj._size == (0,0) or 
+            (proj_info["self_stun"] and proj_obj._player._skill_state == False)):
             # remove projectile from array
             projectiles[proj_index] = None
             projectileToJson(proj_obj, proj_json_dict, False)
             #check_json_updated(name)
             proj_obj._player._skill_state = False
-            print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
+            proj_obj = None
             continue
         #print(f"Here at {proj_obj.get_pos()}")
         # if still existst then log
@@ -175,11 +176,12 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                             projectiles[proj_index] = None
                             projectileToJson(proj_obj, proj_json_dict, False)
                             proj_obj._player._skill_state = False
+                            proj_obj = None
                         if nextproj_obj._size == (0,0):
                             projectiles[nextProjNum] = None
                             projectileToJson(nextproj_obj, enemy_proj_dict, False)
                             nextproj_obj._player._skill_state = False
-                        print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
+                            nextproj_obj = None
                         # at least one projectile will be destroyed
                         break
         
@@ -212,6 +214,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 projectiles[proj_index] = None
                 # then unstun caster if the projectile skill has self stun
                 proj_obj._player._skill_state = False
+                proj_obj = None
                 print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             else:
                 projectileToJson(proj_obj, proj_json_dict, True)
@@ -221,6 +224,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         
     #after final calculation, remove all destroyed projectiles
     projectiles = [proj for proj in projectiles if proj]
+    proj_obj = None
         
     print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
     return projectiles, knock1, stun1, knock2, stun2  

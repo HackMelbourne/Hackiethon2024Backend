@@ -9,7 +9,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = OnePunchSkill
-SECONDARY_SKILL = Boomerang
+SECONDARY_SKILL = BearTrap
 
 #constants, for easier move return
 #movements
@@ -30,15 +30,14 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
-# for testing
-moves = SECONDARY, BACK, BACK, BACK
-moves_iter = iter(moves)
-
 
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.moves = FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD
+        self.moves_iter = iter(self.moves)
+        self.doScripted = True
 
         
     def init_player_skills(self):
@@ -48,6 +47,14 @@ class Script:
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         # PRIMARY_SKILL = OnePunchSkill
         # SECONDARY_SKILL = Grenade
+        return BACK
+        if self.doScripted:
+            try:
+                nxt = next(self.moves_iter)
+                print(nxt)
+                return nxt
+            except StopIteration:
+                return NOMOVE
 
         if get_pos(player)[0] == 0 or get_pos(player)[0] == 30:
             return JUMP_FORWARD

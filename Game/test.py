@@ -7,21 +7,28 @@ primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, SuperS
 secondarySkills = [Hadoken, Lasso, Boomerang, Grenade, IceWall, BearTrap]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
+    print(moveset)
     #TODO prevent double jumps
+    print(moveset[0] not in valid_moves or moveset[1] not in valid_moves)
+    print((player._xCoord + player._direction * moveset[0]) < LEFTBORDER or 
+          (player._xCoord + player._direction * moveset[0]) > RIGHTBORDER)
     if moveset[0] not in valid_moves or moveset[1] not in valid_moves:
         return False
     # check if out of bound 
-    elif (player._xCoord + player._direction * moveset[0] < LEFTBORDER or 
-          player._xCoord + player._direction * moveset[0] > RIGHTBORDER):
+    elif ((player._xCoord + player._direction * moveset[0]) < LEFTBORDER or 
+          (player._xCoord + player._direction * moveset[0]) > RIGHTBORDER):
         if moveset[1]:
             return True
         else:
             return False
     #UPDATE: invalid if next to each other and moving towards the other
+    '''
     elif (abs(player._xCoord - enemy._xCoord) == moveset[0] and 
           (player._yCoord + moveset[1]) == enemy._yCoord):
         return False
+    '''
     return True
+    
 
 def correct_orientation(p1, p2):
     #flips orientation if player jumps over each other
@@ -54,6 +61,10 @@ def correctOverlap(p1, p2, knock1, knock2):
         return True
     return False
        
+def check_move_collision(player1, player2, cached_move_1, cached_move_2):
+    return (player1._xCoord + cached_move_1[0] == player2._xCoord and
+            player2._xCoord + cached_move_2[0] == player1._xCoord)
+    
 # returns if player collision occured       
 def correct_dir_pos(player1, player2, knock1, knock2):
     correctPos(player1)
