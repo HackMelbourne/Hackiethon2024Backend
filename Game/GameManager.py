@@ -384,6 +384,8 @@ def startGame(path1, path2, submissionpath, roundNum):
     else:
         print('Tie!')
         return None
+    
+    # todo add txt file for round info
 
 if __name__ == "__main__":
     startGame(PATH1, PATH2, SUBMISSIONPATH, 0)

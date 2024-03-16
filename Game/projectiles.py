@@ -46,6 +46,11 @@ class Projectile:
             pos = self._path[self._pathIndex]
             self._xCoord += pos[0] - self._path[self._pathIndex - 1][0]
             self._yCoord += pos[1] - self._path[self._pathIndex - 1][1]
+            # bear trap and ice wall should fall if midair
+            if self._trait == "timer" and self._yCoord > 0:
+                self._yCoord -= 1
+                
+            
         elif self._pathIndex >= len(self._path):
             # has reached end of path, so do effects based on trait
             self._do_trait()
