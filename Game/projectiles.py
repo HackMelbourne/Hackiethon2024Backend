@@ -5,7 +5,8 @@ class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
     
-    def __init__(self, player, path, size, type, trait, collision, timer, collisionHp = 2):
+    def __init__(self, player, path, size, type, trait, collision, timer, 
+                 collisionHp = 2):
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
         print(path)
@@ -49,14 +50,13 @@ class Projectile:
             if self._trait == "timer" and self._yCoord > 0:
                 self._yCoord -= 1
                 
-        elif self._pathIndex >= len(self._path) or ((self._xCoord == LEFTBORDER) 
-                                            or (self._xCoord == RIGHTBORDER)):
+        elif self._pathIndex >= len(self._path) or ((self._xCoord < LEFTBORDER) 
+                            or (self._xCoord > RIGHTBORDER)):
             # has reached end of path, so do effects based on trait
             self._do_trait()
             
         self._pathIndex += 1
-        if ((self._xCoord < LEFTBORDER) or (self._xCoord > RIGHTBORDER)):
-            self._size = (0,0)
+
       
     def _do_trait(self):
         if not self._trait:
@@ -65,7 +65,15 @@ class Projectile:
         
         if self._trait == "return":
             rev_path = []
-            for i in range(2, len(self._path) + 1):
+            start = 2
+            if (self._xCoord < LEFTBORDER):
+                self._xCoord = LEFTBORDER
+                start += len(self._path) - self._pathIndex - 1
+            elif (self._xCoord > RIGHTBORDER):
+                self._xCoord = RIGHTBORDER
+                start += len(self._path) - self._pathIndex - 1
+                
+            for i in range(start, len(self._path) + 1):
                 rev_path.append([self._path[-i][0], self._path[-i][1]])
             self._path += rev_path
             self._trait = None
@@ -74,6 +82,10 @@ class Projectile:
         elif self._trait == "timer":
             # stay at current position for given time to live
             # does damage if hits opponent before given time
+            if (self._xCoord < LEFTBORDER):
+                self._xCoord = LEFTBORDER
+            elif (self._xCoord > RIGHTBORDER):
+                self._xCoord = RIGHTBORDER
             self._collision = True
             if self._timer:
                 self._timer -= 1
@@ -83,7 +95,15 @@ class Projectile:
             
         elif self._trait == "timer_explode":
             # similar to timer, but does aoe damage after timer
-            if self._timer:
+            explode = False
+            if (self._xCoord < LEFTBORDER):
+                self._xCoord = LEFTBORDER
+                explode = True
+            elif (self._xCoord > RIGHTBORDER):
+                self._xCoord = RIGHTBORDER
+                explode = True
+                
+            if self._timer and not explode:
                 self._timer -= 1
             else:
                 # explode
@@ -113,6 +133,8 @@ class Projectile:
             # checks if projectile hits target
             if ((abs(target._xCoord-self._xCoord) < self._size[0]) and
                 (abs(target._yCoord-self._yCoord) < self._size[1])):
+                if self._type == "icewall":
+                    return target == self._player
                 return target != self._player
         return False
             

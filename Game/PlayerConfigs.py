@@ -21,6 +21,7 @@ class Player_Controller:
         self._blocking = False
         self._hp = HP
         self._defense = 0
+        self._superarmor = False
         #midair attributes
         self._midair = False
         self._jumpHeight = 1

@@ -1,4 +1,4 @@
-from Game.playerActions import attackHit, changeDamage, changeSpeed, encumber
+from Game.playerActions import attackHit, changeDamage
 from Game.gameSettings import *
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
@@ -263,9 +263,11 @@ def updateBuffs(player):
         if player._atkbuff:
             changeDamage(player, 0)
             player._atkbuff = 0
-        if player._speed != 1:
-            changeSpeed(player, 0)
-            player._speed = 1
+        if player._defense:
+            player._defense = 0
+            player._superarmor = False
+        if player._jumpHeight > 1:
+            player._jumpHeight = 1
     '''   
     if player._encumbered:
         print(f"Duration: {player._encumberedDuration}")

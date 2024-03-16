@@ -197,19 +197,6 @@ def fetchSkill(player, skillClass, reversed=False):
         raise Exception("Player does not have this skill")
     return returnVal
     
-# currently unused in super saiyan   
-def changeSpeed(player, speed):
-    # if speed == 0, reset startups back to default
-    player._primarySkill._reduceMaxStartup(speed)
-    player._secondarySkill._reduceMaxStartup(speed)
-    player._lightAtk._reduceMaxStartup(speed)
-    player._heavyAtk._reduceMaxStartup(speed)
-    player._block._reduceMaxStartup(speed)
-    player._move._reduceMaxStartup(speed)
-    player._speed = ceil(player._speed * speed)
-    # when resetting back to normal speed, set player speed to 1 and use 
-    # resetMaxStartup method
-
 # for super saiyan, increases damage dealt
 def changeDamage(player, buffValue):
     if player._primarySkill._skillType in (attack_actions | projectile_actions):
@@ -304,13 +291,10 @@ def super_saiyan(player, target, action):
     
     player._midStartup = False
     
-    speedBuff = skillInfo[1][0]
-    atkBuff = skillInfo[1][1]
-    duration = skillInfo[1][2]
+    atkBuff = skillInfo[1][0]
+    duration = skillInfo[1][1]
     player._moves.append((action[0], "activate"))
     # turned off for now since startup and recovery so wack with super saiyan
-    # encumbered also turned off
-    #changeSpeed(player, speedBuff)
     changeDamage(player, atkBuff)
     player._currentBuffDuration = duration
     return True
@@ -335,8 +319,48 @@ def meditate(player, target, action):
 
     return True   
     
-# similar layout to dash_atk
-# TODO : has startup, add function to manage startups
+def super_armor(player, target, action):
+    skillInfo = fetchSkill(player, "super_armor")
+
+    if isinstance(skillInfo, int):
+        if skillInfo == -1:
+            player._midStartup = True
+            player._moves.append((action[0], "startup"))
+        else:
+            player._moves.append(("NoMove", "cooldown"))
+        return True
+    
+    player._midStartup = False
+    
+    defBuff = skillInfo[1][0]
+    duration = skillInfo[1][1]
+    player._moves.append((action[0], "activate"))
+    # turned off for now since startup and recovery so wack with super saiyan
+    player._defense += defBuff
+    player._currentBuffDuration = duration
+    player._superarmor = True
+    return True
+
+def jump_boost(player, target, action):
+    skillInfo = fetchSkill(player, "jump_boost")
+
+    if isinstance(skillInfo, int):
+        if skillInfo == -1:
+            player._midStartup = True
+            player._moves.append((action[0], "startup"))
+        else:
+            player._moves.append(("NoMove", "cooldown"))
+        return True
+    
+    player._midStartup = False
+    
+    player._jumpHeight = skillInfo[1][0]
+    duration = skillInfo[1][1]
+    player._moves.append((action[0], "activate"))
+    # turned off for now since startup and recovery so wack with super saiyan
+    player._currentBuffDuration = duration
+    return True
+    
 # powerful punch that takes time to charge up
 def one_punch(player, target, action):
     knockback = stun = 0
@@ -420,10 +444,11 @@ def nullAtk(player, target, action):
 def nullProj(player, target, action):
     return None
 
-# for actions that do not deal damage
+# for actions that do not deal damage/auras
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
                    "super_saiyan": super_saiyan, "meditate": meditate,
-                   "skill_cancel":skill_cancel}
+                   "skill_cancel":skill_cancel, "super_armor":super_armor,
+                   "jump_boost":jump_boost}
 
 # for actions that deal damage
 attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,

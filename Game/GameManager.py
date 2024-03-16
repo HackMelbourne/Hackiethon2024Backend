@@ -16,10 +16,10 @@ from Game.PlayerConfigs import Player_Controller
 # PATH1 = "Player1"
 # PATH2 = "Player2"
 
-SUBMISSIONPATH = "Submissions"
+SUBMISSIONPATH = "pytest_tests/test_bots"
 
-PATH1 = "Player5"
-PATH2 = "Player6"
+PATH1 = "HadokenOnceBot"
+PATH2 = "JumpBot"
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -121,10 +121,10 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     #only determine knockback and stun after attacks hit
     #knock1 and stun1 = knockback and stun inflicted by player1 on player2
-    if knock1:
+    if knock1 and not player2._superarmor:
         player2._xCoord += knock1
         player2._stun = max(stun1, player2._stun)
-    if knock2:
+    if knock2 and not player1._superarmor:
         player1._xCoord += knock2
         player1._stun = max(stun2, player1._stun)
         

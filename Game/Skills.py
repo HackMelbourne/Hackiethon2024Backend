@@ -154,10 +154,10 @@ class OnePunchSkill(AttackSkill):
         self._skillType = "onepunch"
         self._recovery = 2 # bcs op
 
-# returns ("buff", (speedBuff, attackBuff, defenseBuff))
+# returns ("buff", (buffValue=(atk bff, def buff etc), duration)
 class BuffSkill(Skill):
-    def __init__(self, startup, cooldown, speedBuff, attackBuff, duration):
-        super().__init__("buff", startup, cooldown, (speedBuff, attackBuff, duration))
+    def __init__(self, startup, cooldown, buffValue, duration):
+        super().__init__("buff", startup, cooldown, (buffValue, duration))
 
     def _activateSkill(self):
         return self._useSkill()
@@ -180,9 +180,21 @@ class TeleportSkill(Skill):
 # now just buffs attack, ignore speed
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=40, speedBuff=2, attackBuff=2, 
+        super().__init__(startup=0, cooldown=40, buffValue=2, 
                          duration=20)
         self._skillType = "super_saiyan"
+        
+class SuperArmorSkill(BuffSkill):
+    def __init__(self, player=None):
+        super().__init__(startup=0, cooldown=30, buffValue=4, duration=20)
+        self._skillType = "super_armor"
+            
+class JumpBoostSkill(BuffSkill):
+    def __init__(self, player=None):
+        super().__init__(startup=0, cooldown=20, buffValue=2, duration=6)
+        self._skillType = "jump_boost"
+    
+    
 
 def get_skill(skillClass):
     obj = skillClass(None)

@@ -225,7 +225,7 @@ def test_hadoken_in_air():
     assert p1_json_dict['projXCoord'][-n:] == [-1, -1, -1, -1, -1, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, -1, -1]
     assert p1_json_dict['projYCoord'][-n:] == [-1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1]
     assert p2_json_dict['yCoord'][-n:] == [0] * n 
-    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'jump', 'jump', 'hadoken', 'hadoken', 'recover', 'recover'] + ['NoMove'] * (n-9)
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover'] + ['NoMove'] * (n-9)
     assert p2_json_dict['state'][-n:] == ['NoMove'] * n
     assert p2_json_dict['hp'][-1] == HP
 
@@ -243,11 +243,11 @@ def test_hadoken():
 
     n = 7
     assert p1_json_dict['xCoord'][-n:] == [4, 5, 5, 5, 5, 5, 5]
-    assert p2_json_dict['xCoord'][-n:] == [7, 7, 7, 7, 7, 9, 9]
+    assert p2_json_dict['xCoord'][-n:] == [7, 7, 7, 7, 7, 7, 9]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p2_json_dict['yCoord'][-n:] == [0] * n 
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover']
-    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'Hurt']
 
     assert p2_json_dict['hp'][-1] < HP
 
@@ -288,12 +288,12 @@ def test_hadoken_hits_end():
 
     n = 2*turns +1 
     assert p1_json_dict['xCoord'][-n:] == [3] + [4] * (n-1)
-    assert p2_json_dict['xCoord'][-n:] == [11] * (n - 2) + [13, 13]
+    assert p2_json_dict['xCoord'][-n:] == [11] * (n - 3) + [13, 13, 13]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p2_json_dict['yCoord'][-n:] == [0] * n 
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover'] + ['NoMove'] * (n - 7)
-    assert p2_json_dict['state'][-n:] == ['NoMove'] * n
-    assert p2_json_dict['hp'][-n:-2] == [HP] * (n-2)
+    assert p2_json_dict['state'][-n:] == ['NoMove'] * (n-3) + ['Hurt', 'NoMove', 'NoMove']
+    assert p2_json_dict['hp'][-n:] == [HP] * (n-3) + [45, 45, 45]
     assert p2_json_dict['hp'][-1] < HP
 
 def test_hadoken_at_edge():
@@ -313,12 +313,12 @@ def test_hadoken_at_edge():
     assert p1_json_dict['xCoord'][-n:] == [13] + [14] * (n-1)
     assert p2_json_dict['xCoord'][-n:] == [15] * n
     assert p1_json_dict['yCoord'][-n:] == [0] * n
-    assert p1_json_dict['projXCoord'][-n:] == [-1, -1, -1, 15, 15, -1, -1, -1, -1]
-    assert p1_json_dict['projYCoord'][-n:] == [-1, -1, -1, 0, 0, -1, -1, -1, -1]
+    assert p1_json_dict['projXCoord'][-n:] == [-1, -1, -1, 15, 15, 15, -1, -1, -1]
+    assert p1_json_dict['projYCoord'][-n:] == [-1, -1, -1, 0, 0, 0, -1, -1, -1]
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover','NoMove', 'NoMove']
-    assert p2_json_dict['state'][-n:] == ['NoMove', 'jump', 'jump', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'NoMove', 'NoMove', 'NoMove', 'Hurt', 'NoMove', 'NoMove']
     assert p1_json_dict['hp'][-n:] == [HP] * n
-    assert p2_json_dict['hp'][-n:] == [HP] * n
+    assert p2_json_dict['hp'][-n:] == [HP] * 6 + [45] * (n-6)
 
 def test_lasso_at_edge():
     pass
@@ -454,13 +454,13 @@ def test_dash_dodges_hadoken():
     pprint(p2_json_dict)
 
     n = 2*turns +1 
-    assert p1_json_dict['xCoord'][-n:] == [3] + [4] * (n-1)
+    assert p1_json_dict['xCoord'][-n:] == [3,4,4,4,3,3,3]
     assert p2_json_dict['xCoord'][-n:] == [6, 5, 5, 0, 0, 0, 0]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p2_json_dict['yCoord'][-n:] == [0] * n 
-    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'hadoken', 'recover', 'recover']
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'hadoken', 'Hurt', 'recover', 'recover']
     assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'dash_attack', 'dash_attack', 'NoMove', 'NoMove']
-    assert p1_json_dict['hp'][-n:] == [HP] * n
+    assert p1_json_dict['hp'][-n:] == [HP] * 3 + [45] * (n-3)
     assert p2_json_dict['hp'][-n:] == [HP] * n
 
 def test_teleport_dodges_hadoken():
