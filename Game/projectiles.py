@@ -213,7 +213,7 @@ class Boomerang(ProjectileSkill):
                                  skillName="boomerang")
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
         self._stunself = False
-        self._recovery
+        self._recovery = 1
     
     def _activateSkill(self, travelPath=None):
         if not travelPath:

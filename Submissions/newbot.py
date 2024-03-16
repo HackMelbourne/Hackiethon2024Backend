@@ -16,7 +16,7 @@ PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
-#movements
+# movements
 JUMP = ("move", (0,1))
 FORWARD = ("move", (1,0))
 BACK = ("move", (-1,0))
@@ -33,9 +33,6 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
-# for testing
-moves = SECONDARY,
-moves_iter = iter(moves)
 
 class Script:
     def __init__(self):
@@ -47,5 +44,4 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return SECONDARY
-        
+        return FORWARD

@@ -2,7 +2,6 @@
 from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
-from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -13,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Hadoken
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
 #movements
@@ -33,6 +32,7 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
+CANCEL = ('skill_cancel',)
 # for testing
 moves = SECONDARY,
 moves_iter = iter(moves)
@@ -41,11 +41,16 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.index = 0
+        self.moves = [FORWARD, SECONDARY, SECONDARY, FORWARD]
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return SECONDARY
-        
+        if self.index < len(self.moves):
+            move = self.moves[self.index]
+            self.index += 1
+            return move
+        return NOMOVE    

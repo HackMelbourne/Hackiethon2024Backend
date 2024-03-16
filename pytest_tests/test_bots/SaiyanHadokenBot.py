@@ -2,7 +2,6 @@
 from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
-from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
 # primary skill can be defensive or offensive
 # secondary skills involve summoning a projectile
@@ -12,7 +11,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
+PRIMARY_SKILL = SuperSaiyanSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -41,11 +40,22 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
+        self.hasWalked = False
+        self.hasSaiyaned = False
+        self.hasHadokened = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return SECONDARY
-        
+        if not self.hasWalked:
+            self.hasWalked = True
+            return FORWARD
+        if not self.hasSaiyaned:
+            self.hasSaiyaned = True
+            return PRIMARY
+        if not self.hasHadokened:
+            self.hasHadokened = True
+            return SECONDARY
+        return FORWARD

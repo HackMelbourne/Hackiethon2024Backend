@@ -154,12 +154,12 @@ def test_teleport():
     # assumptions: heavy has startup of 1
     #TODO: IDK
     n = 7
-    assert p1_json_dict['xCoord'][-n:] == [5, 6, 6, 1, 1, 1, 1]
+    assert p1_json_dict['xCoord'][-n:] == [5, 6, 6, 11, 11, 11, 11]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'teleport', 'teleport', 'NoMove', 'NoMove']
 
 def test_teleport_outside_map():
-    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(teleport_once_bot, nothing_bot, 3, 8)
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(teleport_once_bot, nothing_bot, 11, 15)
 
     for i in range(3):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
@@ -170,7 +170,8 @@ def test_teleport_outside_map():
     # assumptions: heavy has startup of 1
     #TODO: IDK
     n = 7
-    assert p1_json_dict['xCoord'][-n:] == [3, 4, 4, 0, 0, 0, 0]
+    assert p1_json_dict['xCoord'][-n:] == [11, 12, 12, 15, 14, 14, 14]
+    assert p2_json_dict['xCoord'][-n:] == [15] * n
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'teleport', 'teleport', 'NoMove', 'NoMove']
 
@@ -186,7 +187,7 @@ def test_teleport_dodges_dash_attack():
     # assumptions: heavy has startup of 1
     #TODO: IDK
     n = 7
-    assert p1_json_dict['xCoord'][-n:] == [5, 6, 6, 1, 1, 1, 1]
+    assert p1_json_dict['xCoord'][-n:] == [5, 6, 6, 11, 11, 11, 11]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'teleport', 'teleport', 'NoMove', 'NoMove']
     assert p1_json_dict['hp'][-1] == HP
