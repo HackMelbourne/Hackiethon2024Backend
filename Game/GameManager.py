@@ -97,7 +97,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
-    
+    print(len(projectiles))
     #print("Post action, pre fill tick")
     #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     if JSONFILL:
@@ -349,18 +349,20 @@ def startGame(path1, path2, submissionpath, roundNum):
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles, stun1, stun2)
 
+        
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
         
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))
-        
+    '''
     for key in p1_json_dict.keys():
         print(key)
         print(p1_json_dict[key])
     for key in p2_json_dict.keys():
         print(key)
         print(p2_json_dict[key])
+    '''
     
     # for json checking purposes
     for json_key in p1_json_dict:
@@ -370,6 +372,8 @@ def startGame(path1, path2, submissionpath, roundNum):
     for json_key in p2_json_dict:
         if json_key != "ProjectileType":
             print(f"{json_key} : {len(p2_json_dict[json_key])}")
+            
+    
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")

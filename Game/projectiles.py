@@ -5,7 +5,7 @@ class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
     
-    def __init__(self, player, path, size, type, trait, collision, timer):
+    def __init__(self, player, path, size, type, trait, collision, timer, collisionHp = 2):
         # size = (x, y) hitbox size of projectile
         # type =  type of projectile eg hadoken
         self._direction = player._direction
@@ -15,6 +15,7 @@ class Projectile:
         self._type = type
         self._timer = timer
         self._entityType = "projectile"
+        self._collisionHp = collisionHp
         
         # True if projectile damages on hit during travel eg hadoken, lasso
         # False if prpojectile damages after travel eg ice wall, landmine
@@ -101,9 +102,18 @@ class Projectile:
                 self._size = (self._size[0] + 1, self._size[1] + 1)
                 self._collision = True
                 self._trait = "explode"
+                # allow to destroy proj and players
+                self._collisionHp = 10
               
     def get_pos(self):
         return (self._xCoord, self._yCoord)
+    
+    def take_col_dmg(self, colDmg):
+        self._collisionHp -= colDmg
+        if self._collisionHp <= 0:
+            # destroy this projectile
+            self._collisionHp = 0
+            self._size = (0,0)
             
     def _checkCollision(self, target):
         # checks if projectile has a size
@@ -115,7 +125,7 @@ class Projectile:
         return False
             
     def _checkProjCollision(self, target):
-        if self._size[0] and self._size[1] and self._collision:
+        if self._size[0] and self._size[1]:
             # this projectiles range = x to x + target size * direction
             # therefore, get max x and max y sizes, check if they hit
             # hits if both positions within the max x and y sizes
@@ -143,9 +153,9 @@ class ProjectileSkill(AttackSkill):
         self._path = []
         self._recovery = 0
         
-    def summonProjectile(self, path, size, trait, collision, timer):
+    def summonProjectile(self, path, size, trait, collision, timer, colHp = 2):
         projectile = Projectile(self._player, path, size, self._skillType, trait, 
-                                collision, timer)
+                                collision, timer, collisionHp=colHp)
         return projectile
     
     def _reversePath(self):
@@ -256,7 +266,7 @@ class Grenade(ProjectileSkill):
         
         projectile = self.summonProjectile(path = travelPath, size=(1,1), 
                                            trait="timer_explode", 
-                                           collision=False, timer=0)
+                                           collision=False, timer=0, colHp=1)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
