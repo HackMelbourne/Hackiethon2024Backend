@@ -226,10 +226,8 @@ class Boomerang(ProjectileSkill):
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._stunself = False
-<<<<<<< HEAD
         self._recovery = 1
-=======
->>>>>>> origin/update0.1
+
     
     def init_path(self):
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
