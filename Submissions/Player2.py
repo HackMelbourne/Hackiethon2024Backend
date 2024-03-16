@@ -9,7 +9,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = OnePunchSkill
-SECONDARY_SKILL = IceWall
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
 #movements

@@ -355,14 +355,14 @@ def startGame(path1, path2, submissionpath, roundNum):
         
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))
-    '''
+    
     for key in p1_json_dict.keys():
         print(key)
         print(p1_json_dict[key])
     for key in p2_json_dict.keys():
         print(key)
         print(p2_json_dict[key])
-    '''
+    
     
     # for json checking purposes
     for json_key in p1_json_dict:

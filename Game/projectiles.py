@@ -28,7 +28,7 @@ class Projectile:
         self._player = player
         
         # this is an array of projectile positions relative to cast position over time
-        self._path = path
+        self._path = list(path)
         self._pathIndex = 0
         
         
@@ -40,9 +40,18 @@ class Projectile:
             
         self._xCoord = player._xCoord + path[0][0]
         self._yCoord = player._yCoord + path[0][1]
-
+        
+        if self._trait == "return":
+            rev_path = []
+            for i in range(2, len(self._path) + 1):
+                rev_path.append([self._path[-i][0], self._path[-i][1]])
+            self._path += rev_path
+            self._trait = None
+            self._direction *= -1
+            
     def _travel(self):
         print(self._pathIndex)
+        print(self._path)
         if 0 < self._pathIndex < len(self._path):
             pos = self._path[self._pathIndex]
             self._xCoord += pos[0] - self._path[self._pathIndex - 1][0]
@@ -51,7 +60,6 @@ class Projectile:
             if self._trait == "timer" and self._yCoord > 0:
                 self._yCoord -= 1
                 
-            
         elif self._pathIndex >= len(self._path):
             # has reached end of path, so do effects based on trait
             self._do_trait()
@@ -64,24 +72,6 @@ class Projectile:
         if not self._trait:
             # pop
             self._size = (0, 0)
-            
-        elif self._trait == "return":
-            # dynamically return towards player
-            self._direction = -1 * self._initdirection
-            if (self._xCoord == self._player._xCoord and 
-                self._yCoord == self._player._yCoord):
-                # boomerang caught, or player in front of projectile
-                self._size = (0,0)
-            elif (self._player._xCoord - self._xCoord) * self._direction > 0 :
-                # if the player is currently at least behind the projectile 
-                # travel towards caster
-                self._xCoord += self._direction
-                if self._yCoord < self._player._yCoord:
-                    self._yCoord += 1
-                elif self._yCoord > self._player._yCoord:
-                    self._yCoord -= 1
-            else:
-                self._size = (0,0)
                 
         elif self._trait == "timer":
             # stay at current position for given time to live
@@ -104,6 +94,7 @@ class Projectile:
                 self._trait = "explode"
                 # allow to destroy proj and players
                 self._collisionHp = 10
+
               
     def get_pos(self):
         return (self._xCoord, self._yCoord)
@@ -223,7 +214,7 @@ class Lasso(ProjectileSkill):
     
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]

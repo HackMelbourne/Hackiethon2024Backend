@@ -160,7 +160,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             continue
         #print(f"Here at {proj_obj.get_pos()}")
         # if still existst then log
-        #print(f"PROJ {proj_obj.get_pos()}")
+        print(f"PROJ {proj_obj.get_pos()}")
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
             nextProj = projectiles[nextProjNum]
