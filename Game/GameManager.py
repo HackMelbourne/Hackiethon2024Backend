@@ -17,8 +17,13 @@ from Game.PlayerConfigs import Player_Controller
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
+<<<<<<< HEAD
 PATH1 = "Player6"
 PATH2 = "Player5"
+=======
+PATH1 = "Player1"
+PATH2 = "Player2"
+>>>>>>> origin/update0.1
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
@@ -97,7 +102,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
-    
+    print(len(projectiles))
     #print("Post action, pre fill tick")
     #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
     if JSONFILL:
@@ -290,7 +295,7 @@ def get_empty_json():
         'projYCoord':[]
     }
                                           
-def startGame(path1, path2, submissionpath):
+def startGame(path1, path2, submissionpath, roundNum):
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
     if isinstance(path1, str) and not isinstance(path2,str):
@@ -309,14 +314,20 @@ def startGame(path1, path2, submissionpath):
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
     # check for battle json
-    p1vp2 = f"{path1} vs {path2}.json"
-    p2vp1 = f"{path2} vs {path1}.json"
-    if(p1vp2 in player_json.glob('*.json')):
-        player1_json = Path(f"jsonfiles/{p1vp2}")
-    if(p2vp1 in player_json.glob('*.json')):
-        player2_json = Path(f"jsonfiles/{p2vp1}")
-    player1_json = player_json / p1vp2
-    player2_json = player_json / p2vp1
+    p1vp2 = f"{path1} vs {path2}"
+    p2vp1 = f"{path2} vs {path1}"
+    # create new battle file with player jsons
+    new_battle = player_json / f"Round {roundNum}"
+    player1_json = new_battle / "p1.json"
+    player2_json = new_battle / "p2.json"
+    # get list of battles 
+    files = player_json.glob("*")
+    battles = [x for x in files if x.is_dir()]   
+    # check if this battle has not happened before
+    if f"Round {roundNum}" not in battles:
+        player1_json.parent.mkdir(parents=True, exist_ok=True)
+        player2_json.parent.mkdir(parents=True, exist_ok=True)
+        
     player1_json.open("w")
     player2_json.open("w")
     # structure the dict
@@ -343,18 +354,20 @@ def startGame(path1, path2, submissionpath):
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles, stun1, stun2)
 
+        
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
         
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))
-        
+    
     for key in p1_json_dict.keys():
         print(key)
         print(p1_json_dict[key])
     for key in p2_json_dict.keys():
         print(key)
         print(p2_json_dict[key])
+    
     
     # for json checking purposes
     for json_key in p1_json_dict:
@@ -364,6 +377,8 @@ def startGame(path1, path2, submissionpath):
     for json_key in p2_json_dict:
         if json_key != "ProjectileType":
             print(f"{json_key} : {len(p2_json_dict[json_key])}")
+            
+    
     
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
@@ -378,6 +393,8 @@ def startGame(path1, path2, submissionpath):
     else:
         print('Tie!')
         return None
+    
+    # todo add txt file for round info
 
 if __name__ == "__main__":
-    startGame(PATH1, PATH2, SUBMISSIONPATH)
+    startGame(PATH1, PATH2, SUBMISSIONPATH, 0)

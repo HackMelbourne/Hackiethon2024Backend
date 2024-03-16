@@ -12,8 +12,8 @@ MULTIPLIER = 80
 WIDTH = (RIGHTBORDER - LEFTBORDER) * 80
 HEIGHT = 500 
 
-left_file = "jsonfiles\p1.json"
-right_file = "jsonfiles\p2.json"
+left_file = "jsonfiles\Round 0\p1.json"
+right_file = "jsonfiles\Round 0\p2.json"
 
 RED = (255, 0, 0) 
 BLUE = (0, 255, 0)
