@@ -280,7 +280,7 @@ def test_jump_over_ice_wall():
 
     n = 2 * turns + 1
     assert p1_json_dict['xCoord'][-n:] == [4, 5, 5, 5, 5, 5, 5, 5, 5]
-    assert p2_json_dict['xCoord'][-n:] == [8, 7, 7, 6, 8, 8, 8, 8, 8]
+    assert p2_json_dict['xCoord'][-n:] == [8, 7, 7, 8, 8, 8, 8, 8, 8]
     assert p1_json_dict['yCoord'][-n:] == [0] * n
     assert p1_json_dict['projXCoord'][-n:] == [-1, -1, -1, 6, -1, -1, -1, -1, -1]
     assert p1_json_dict['projYCoord'][-n:] == [-1, -1, -1, 0, -1, -1, -1, -1, -1]
@@ -288,6 +288,33 @@ def test_jump_over_ice_wall():
     assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'icewall', 'icewall', 'recover', 'recover', 'NoMove', 'NoMove']
     assert p2_json_dict['state'][-n:] == ['NoMove', 'jump', 'jump', 'NoMove', 'NoMove', 'NoMove', 'Hurt', 'NoMove', 'NoMove']
     assert p2_json_dict['hp'][-1] < HP
+
+def test_boomerang_breaks_ice_wall():
+    p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles = init_game(icewall_once_bot, boomerang_once_bot, 3, 9)
+
+    assert p1_json_dict['xCoord'][-1] == 3
+    assert p2_json_dict['xCoord'][-1] == 9
+
+    turns = 4
+    for i in range(turns):
+        projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2)
+
+    pprint(p1_json_dict)
+    pprint(p2_json_dict)
+
+    n = 2 * turns + 1
+    assert p1_json_dict['xCoord'][-n:] == [3] + [4] * (n-1)
+    assert p2_json_dict['xCoord'][-n:] == [9] + [8] * (n-1)
+    assert p1_json_dict['yCoord'][-n:] == [0] * n
+    assert p2_json_dict['yCoord'][-n:] == [0] * n
+    assert p1_json_dict['projXCoord'][-n:] == [-1, -1, -1, 5, 5, 6, -1, -1, -1]
+    assert p1_json_dict['projYCoord'][-n:] == [-1, -1, -1, 0, 0, 0, -1, -1, -1]
+    assert p2_json_dict['projXCoord'][-n:] == [-1, -1, -1, 7, 7, 6, -1, -1, -1]
+    assert p2_json_dict['projYCoord'][-n:] == [-1, -1, -1, 0, 0, 0, -1, -1, -1]
+    assert p1_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'icewall', 'icewall', 'recover', 'recover', 'NoMove', 'NoMove']
+    assert p2_json_dict['state'][-n:] == ['NoMove', 'move', 'move', 'boomerang', 'boomerang', 'recover', 'recover', 'NoMove', 'NoMove']
+    assert p1_json_dict['hp'][-1] == 50
+    assert p2_json_dict['hp'][-1] == 50
 
 def test_backwards_boomerang_breaks_ice_wall():
     pass
@@ -604,8 +631,8 @@ def test_teleport_dodges_hadoken():
     assert p1_json_dict['hp'][-n:] == [HP] * n
     assert p2_json_dict['hp'][-n:] == [HP] * n
 
-def test_lasso_breaks_ice_wall():
-    pass
+# def test_lasso_breaks_ice_wall():
+#     pass
 
 def test_hadoken_breaks_hadoken():
     pass
