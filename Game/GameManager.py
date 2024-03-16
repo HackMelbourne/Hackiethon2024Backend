@@ -17,13 +17,9 @@ from Game.PlayerConfigs import Player_Controller
 # PATH2 = "Player2"
 
 SUBMISSIONPATH = "Submissions"
-<<<<<<< HEAD
 PATH1 = "Player6"
 PATH2 = "Player5"
-=======
-PATH1 = "Player1"
-PATH2 = "Player2"
->>>>>>> origin/update0.1
+
 #PATH1 = "Player1"
 #PATH2 = "Player2"
 
