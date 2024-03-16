@@ -1,6 +1,6 @@
 from Game.GameManager import get_empty_json, setupGame
 from Game.gameSettings import JSONFILL
-from Game.turnUpdates import playerToJson
+from Game.turnUpdates import playerToJson, projectileToJson
 
 
 def init_game(p1, p2, leftstart=7, rightstart=8):
@@ -16,6 +16,8 @@ def init_game(p1, p2, leftstart=7, rightstart=8):
     if JSONFILL:
         playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL, start=True)
         playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL, start=True)
+        projectileToJson(None, p1_json_dict, False, fill=True)
+        projectileToJson(None, p2_json_dict, False, fill=True)
 
     return p1_script, p2_script, player1, player2, stun1, stun2, p1_json_dict, p2_json_dict, projectiles
 
