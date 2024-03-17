@@ -6,7 +6,7 @@ from ScriptingHelp.usefulFunctions import *
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = SuperSaiyanSkill
+PRIMARY_SKILL = OnePunchSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return

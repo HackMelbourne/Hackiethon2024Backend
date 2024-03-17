@@ -12,17 +12,12 @@ from Game.projectiles import *
 from Game.turnUpdates import *
 from Game.PlayerConfigs import Player_Controller
 
-# SUBMISSIONPATH = "Submissions/"
-# PATH1 = "Player1"
-# PATH2 = "Player2"
-
+# Manually choose bot files to test
 SUBMISSIONPATH = "pytest_tests/test_bots"
-
 PATH1 = "BoomerangOnceBot"
 PATH2 = "JumpBot"
-#PATH1 = "Player1"
-#PATH2 = "Player2"
 
+# Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
     p1module = submissionFiles / (path1 + ".py")
@@ -37,90 +32,80 @@ def get_player_files(path1, path2, subpath):
         return p1, p2
     else:
         raise Exception("A file does not exist in " + subpath)
-    
+
+
+# Checks for players moving into each other
 def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopVelo = False):
-    # post midair update correction
     if (correct_dir_pos(player1, player2, knock1, knock2)):
-        # player collision occured
+        # If an overlap occured, then a collision has occured, so set
+        # horizontal midair velocity to 0
         player1._velocity = 0
-        #player1._airvelo = 0
         player2._velocity = 0
-        #player2._airvelo = 0  
     elif checkMidair:
-        # check for midair moving towards each other
-        # midair, distance 1, velocity = direction
+        # Check for midair players moving towards each other
+        # If they end up face-to-face midair, set horizontal velocity to 0
         if ((player1._yCoord == player2._yCoord) and 
             (abs(player1._xCoord - player2._xCoord) == 1)
             and (player1._direction != player2._direction)):
-            # for sure
             player1._velocity = 0
             player2._velocity = 0
+            # Sets falling state to true for both players: Currently unused
             if stopVelo: 
                 player1._airvelo = 0
                 player2._airvelo = 0
                 
-# plays out one turn without checking deaths
+# Plays out a single turn, doesn't check deaths
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
-    """
-    Plays out one turn without checking death.
-    Isolating so we can unit test.
-    """
+    # Initializing knockbacks: knock1 = knockback INFLICTED by player1 on player 2
     knock1 = knock2 = 0
-    print(projectiles)
-
-    #if midair, start falling/rising, and check if midair movement causes a collision
+    
+    # If midair, start falling/rising and check if a collision occurs
     updateMidair(player1)
     check_collision(player1, player2, knock1, knock2)
     updateMidair(player2)
     check_collision(player1, player2, knock1, knock2)
- 
-    #print(f"Post midair movement: P1: {player1.get_pos()}, P2: {player2.get_pos()}")
-    # uncomment to allow for smoother movement (doubles frames, need to find a way to do the same for projectiles)
-    # if uncommented, length of projectile json would be half of player json
-    #playerToJson(player1, p1_json_dict, True)
-    #playerToJson(player2,p2_json_dict, True)
 
+    # Check for existing projectiles belonging to each player
     p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
     p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
     
+    # Pass relevant information to player scripts, and get a move from them
     p1_move = p1_script.get_move(player1, player2, p1_projectiles, p2_projectiles)
     p2_move = p2_script.get_move(player2, player1, p2_projectiles, p1_projectiles)
-    
-    print(p1_move, p2_move)
+  
+    # In case the scripts return None
     if not p1_move:
         p1_move = ("NoMove",)
     if not p2_move:
         p2_move = ("NoMove",)
+        
+    # Add their move to their list of inputs
     player1._inputs.append(p1_move)
     player2._inputs.append(p2_move)
     
+    # Get move from input list
     act1 = player1._action()
     act2 = player2._action()
     
-    #print(f"Pre action HP:  P1: {player1._hp}, P2: {player2._hp}")
+    # Get game information from the result of the players performing their inputs
     knock1, stun1, knock2, stun2, projectiles = performActions(player1, player2, 
                                         act1, act2, stun1, stun2, 
                                         projectiles)
-    #print("Post action, pre fill tick")
-    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
-    
+    # JSONFILL always True now...
+    # Writes to json files the current actions, positions, hp etc...
     if JSONFILL:
         playerToJson(player1, p1_json_dict, not JSONFILL)
         playerToJson(player2,p2_json_dict, not JSONFILL)
         
-    # post movement/attack position correction
-    # this is after JSONFLL bcs movement of player into each other must still 
-    # be recorded
+    # Check if players move into each other, correct it if they do
     check_collision(player1, player2, knock1, knock2)
-    # if there are projectiles, make them travel
+    
+    # Make any currently existing projectiles move, and record them in json files
     projectiles, knock1, stun1, knock2, stun2 = projectile_move(projectiles, 
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
-    
-    #print("Post action, post collision/proj check")
-    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
-    #only determine knockback and stun after attacks hit
-    #knock1 and stun1 = knockback and stun inflicted by player1 on player2
+
+    # Only determine knockback and stun after attacks hit
     if knock1 and not player2._superarmor:
         player2._xCoord += knock1
         player2._stun = max(stun1, player2._stun)
@@ -128,7 +113,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
         player1._xCoord += knock2
         player1._stun = max(stun2, player1._stun)
         
-    # final position correction, if any, due to projectiles      
+    # Final position correction, if any, due to projectiles      
     check_collision(player1, player2, knock1, knock2, True, False)
         
     updateCooldown(player1)
@@ -140,38 +125,37 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
     p1_dead = check_death(player1)
     p2_dead = check_death(player2)
 
-    #print("Post action, post tick fill")
-    #print(f"P1: {player1.get_pos(), player1._hp}, P2: {player2.get_pos(), player2._hp}")
+    # Second write to json files, for any movement due to projectiles, and to 
+    # check if a player got hurt
     playerToJson(player1, p1_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
     playerToJson(player2,p2_json_dict, fill=JSONFILL, checkHurt = JSONFILL)
 
     return projectiles, stun1, stun2, p1_dead, p2_dead
 
 def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
-   
+    
+    # Initializes player scripts as player controller objects
     player1 = Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
     player2 = Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
-    # check if correct primary and secondary skills
+    # Ensure that valid primary and secondary skills are set
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))
     return player1,player2
 
-#------------------Adding to player1 and player2 move scripts for test---------
 #ALERT: only for logic and animation testing, not for actual use
 def swap_skills(player, new_prim, new_second):
     player._primarySkill = new_prim(player)
     player._secondarySkill = new_second(player)
     
-# resets player shield strength
+# Resets player shield strength
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
-# carries out player actions, return any resulting after effects to main loop  
+# Carries out player actions, return any resulting after effects to main loop  
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
-    # empty move if player is currently stunned or doing recovery ticks
-    print(f"P1 input: {act1}, P2 input: {act2}")
+    # Empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
         act1 = ("NoMove", "NoMove")
         update_stun(player1)
@@ -179,6 +163,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         act2 = ("NoMove", "NoMove")
         update_stun(player2)
     
+    # Checks if player does something to cancel a skill
     if player1._midStartup or player1._skill_state:
         if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
             player1._skill_state = False
@@ -201,7 +186,8 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         swap_skills(player2, act1[1], act1[2])
         act2 = ("NoMove", "NoMove")
     
-    # first check if a "no move" is input: 
+    # Check if no valid move is input, or if the player is recovering 
+    # If so, set act to None to prevent further checks
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         if player1._recovery:
             player1._moves.append(("recover", None))
@@ -219,57 +205,57 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         reset_block(player2)
         act2 = None
 
-    # nullFunc, nullProj = default functions that return (0,0) or None with params
+    # nullDef, nullAtk, nullProj = default functions that return (0,0) or None
     # actions can only occur if the player is not stunned
     # if a defensive action is taken, it has priority over damage moves/skills
     # defensive = any skill that does not deal damage
+    
+    # Movements are cached, and then carried out based on position 
+    # If there are movements, set act to None to prevent going into attack check
     cached_move_1 = cached_move_2 = None
     if act1:
         if act1[0] != "block":
             reset_block(player1)
         cached_move_1 = defense_actions.get(act1[0], nullDef)(player1, player2, act1)
         if cached_move_1:
-            print(f"P1 move: {act1}")
-            act1 = None # prevent from going into attacks
+            act1 = None
     if act2:
         if act2[0] != "block":
             reset_block(player2)
         cached_move_2 = defense_actions.get(act2[0], nullDef)(player2, player1, act2)
         if cached_move_2:
-            print(f"P2 move: {act2}")
             act2 = None
 
-    # check if they would move into each other
+    # Prevent players that are directly facing each other from moving into each other
     if isinstance(cached_move_1, list) and isinstance(cached_move_2, list):
-        # if right in front of each other and moving exactly towards each other
         if (check_move_collision(player1, player2, cached_move_1, cached_move_2) 
             and cached_move_1[1] == cached_move_2[1] and 
             abs(player1._xCoord - player2._xCoord) == 1):
             cached_move_1 = cached_move_2 = None
             player1._moves[-1] = ("NoMove", None)
             player2._moves[-1] = ("NoMove", None) 
+    
+    # Further checks for valid movement
+    # Prevent horizontal movement if it would result in moving into a still player
+    # Diagonal movements are allowed, since midair collision checks occur after
     if isinstance(cached_move_1, list):
-        # this is a movement
-        if player1._xCoord + cached_move_1[0] == player2._xCoord and cached_move_2 == [0,0]:
+        if player1._xCoord + cached_move_1[0] == player2._xCoord and cached_move_2 == [0,0] and not cached_move_1[1]:
             cached_move_1[0] = 0
         player1._xCoord += cached_move_1[0]
         player1._yCoord += cached_move_1[1]
     if isinstance(cached_move_2, list):
-        # this is a movement
-        print(player2._xCoord + cached_move_2[0] == player1._xCoord)
-        print(cached_move_1)
-        if player2._xCoord + cached_move_2[0] == player1._xCoord and cached_move_1 == [0,0]:
+        if player2._xCoord + cached_move_2[0] == player1._xCoord and cached_move_1 == [0,0] and not cached_move_1[1]:
             cached_move_2[0] = 0
         player2._xCoord += cached_move_2[0]
         player2._yCoord += cached_move_2[1]
         
+    # Prevent from going offscreen
     correctPos(player1)
     correctPos(player2)
-    # then check if a damage dealing action is taken
-    # if an attack lands, return knockback and stun caused by player
-    # if projectile is created, add to projectile list
 
-
+    # Now check for damage dealing actions
+    # Get any knockback and stun values if an attack lands
+    # Summon projectiles if any projectile skills were casted
     if act1:
         knock1, stun1 = attack_actions.get(act1[0], nullAtk)(player1, player2, act1)
         proj_obj = projectile_actions.get(act1[0], nullProj)(player1, player2, act1)
@@ -283,18 +269,17 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
             projectiles.append(proj_obj)
         reset_block(player2)
 
+    # Correct positioning again just in case
     correctPos(player1)
     correctPos(player2)
     
+    # Move to next move in player input list
     player1._moveNum += 1
     player2._moveNum += 1
     
-    if act1:
-        print(f"P1 move {act1}")
-    if act2:
-        print(f"P2 move {act2}")
     return knock1, stun1, knock2, stun2, projectiles
 
+# Initializes json object 
 def get_empty_json():
     return {
         'hp': [],
@@ -310,8 +295,10 @@ def get_empty_json():
         'projXCoord':[],
         'projYCoord':[]
     }
-                                          
+                              
+# Main game loop            
 def startGame(path1, path2, submissionpath, roundNum):
+    # Assert that paths are passed correctly
     if not isinstance(path1, str) and isinstance(path2,str):
         return path2
     if isinstance(path1, str) and not isinstance(path2,str):
@@ -319,13 +306,13 @@ def startGame(path1, path2, submissionpath, roundNum):
     if not isinstance(path1, str) and not isinstance(path2,str):
         return None
     
+    # Get bot files
     p1, p2 = get_player_files(path1, path2, submissionpath)
         
+    # Initialize scripts and setup player positions and skills
     p1_script = p1.Script()
     p2_script = p2.Script()
     player1, player2 = setupGame(p1_script, p2_script)
-
-    stun1 = stun2 = 0
 
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
@@ -350,12 +337,14 @@ def startGame(path1, path2, submissionpath, roundNum):
     p1_json_dict = get_empty_json()
     p2_json_dict = get_empty_json()
     
+    # Initialize variables
     projectiles = []
+    stun1 = stun2 = 0
     tick = 0
     max_tick = timeLimit * movesPerSecond
     game_running = True
     
-    # buffer turn : for smoothness
+    # Buffer turn : for smoothness
     for i in range(BUFFERTURNS * 2): # 2 since fill ticks
         playerToJson(player1, p1_json_dict, fill=True, start=True)
         playerToJson(player2, p2_json_dict, fill=True, start=True)
@@ -364,30 +353,28 @@ def startGame(path1, path2, submissionpath, roundNum):
         tick += 1
         max_tick += 1
         
-    print(p1_json_dict)
-    print(p2_json_dict)
-        
-    #instantiate the player scripts
+    # Loops through turns
     while game_running:
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles, stun1, stun2)
         
+        # Ends game if a player dies or if time up
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
-        
+    
+    # Write into json files
     player1_json.write_text(json.dumps(p1_json_dict))
     player2_json.write_text(json.dumps(p2_json_dict))
     
+    # For testing
     for key in p1_json_dict.keys():
         print(key)
         print(p1_json_dict[key])
     for key in p2_json_dict.keys():
         print(key)
         print(p2_json_dict[key])
-    
-    
-    # for json checking purposes
+
     for json_key in p1_json_dict:
         if json_key != "ProjectileType":
             print(f"{json_key} : {len(p1_json_dict[json_key])}")
@@ -396,8 +383,6 @@ def startGame(path1, path2, submissionpath, roundNum):
         if json_key != "ProjectileType":
             print(f"{json_key} : {len(p2_json_dict[json_key])}")
             
-    
-    
     print(f"START BUFFERS: {BUFFERTURNS}, ACTUAL TURNS: {len(player1._inputs)}")
     print(f"jsonfill is {JSONFILL}")
     print(f"{path1} HP: {player1._hp} --  {path2} HP: {player2._hp}")

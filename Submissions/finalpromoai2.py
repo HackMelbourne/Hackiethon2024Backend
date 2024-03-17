@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = SuperSaiyanSkill
+PRIMARY_SKILL = UppercutSkill
 SECONDARY_SKILL = Lasso
 
 #constants, for easier move return

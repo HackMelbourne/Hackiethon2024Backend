@@ -84,5 +84,6 @@ def playerInfo(player, playerName, action):
 def check_valid_skills(primskill, secoskill):
     print(primskill in primarySkills)
     print(secoskill in secondarySkills or secoskill in aura_skills)
+    print(primskill, secoskill)
     
     return (primskill in primarySkills and secoskill in secondarySkills)

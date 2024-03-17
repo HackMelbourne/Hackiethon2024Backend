@@ -1,8 +1,13 @@
 from Game.test import validMove, correctPos
-from math import ceil
-
 from Game.gameSettings import HP, PARRYSTUN
 
+# To use an action, use activateSkill to get a movevalue
+# Checks if it is on cooldown or not
+# If on cooldown or in startup, returns an integer value: -1 if in startup
+# Then appends to actual movelist 
+
+# For basic movement actions - action = ("move", moveval)
+# moveval can be (1,0), (1,1), (0,1), (-1,0), (-1,1)
 def move(player, enemy, action):
     moveAction = player._move._activateSkill(action[1])
     if isinstance(moveAction, int):
@@ -18,39 +23,41 @@ def move(player, enemy, action):
     player._blocking = False
     player._block._regenShield()
     moveAction = moveAction[1]
-    # dont actually move until reach outside function
+    # Don't actually move until reach outside function
     cached_move = [0,0]
+    # Can only move if not midair
     if validMove(moveAction, player, enemy) and not player._midair:
-        print("valid move")
         # has vertical logic
         if moveAction[1]:
             player._midair = True
             cached_move[1] += 1
             if moveAction[0]:
-                # this is diagonal jump
+                # This is a diagonal jump
+                # Calculate midair horizontal velocity based on speed and direction
                 player._velocity = player._direction * moveAction[0] * player._speed
                 cached_move[0] += player._velocity
             player._jumpHeight = 1 * player._speed
             player._airvelo = player._jumpHeight
         else:
-            # no vertical logic, simple horizontal movement 
+            # No vertical logic, simple horizontal movement 
             cached_move[0] += player._direction * moveAction[0] * player._speed   
         player._moves.append(action)
     else:
         player._moves.append(("NoMove", None))
     return cached_move
         
+# Resets block to default values
 def reset_block(player):
     player._block._regenShield()
     player._blocking = False
     
+# Do block: no reason to use activate skill
 def block(player, target, action):
     player._moves.append((action[0], "activate"))
     player._blocking = True
     return True
 
-#returns the action if not on cooldown or mid-startup.
-# if on cd, return current cd, or -1 if mid startup
+# Get normal attack info
 def fetchAttack(player, attackType):
     returnVal = None
     if attackType == "light":
@@ -65,6 +72,7 @@ def fetchAttack(player, attackType):
             player._recovery += player._primarySkill._recovery
     return returnVal
 
+# Check if a normal attack combo was casted successfully
 def check_atk_combo(player, attack):
     if len(player._moves) < 3:
         return False
@@ -88,7 +96,7 @@ def check_atk_combo(player, attack):
                 return True
     return False           
  
-# goes to previous move that isnt startup       
+# Goes to previous move that isnt startup       
 def go_to_prev_atk(player, move, start):
     while player._moves[start] == move:
         start -= 1
@@ -96,30 +104,29 @@ def go_to_prev_atk(player, move, start):
 
 # Helper function for all attack types and attack skills    
 def attackHit(player, target, damage, atk_range, vertical, blockable, knockback, stun, surehit=False):
-    # checks if target is within the horizontal and vertical attack range
+    # Checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    # surehit is for projectiles, bcs checking for collision alr done 
+    # Surehit is for projectiles since collision check is already done
     if (surehit or (abs(player_x-target_x) <= atk_range) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
-        # if target is blocking
-        print(f"target blocking is {target._blocking}, attack is blockable: {blockable}")
+        # If target is blocking
         if(target._blocking and blockable):
-            #parry if block is frame perfect: the target blocks as attack comes out
+            # Parry if block is frame perfect: the target blocks as attack comes out
             if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
+                # Can only parry player attacks, not projectiles
                 if player._entityType == "player":
                     player._stun = PARRYSTUN
             elif target._blocking:
-                #target is stunned if their shield breaks from damage taken
+                # Target is stunned if their shield breaks from damage taken
                 target._stun += target._block._shieldDmg(damage)
             return 0, 0
-        else:
+        else: # If attack actually lands
             damage = damage - target._defense
             if damage < 0:
                 damage = 0
             target._hp -= damage
             target._velocity = 0
-            print(f"player {player._id} hit player {target._id}")
             return knockback * player._direction, stun
     return 0, 0
 
@@ -144,6 +151,7 @@ def attack(player,target, action):
                 attack[4] += 2
                 
             player._moves.append((action[0], "activate"))
+            #TODO check this, repeated code with fetchAttack
             if action[0] == "light":
                 player._recovery = player._lightAtk._recovery
             else:
@@ -444,32 +452,18 @@ def nullAtk(player, target, action):
 def nullProj(player, target, action):
     return None
 
-# for actions that do not deal damage/auras
+# Function dictionaries
+# For actions that do not deal damage and auras
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
                    "super_saiyan": super_saiyan, "meditate": meditate,
                    "skill_cancel":skill_cancel, "super_armor":super_armor,
                    "jump_boost":jump_boost}
 
-# for actions that deal damage
+# For actions that deal damage
 attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
                   "uppercut": uppercut, "onepunch": one_punch
                   }
 
-# for projectile actions
+# For projectile actions : TODO remove lasso and icewall
 projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang,
                       "grenade":grenade, "beartrap":beartrap, "icewall":icewall}
-
-'''
-How to add a new skill
-- Add the skill class to skills.py
-Then use
-def skill(player, target, action):
-    -- this checks if the skill is on cooldown or startup, use it if not --
-    if (action[0] == "skill"):
-        skillInfo = fetchSkill(player, "skill")
-        if isinstance(skillInfo, int):
-            return 0, 0
-        
-        -- add skill logic here --
-    return None
-'''

@@ -177,7 +177,7 @@ class TeleportSkill(Skill):
     def _activateSkill(self):
         return self._useSkill()
 
-# now just buffs attack, ignore speed
+# All buffs last 20 seconds
 class SuperSaiyanSkill(BuffSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=40, buffValue=2, 
@@ -191,7 +191,7 @@ class SuperArmorSkill(BuffSkill):
             
 class JumpBoostSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=20, buffValue=2, duration=6)
+        super().__init__(startup=0, cooldown=20, buffValue=2, duration=20)
         self._skillType = "jump_boost"
     
     
