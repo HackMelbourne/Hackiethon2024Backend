@@ -18,7 +18,7 @@ from Game.PlayerConfigs import Player_Controller
 
 SUBMISSIONPATH = "pytest_tests/test_bots"
 
-PATH1 = "HadokenOnceBot"
+PATH1 = "BoomerangOnceBot"
 PATH2 = "JumpBot"
 #PATH1 = "Player1"
 #PATH2 = "Player2"

@@ -37,18 +37,26 @@ CANCEL = ('skill_cancel',)
 moves = SECONDARY,
 moves_iter = iter(moves)
 
+SECONDARYREV = (SECONDARY[0], True)
+
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         self.hasWalked = False
         self.hasUsedSkill = False
+        self.moves = [BACK, SECONDARY, NOMOVE, NOMOVE, SECONDARY, BACK, BACK, BACK, SECONDARY]
+        self.itermoves = iter(self.moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        try:
+            return next(self.itermoves)
+        except StopIteration:
+            return NOMOVE
         if not self.hasWalked:
             self.hasWalked = True
             return FORWARD 
