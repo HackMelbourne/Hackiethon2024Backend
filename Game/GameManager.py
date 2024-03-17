@@ -320,9 +320,11 @@ def startGame(path1, path2, submissionpath, roundNum):
     p1vp2 = f"{path1} vs {path2}"
     p2vp1 = f"{path2} vs {path1}"
     # create new battle file with player jsons
-    new_battle = player_json / f"Round {roundNum}"
+    new_battle = player_json / f"Round_{roundNum}"
     player1_json = new_battle / "p1.json"
     player2_json = new_battle / "p2.json"
+    # create round result file
+    round_results_json = new_battle / "round.json"
     # get list of battles 
     files = player_json.glob("*")
     battles = [x for x in files if x.is_dir()]   
@@ -330,10 +332,12 @@ def startGame(path1, path2, submissionpath, roundNum):
     if f"Round {roundNum}" not in battles:
         player1_json.parent.mkdir(parents=True, exist_ok=True)
         player2_json.parent.mkdir(parents=True, exist_ok=True)
+        round_results_json.parent.mkdir(parents=True, exist_ok=True)
         
     player1_json.open("w")
     player2_json.open("w")
-    # structure the dict
+    round_results_json.open("w")
+    # structure the dict, no need to structure round result dict until the end
     p1_json_dict = get_empty_json()
     p2_json_dict = get_empty_json()
     
@@ -387,15 +391,21 @@ def startGame(path1, path2, submissionpath, roundNum):
     print(f"jsonfill is {JSONFILL}")
     print(f"{path1} HP: {player1._hp} --  {path2} HP: {player2._hp}")
     
+    winner = None
     if player1._hp > player2._hp:
         print(f"{path1} won in {tick} turns!")
-        return path1
+        winner = path1
     elif player1._hp < player2._hp:
         print(f"{path2} won in {tick} turns!")
-        return path2
+        winner = path2
     else:
         print('Tie!')
-        return None
+    
+    # create round info json dictionary
+    round_info = {'p1': path1, 'p2':path2, 'winner':winner, 'roundNum':roundNum}
+    round_results_json.write_text(json.dumps(round_info))
+    
+    return winner
     
     # todo add txt file for round info
 
