@@ -80,11 +80,18 @@ class Player_Controller:
             return self._moves[-1]
         return None
     
-    def primary_on_cd(self):
-        return self._primarySkill.on_cooldown()
+    def primary_on_cd(self, get_timer):
+        if get_timer:
+            return self._primarySkill.get_cooldown()
+        else:
+            return self._primarySkill.on_cooldown()
+        
     
-    def secondary_on_cd(self):
-        return self._secondarySkill.on_cooldown()
+    def secondary_on_cd(self, get_timer):
+        if get_timer:
+            return self._primarySkill.get_cooldown()
+        else: 
+            return self._secondarySkill.on_cooldown()
     
     def heavy_on_cd(self):
         return self._heavyAtk.on_cooldown()

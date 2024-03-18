@@ -43,6 +43,9 @@ class Projectile:
         self._yCoord = player._yCoord + path[0][1]
         
             
+    def get_type(self):
+        return self._type
+    
     def _travel(self):
         if 0 < self._pathIndex < len(self._path) and LEFTBORDER < self._xCoord < RIGHTBORDER:
             pos = self._path[self._pathIndex]

@@ -70,6 +70,9 @@ class Skill:
     
     def on_cooldown(self):
         return self._cooldown != 0
+
+    def get_cooldown(self):
+        return self._cooldown
        
 # when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):

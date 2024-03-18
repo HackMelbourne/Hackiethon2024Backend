@@ -1,5 +1,6 @@
 #constants, for easier move return
 #movements
+
 JUMP = ("move", (0,1))
 FORWARD = ("move", (1,0))
 BACK = ("move", (-1,0))
@@ -34,10 +35,10 @@ def get_proj_pos(proj):
     return proj.get_pos()
 
 def primary_on_cooldown(player):
-    return player.primary_on_cd()
+    return player.primary_on_cd(get_timer=False)
 
 def secondary_on_cooldown(player):
-    return player.secondary_on_cd()
+    return player.secondary_on_cd(get_timer=False)
 
 def heavy_on_cooldown(player):
     return player.heavy_on_cd()
@@ -62,6 +63,16 @@ def get_primary_skill(player):
 
 def get_secondary_skill(player):
     return player.get_secondary_name()
+
+def get_projectile_type(proj):
+    return proj.get_type()
+
+def get_priamry_cooldown(player):
+    return player.primary_on_cd(get_timer=True)
+
+def secondary_on_cooldown(player):
+    return player.secondary_on_cd(get_timer=True)
+    
 
 # checks if the player has landed this turn: cannot make a movement but can still attack or block
 def get_landed(player):
