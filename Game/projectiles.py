@@ -267,7 +267,7 @@ class Lasso(ProjectileSkill):
     
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=1, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._stunself = False
@@ -359,7 +359,7 @@ class BearTrap(ProjectileSkill):
         
         projectile = self.summonProjectile(path = travelPath, size=(1,1), 
                                            trait="timer", 
-                                           collision=False, timer=5, colHp=2, reverse=reverse)
+                                           collision=False, timer=10, colHp=2, reverse=reverse)
         return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]

@@ -41,13 +41,18 @@ class Script:
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         self.hasJumped = False
+        self.moves = [NOMOVE, LIGHT, LIGHT, LIGHT,]
+        self.itermoves = iter(self.moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return LIGHT
+        try:
+            return next(self.itermoves)
+        except StopIteration:
+            return NOMOVE
         if not self.hasJumped:
             self.hasJumped = True
             return JUMP

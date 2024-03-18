@@ -135,15 +135,15 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         stun1 = max(stun1, proj_stun1)
         knock2 += proj_knock2
         stun2 = max(stun2, proj_stun2)
-        if proj_knock1 or proj_knock2:
+        if proj_knock1 or proj_stun1 or proj_knock2 or proj_stun2:
             # player got hit, so remove projectile
             projectiles[proj_index] = None # to set destroyed projectiles
             projectileToJson(proj_obj, proj_json_dict, True, midtickhit=True)
             proj_obj = None
             #check_json_updated(name)
-            if proj_knock1:
+            if proj_knock1 or proj_stun1:
                 player1._skill_state = False
-            if proj_knock2:
+            if proj_knock2 or proj_stun2:
                 player2._skill_state = False
             print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             continue
@@ -200,13 +200,15 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             
             # recalculate knockbacks and stuns
             knock1 += proj_knock1
-            stun1 = max(stun1, proj_stun1)
+            if not stun1:
+                stun1 = proj_stun1
             knock2 += proj_knock2
-            stun2 = max(stun2, proj_stun2)
+            if not stun2:
+                stun2 = proj_stun2
 
             # then pop the projectile if it hit or expires, else continue travel
             if proj_obj._size == (0,0):
-                if proj_knock1 or proj_knock2:
+                if proj_knock1 or proj_knock2 or proj_stun1 or proj_stun2:
                     projectileToJson(proj_obj, proj_json_dict, False, midtickhit=True)
                 else:
                     projectileToJson(proj_obj, proj_json_dict, False)
@@ -263,8 +265,8 @@ def updateBuffs(player):
         if player._atkbuff:
             changeDamage(player, 0)
             player._atkbuff = 0
-        if player._defense:
-            player._defense = 0
+        if player._defense > 1:
+            player._defense = 1
             player._superarmor = False
         if player._jumpHeight > player._defaultJumpHeight:
             player._jumpHeight = player._defaultJumpHeight

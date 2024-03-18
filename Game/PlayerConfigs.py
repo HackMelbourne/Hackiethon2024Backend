@@ -6,7 +6,7 @@ class Player_Controller:
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
         self._lightAtk = AttackSkill(0, 1, 2, 1, 0, True, 0, 0)
-        self._heavyAtk = AttackSkill(1, 3, 4, 1, 0, True, 1, 1, recovery=1)
+        self._heavyAtk = AttackSkill(0, 3, 4, 1, 0, True, 1, 1, recovery=1)
         self._block = BlockSkill(0, 0, 10, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
@@ -20,7 +20,7 @@ class Player_Controller:
         self._midStartup = False
         self._blocking = False
         self._hp = HP
-        self._defense = 0
+        self._defense = 1
         self._superarmor = False
         #midair attributes
         self._midair = False

@@ -136,8 +136,8 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=5, damage=5, xRange=5, 
-                         vertical=0, blockable=False, knockback=1, stun=2)
+        super().__init__(startup=1, cooldown=7, damage=4, xRange=5, 
+                         vertical=0, blockable=False, knockback=1, stun=0)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
@@ -186,7 +186,7 @@ class SuperSaiyanSkill(BuffSkill):
         
 class SuperArmorSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=30, buffValue=4, duration=20)
+        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
         self._skillType = "super_armor"
             
 class JumpBoostSkill(BuffSkill):

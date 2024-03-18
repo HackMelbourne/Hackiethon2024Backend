@@ -106,12 +106,14 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             p1_json_dict, p2_json_dict)
 
     # Only determine knockback and stun after attacks hit
-    if knock1 and not player2._superarmor:
+    if knock1 or stun1 and not player2._superarmor:
         player2._xCoord += knock1
-        player2._stun = max(stun1, player2._stun)
-    if knock2 and not player1._superarmor:
+        if not player2._stun:
+            player2._stun = stun1
+    if knock2 or stun2 and not player1._superarmor:
         player1._xCoord += knock2
-        player1._stun = max(stun2, player1._stun)
+        if not player1._stun:
+            player1._stun = stun2
         
     # Final position correction, if any, due to projectiles      
     check_collision(player1, player2, knock1, knock2, True, False)
