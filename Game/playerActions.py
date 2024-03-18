@@ -113,7 +113,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
         # If target is blocking
         if(target._blocking and blockable):
             # Parry if block is frame perfect: the target blocks as attack comes out
-            if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
+            if target._moves[-1][0] == "block" and (target.get_past_move(2) != "block" or len(target._moves) == 1):
                 # Can only parry player attacks, not projectiles
                 if player._entityType == "player":
                     player._stun = PARRYSTUN

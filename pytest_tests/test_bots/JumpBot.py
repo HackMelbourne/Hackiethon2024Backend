@@ -47,6 +47,7 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        return LIGHT
         if not self.hasJumped:
             self.hasJumped = True
             return JUMP
