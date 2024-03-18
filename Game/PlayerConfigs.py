@@ -24,7 +24,8 @@ class Player_Controller:
         self._superarmor = False
         #midair attributes
         self._midair = False
-        self._jumpHeight = 1
+        self._defaultJumpHeight = 1
+        self._jumpHeight = self._defaultJumpHeight
         self._falling = False
         self._velocity = 0
         self._airvelo = 0

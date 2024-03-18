@@ -45,7 +45,7 @@ class Script:
         self.secondary = SECONDARY_SKILL
         self.hasWalked = False
         self.hasUsedSkill = False
-        self.moves = [BACK, SECONDARY, NOMOVE, NOMOVE, SECONDARY, BACK, BACK, BACK, SECONDARY]
+        self.moves = [JUMP_FORWARD]
         self.itermoves = iter(self.moves)
         
     def init_player_skills(self):

@@ -16,6 +16,7 @@ def proj_knockback(proj, player):
             knockback = 0
     return knockback
 
+# Reduces cooldown for all actions per turn
 def updateCooldown(player):
     player._lightAtk._reduceCd(1)
     player._heavyAtk._reduceCd(1)
@@ -23,16 +24,16 @@ def updateCooldown(player):
     player._secondarySkill._reduceCd(1)
     player._move._reduceCd(1)
     
-# updates current position of player if they are midair or started jumping
+# Updates current position of player if they are midair or started jumping
 def updateMidair(player):
-    # check if player should be falling
+    # Check if player should be falling
+    print(f"Player {player._id}, jump: {player._jumpHeight}, airvelo: {player._airvelo}")
     if not player._falling:
         player._falling = (player._yCoord >= player._jumpHeight * player._speed)
-    # not yet at apex of jump
+    # Not yet at apex of jump
     if player._midair:
         if player._falling: 
-            # specifically to check for diagonal jumps, ensure jump arc
-            # like _ - - _
+            # Specifically to check for diagonal jumps, ensure jump arc
             check_point = player._jumpHeight
             if ((player.get_past_move(check_point)[1] not in ((0,1), (1,1), (-1,1))) or
                                                     player._airvelo == 0):
@@ -46,13 +47,12 @@ def updateMidair(player):
         player._midair = player._falling = False
         # set a movestun to the player so that they cant jump away right after
         player._move._movestun_on_fall(1)
-        print("player move cooldown")
-        print(player._move._cooldown)
     
     if not player._midair:
         player._velocity = 0
         player._airvelo = 0
-        player._jumpheight = MAX_JUMP_HEIGHT
+    
+    print(f"Player {player._id}, jump: {player._jumpHeight}, airvelo: {player._airvelo}")
 
 def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['hp'].append(player._hp)
@@ -266,8 +266,8 @@ def updateBuffs(player):
         if player._defense:
             player._defense = 0
             player._superarmor = False
-        if player._jumpHeight > 1:
-            player._jumpHeight = 1
+        if player._jumpHeight > player._defaultJumpHeight:
+            player._jumpHeight = player._defaultJumpHeight
     '''   
     if player._encumbered:
         print(f"Duration: {player._encumberedDuration}")

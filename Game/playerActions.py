@@ -36,7 +36,7 @@ def move(player, enemy, action):
                 # Calculate midair horizontal velocity based on speed and direction
                 player._velocity = player._direction * moveAction[0] * player._speed
                 cached_move[0] += player._velocity
-            player._jumpHeight = 1 * player._speed
+            player._jumpHeight *= player._speed
             player._airvelo = player._jumpHeight
         else:
             # No vertical logic, simple horizontal movement 

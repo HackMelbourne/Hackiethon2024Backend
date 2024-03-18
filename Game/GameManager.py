@@ -58,12 +58,12 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
     # Initializing knockbacks: knock1 = knockback INFLICTED by player1 on player 2
     knock1 = knock2 = 0
-    
     # If midair, start falling/rising and check if a collision occurs
     updateMidair(player1)
     check_collision(player1, player2, knock1, knock2)
     updateMidair(player2)
     check_collision(player1, player2, knock1, knock2)
+
 
     # Check for existing projectiles belonging to each player
     p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
@@ -316,9 +316,6 @@ def startGame(path1, path2, submissionpath, roundNum):
 
     # Check if file exists if so delete it 
     player_json = Path("jsonfiles/")
-    # check for battle json
-    p1vp2 = f"{path1} vs {path2}"
-    p2vp1 = f"{path2} vs {path1}"
     # create new battle file with player jsons
     new_battle = player_json / f"Round_{roundNum}"
     player1_json = new_battle / "p1.json"
@@ -362,7 +359,6 @@ def startGame(path1, path2, submissionpath, roundNum):
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles, stun1, stun2)
-        
         # Ends game if a player dies or if time up
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1
