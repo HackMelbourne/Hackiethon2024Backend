@@ -46,7 +46,7 @@ def updateMidair(player):
     if player._yCoord == 0 and player._falling: 
         player._midair = player._falling = False
         # set a movestun to the player so that they cant jump away right after
-        player._move._movestun_on_fall(1)
+        player._move._movestun_on_fall(2)
     
     if not player._midair:
         player._velocity = 0

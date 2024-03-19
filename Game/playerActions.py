@@ -275,10 +275,11 @@ def teleport(player, target, action):
     player._midStartup = False
 
     distance = skillInfo[1]
-    if action[1] and action[1] == -1:
-        tp_direction = -1
-    else:
+    # default teleport is backwards
+    if action[1] and action[1] == 1:
         tp_direction = 1
+    else:
+        tp_direction = -1
     #tp_direction = -1
     player._moves.append((action[0], "activate"))
     player._xCoord += distance * tp_direction * player._direction

@@ -318,8 +318,8 @@ class Grenade(ProjectileSkill):
          
     def _activateSkill(self, travelPath=None):
         if not travelPath:
-            travelPath = self._path
             self.init_path()
+            travelPath = self._path
             reverse=False
         atk_info = super()._activateSkill()
         if isinstance(atk_info, int):
@@ -348,7 +348,7 @@ class BearTrap(ProjectileSkill):
         self._stunself = False
         
     def init_path(self):
-        self._path = [[1,0], [2,0]]
+        self._path = [[1,0]]
         
     def _activateSkill(self, travelPath=None):
         reverse=True

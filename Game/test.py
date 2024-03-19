@@ -5,7 +5,7 @@ from Game.projectiles import *
 
 primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, TeleportSkill]
 secondarySkills = [Hadoken, Lasso, Boomerang, Grenade, IceWall, BearTrap]
-aura_skills = [SuperArmorSkill, SuperSaiyanSkill]
+aura_skills = [SuperArmorSkill, SuperSaiyanSkill, JumpBoostSkill]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
     print(moveset)
@@ -86,4 +86,4 @@ def check_valid_skills(primskill, secoskill):
     print(secoskill in secondarySkills or secoskill in aura_skills)
     print(primskill, secoskill)
     
-    return (primskill in primarySkills and secoskill in secondarySkills)
+    return (primskill in primarySkills and secoskill in secondarySkills+aura_skills)

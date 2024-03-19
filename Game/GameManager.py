@@ -13,9 +13,9 @@ from Game.turnUpdates import *
 from Game.PlayerConfigs import Player_Controller
 
 # Manually choose bot files to test
-SUBMISSIONPATH = "pytest_tests/test_bots"
-PATH1 = "BoomerangOnceBot"
-PATH2 = "JumpBot"
+SUBMISSIONPATH = "Submissions"
+PATH1 = "Player1"
+PATH2 = "Player2"
 
 # Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
@@ -58,6 +58,7 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
 def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
     # Initializing knockbacks: knock1 = knockback INFLICTED by player1 on player 2
     knock1 = knock2 = 0
+    stun1 = stun2 = 0
     # If midair, start falling/rising and check if a collision occurs
     updateMidair(player1)
     check_collision(player1, player2, knock1, knock2)
@@ -106,11 +107,11 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             p1_json_dict, p2_json_dict)
 
     # Only determine knockback and stun after attacks hit
-    if knock1 or stun1 and not player2._superarmor:
+    if (knock1 or stun1) and not player2._superarmor:
         player2._xCoord += knock1
         if not player2._stun:
             player2._stun = stun1
-    if knock2 or stun2 and not player1._superarmor:
+    if (knock2 or stun2) and not player1._superarmor:
         player1._xCoord += knock2
         if not player1._stun:
             player1._stun = stun2
@@ -157,6 +158,7 @@ def reset_block(player):
 # Carries out player actions, return any resulting after effects to main loop  
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
+    print(act1, player1._stun)
     # Empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
         act1 = ("NoMove", "NoMove")
@@ -165,6 +167,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         act2 = ("NoMove", "NoMove")
         update_stun(player2)
     
+    print(act1)
     # Checks if player does something to cancel a skill
     if player1._midStartup or player1._skill_state:
         if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
@@ -245,11 +248,13 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
             cached_move_1[0] = 0
         player1._xCoord += cached_move_1[0]
         player1._yCoord += cached_move_1[1]
+        player1._moves[-1] = ("move", (cached_move_1[0]&player1._direction, cached_move_1[1]))
     if isinstance(cached_move_2, list):
         if player2._xCoord + cached_move_2[0] == player1._xCoord and cached_move_1 == [0,0] and not cached_move_1[1]:
             cached_move_2[0] = 0
         player2._xCoord += cached_move_2[0]
         player2._yCoord += cached_move_2[1]
+        player2._moves[-1] = ("move", (cached_move_2[0]*player2._direction, cached_move_2[1]))
         
     # Prevent from going offscreen
     correctPos(player1)

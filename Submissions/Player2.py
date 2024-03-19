@@ -8,8 +8,8 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 # SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
 
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
-SECONDARY_SKILL = BearTrap
+PRIMARY_SKILL = DashAttackSkill
+SECONDARY_SKILL = SuperSaiyanSkill
 
 #constants, for easier move return
 #movements
@@ -35,7 +35,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD
+        self.moves = NOMOVE, NOMOVE, BACK, BACK
         self.moves_iter = iter(self.moves)
         self.doScripted = True
 
@@ -47,7 +47,10 @@ class Script:
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         # PRIMARY_SKILL = OnePunchSkill
         # SECONDARY_SKILL = Grenade
-        return BACK
+        try:
+            return next(self.moves_iter)
+        except StopIteration:
+            return NOMOVE
         if self.doScripted:
             try:
                 nxt = next(self.moves_iter)
