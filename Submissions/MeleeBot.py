@@ -12,8 +12,8 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = UppercutSkill
+SECONDARY_SKILL = SuperArmorSkill
 
 #constants, for easier move return
 #movements
@@ -51,48 +51,19 @@ class Script:
         return self.primary, self.secondary
     
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-
-        # triggering avoid projectile (only avoids hadokens) mode
-        if len(enemy_projectiles) > 0 and get_projectile_type(enemy_projectile) == "hadoken":
-            enemy_projectile = enemy_projectiles[0]
-            self.avoid_proj = True
-
-            if get_pos(player)[0] < get_pos(enemy)[0]:
-                self.go_left = True
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
+        distance = get_distance(player, enemy)
+        if distance == 1:
+            if not primary_on_cooldown(player):
+                return PRIMARY
             else:
-                self.go_left = False
-            if self.go_left:
-                
-                self.proj_end = get_proj_pos(enemy_projectile) - seco_range(enemy)
-            else:
-                self.proj_end = get_proj_pos(enemy_projectile) + seco_range(enemy)
-        else:
-            self.avoid_proj = False
-
-        distance_from_enemy = get_distance(player, enemy)
-
-        if self.avoid_proj:
-            # trying to avoid projectile
-            if self.go_left and get_pos(player) > self.proj_end and self.proj_end >= 0:
-                return BACK
-            if not self.go_left and get_pos(player) < self.proj_end and self.proj_end <= 15:
-                return BACK
+                return HEAVY
             
-            distance_from_proj = abs(get_pos(player)[0] - get_proj_pos(enemy_projectile)[0])
-            if distance_from_proj == 1:
-                return BLOCK
+        return FORWARD
+       
             
-            if distance_from_enemy <= seco_range(player):
-                return SECONDARY
-            
-            if distance_from_enemy == 1:
-                return JUMP_FORWARD
-            
-            return BACK
-        else:
-            if distance_from_enemy <= seco_range(player):
-                return SECONDARY
-            return FORWARD
 
 def get_distance(player1, player2):
     return abs(get_pos(player1)[0] - get_pos(player2)[0])
