@@ -1,11 +1,11 @@
 JSONFILL = True # set to True for midtick info, like hurt etc
 LEFTBORDER = 0
 RIGHTBORDER = 15
-DIST_FROM_MID = 0.5 if (RIGHTBORDER-LEFTBORDER)%2 else 1
+DIST_FROM_MID = 3
 BUFFERTURNS = 1
 HP = 50
 #game settings
-timeLimit = 2
+timeLimit = 6
 movesPerSecond = 4
 #direction constants
 GORIGHT = 1

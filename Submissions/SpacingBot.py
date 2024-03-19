@@ -53,43 +53,50 @@ class Script:
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
 
         # triggering avoid projectile (only avoids hadokens) mode
-        if len(enemy_projectiles) > 0 get_proj_type(enemy_projectile) == "hadoken":
+        if not self.avoid_proj and len(enemy_projectiles) > 0:
             enemy_projectile = enemy_projectiles[0]
-            self.avoid_proj = True
+            if get_projectile_type(enemy_projectile) == "hadoken":
+                self.avoid_proj = True
 
-            if get_pos(player)[0] < get_pos(enemy)[0]:
-                self.go_left = True
-            else:
-                self.go_left = False
-            if self.go_left:
+                if get_pos(player)[0] < get_pos(enemy)[0]:
+                    self.go_left = True
+                else:
+                    self.go_left = False
+                if self.go_left:
+                    
+                    self.proj_end = get_proj_pos(enemy_projectile)[0] - seco_range(enemy)
+                else:
+                    self.proj_end = get_proj_pos(enemy_projectile)[0] + seco_range(enemy)
+                print("PROJ END", self.proj_end)
                 
-                self.proj_end = get_proj_pos(enemy_projectile) - seco_range(enemy)
-            else:
-                self.proj_end = get_proj_pos(enemy_projectile) + seco_range(enemy)
-        else:
+        elif len(enemy_projectiles) == 0:
             self.avoid_proj = False
 
         distance_from_enemy = get_distance(player, enemy)
 
-        if self.avoid_proj:
+        if self.avoid_proj and len(enemy_projectiles) > 0:
+            enemy_projectile = enemy_projectiles[0]
             # trying to avoid projectile
-            if self.go_left and get_pos(player) > self.proj_end and self.proj_end >= 0:
+            if self.go_left and get_pos(player)[0] >= self.proj_end and self.proj_end >= 0:
                 return BACK
-            if not self.go_left and get_pos(player) < self.proj_end and self.proj_end <= 15:
+            if not self.go_left and get_pos(player)[0] <= self.proj_end and self.proj_end <= 15:
                 return BACK
+            
             
             distance_from_proj = abs(get_pos(player)[0] - get_proj_pos(enemy_projectile)[0])
             if distance_from_proj == 1:
                 return BLOCK
             
-            if distance_from_enemy <= seco_range(player):
+            if distance_from_enemy <= seco_range(player) and distance_from_proj > 3:
                 return SECONDARY
             
             if distance_from_enemy == 1:
                 return JUMP_FORWARD
             
-            return BACK
+            return NOMOVE
         else:
+            if distance_from_enemy == 1:
+                return HEAVY
             if distance_from_enemy <= seco_range(player):
                 return SECONDARY
             return FORWARD
