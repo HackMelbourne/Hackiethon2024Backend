@@ -70,6 +70,9 @@ class Skill:
     
     def on_cooldown(self):
         return self._cooldown != 0
+
+    def get_cooldown(self):
+        return self._cooldown
        
 # when moving, use activateSkill to specify direction   
 class MoveSkill(Skill):
@@ -136,8 +139,8 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=5, damage=5, xRange=5, 
-                         vertical=0, blockable=False, knockback=1, stun=2)
+        super().__init__(startup=1, cooldown=7, damage=4, xRange=5, 
+                         vertical=0, blockable=False, knockback=1, stun=0)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
@@ -172,7 +175,7 @@ class Meditate(Skill):
 class TeleportSkill(Skill):
     def __init__(self, player=None):
         # skillValue here means teleport distance
-        super().__init__(skillType= "teleport", startup= 0, cooldown= 6, skillValue= 5)
+        super().__init__(skillType= "teleport", startup= 0, cooldown= 6, skillValue= 6)
 
     def _activateSkill(self):
         return self._useSkill()
@@ -186,7 +189,7 @@ class SuperSaiyanSkill(BuffSkill):
         
 class SuperArmorSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=30, buffValue=4, duration=20)
+        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
         self._skillType = "super_armor"
             
 class JumpBoostSkill(BuffSkill):

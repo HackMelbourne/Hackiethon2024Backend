@@ -113,7 +113,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
         # If target is blocking
         if(target._blocking and blockable):
             # Parry if block is frame perfect: the target blocks as attack comes out
-            if target._moves[-1][0] == "block" and target._moves[-2][0] != "block":
+            if target._moves[-1][0] == "block" and (target.get_past_move(2)[0] != "block" or len(target._moves) == 1):
                 # Can only parry player attacks, not projectiles
                 if player._entityType == "player":
                     player._stun = PARRYSTUN
@@ -122,7 +122,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 target._stun += target._block._shieldDmg(damage)
             return 0, 0
         else: # If attack actually lands
-            damage = damage - target._defense
+            damage = int(damage / target._defense)
             if damage < 0:
                 damage = 0
             target._hp -= damage
@@ -275,10 +275,11 @@ def teleport(player, target, action):
     player._midStartup = False
 
     distance = skillInfo[1]
-    if action[1] and action[1] == -1:
-        tp_direction = -1
-    else:
+    # default teleport is backwards
+    if action[1] and action[1] == 1:
         tp_direction = 1
+    else:
+        tp_direction = -1
     #tp_direction = -1
     player._moves.append((action[0], "activate"))
     player._xCoord += distance * tp_direction * player._direction

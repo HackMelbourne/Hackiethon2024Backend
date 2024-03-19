@@ -13,7 +13,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Hadoken
+SECONDARY_SKILL = Grenade
 
 #constants, for easier move return
 # movements
@@ -33,21 +33,22 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
-# for testing
-moves = SECONDARY,
-moves_iter = iter(moves)
+
 
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         self.moves = SECONDARY,
-        self.moves_iter = iter(moves)
+        self.moves_iter = iter(self.moves)
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return BACK
+        try:
+            return next(self.moves_iter)
+        except StopIteration:
+            return NOMOVE
         

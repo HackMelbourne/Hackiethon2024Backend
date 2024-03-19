@@ -6,7 +6,7 @@ class Player_Controller:
         self._primarySkill = primary(self)
         self._secondarySkill = secondary(self)
         self._lightAtk = AttackSkill(0, 1, 2, 1, 0, True, 0, 0)
-        self._heavyAtk = AttackSkill(1, 3, 4, 1, 0, True, 1, 1, recovery=1)
+        self._heavyAtk = AttackSkill(0, 3, 4, 1, 0, True, 1, 1, recovery=1)
         self._block = BlockSkill(0, 0, 10, 2)
         self._move = MoveSkill(0, 0, (0,0))
         self._id = id
@@ -20,7 +20,7 @@ class Player_Controller:
         self._midStartup = False
         self._blocking = False
         self._hp = HP
-        self._defense = 0
+        self._defense = 1
         self._superarmor = False
         #midair attributes
         self._midair = False
@@ -80,11 +80,18 @@ class Player_Controller:
             return self._moves[-1]
         return None
     
-    def primary_on_cd(self):
-        return self._primarySkill.on_cooldown()
+    def primary_on_cd(self, get_timer):
+        if get_timer:
+            return self._primarySkill.get_cooldown()
+        else:
+            return self._primarySkill.on_cooldown()
+        
     
-    def secondary_on_cd(self):
-        return self._secondarySkill.on_cooldown()
+    def secondary_on_cd(self, get_timer):
+        if get_timer:
+            return self._primarySkill.get_cooldown()
+        else: 
+            return self._secondarySkill.on_cooldown()
     
     def heavy_on_cd(self):
         return self._heavyAtk.on_cooldown()
