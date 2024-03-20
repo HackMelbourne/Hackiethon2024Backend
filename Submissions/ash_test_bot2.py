@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
+PRIMARY_SKILL = DashAttackSkill
 SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
@@ -44,46 +44,37 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        
-        # always use when available
-        if not primary_on_cooldown(player) and self.get_x_distance(player, enemy) <= prim_range(player):
-            return PRIMARY
-        if not secondary_on_cooldown(player) and self.get_x_distance(player, enemy) <= seco_range(player):
-            return SECONDARY
 
-        # be aggressive when we have enough hp
-        if (get_hp(player) >= 30) or (get_hp(player) > get_hp(enemy)):
-
-            # check if opponent is in reach
-            if self.get_x_distance(player, enemy) <= 1:
-                if not heavy_on_cooldown(player):
+        if get_landed(player):
+            if self.get_x_distance(player, enemy) == 1:
+                if not heavy_on_cooldown(player) and get_stun_duration(enemy) > 1:
                     return HEAVY
-                else:
-                    return LIGHT
-
-            # move to opponent if they are far
-            elif self.get_x_distance(player, enemy) > 1:
-                if get_pos(player)[0] < get_pos(enemy)[0]:
-                    return FORWARD
-                else:
-                    return BACK
-
-        # be more defensive
-        elif (get_hp(player) < 30):
-            
-            if (len(enemy_projectiles) and abs(get_proj_pos(enemy_projectiles[0])[0] - get_pos(player)[0]) < 3): #incoming projectile
-                return JUMP
-            
-            elif self.get_x_distance(player, enemy) == 1:
-                if not heavy_on_cooldown(player):
-                    return HEAVY
-                else:
-                    return LIGHT
-
-            elif get_pos(player)[0] < get_pos(enemy)[0]:
-                return BACK
+                return LIGHT
             else:
+                return BLOCK
+        
+        elif self.get_x_distance(player, enemy) > 1:
+            if not secondary_on_cooldown(player) and self.get_x_distance(player, enemy) <= seco_range(player):
+                return SECONDARY
+            
+            elif (len(enemy_projectiles) and abs(get_proj_pos(enemy_projectiles[0])[0] - get_pos(player)[0]) < 3): #incoming projectile
+                return JUMP
+
+            if get_pos(player)[0] < get_pos(enemy)[0]:
                 return FORWARD
+            else:
+                return BACK
+        
+        elif self.get_x_distance(player, enemy) == 1:
+            if not primary_on_cooldown(player) and self.get_x_distance(player, enemy) <= prim_range(player):
+                return PRIMARY
+            if not heavy_on_cooldown(player) and get_stun_duration(enemy) > 1:
+                    return HEAVY
+            else:
+                return LIGHT
+            
+        return LIGHT
+            
     
     def get_x_distance(self, player, enemy):
         return abs(get_pos(player)[0] - get_pos(enemy)[0]) 
