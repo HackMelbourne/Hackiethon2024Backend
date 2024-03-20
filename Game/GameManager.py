@@ -106,6 +106,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
 
+    print(knock1, knock2)
     # Only determine knockback and stun after attacks hit
     if (knock1 or stun1) and not player2._superarmor:
         player2._xCoord += knock1
@@ -158,7 +159,7 @@ def reset_block(player):
 # Carries out player actions, return any resulting after effects to main loop  
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
-    print(act1, player1._stun)
+
     # Empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
         act1 = ("NoMove", "NoMove")
@@ -167,7 +168,6 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         act2 = ("NoMove", "NoMove")
         update_stun(player2)
     
-    print(act1)
     # Checks if player does something to cancel a skill
     if player1._midStartup or player1._skill_state:
         if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
@@ -193,6 +193,7 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     
     # Check if no valid move is input, or if the player is recovering 
     # If so, set act to None to prevent further checks
+    print(act1, act2)
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
         if player1._recovery:
             player1._moves.append(("recover", None))

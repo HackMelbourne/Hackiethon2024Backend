@@ -39,7 +39,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = SECONDARY,
+        self.moves = LIGHT,
         self.moves_iter = iter(self.moves)
         
     def init_player_skills(self):
@@ -50,5 +50,5 @@ class Script:
         try:
             return next(self.moves_iter)
         except StopIteration:
-            return NOMOVE
+            return LIGHT
         
