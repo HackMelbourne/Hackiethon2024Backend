@@ -4,7 +4,7 @@ from Game.Skills import *
 from Game.projectiles import *
 
 primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, TeleportSkill]
-secondarySkills = [Hadoken, Lasso, Boomerang, Grenade, IceWall, BearTrap]
+secondarySkills = [Hadoken, Boomerang, Grenade, BearTrap]
 aura_skills = [SuperArmorSkill, SuperSaiyanSkill, JumpBoostSkill]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]

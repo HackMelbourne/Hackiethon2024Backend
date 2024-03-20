@@ -465,5 +465,5 @@ attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
                   }
 
 # For projectile actions : TODO remove lasso and icewall
-projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang,
-                      "grenade":grenade, "beartrap":beartrap, "icewall":icewall}
+projectile_actions = {"hadoken":hadoken, "boomerang":boomerang,
+                      "grenade":grenade, "beartrap":beartrap}
