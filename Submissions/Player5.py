@@ -7,7 +7,7 @@ from ScriptingHelp.usefulFunctions import *
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = Lasso
+SECONDARY_SKILL = SuperArmorSkill
 
 #constants, for easier move return
 #movements

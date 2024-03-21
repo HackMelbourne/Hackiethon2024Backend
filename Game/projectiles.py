@@ -196,7 +196,7 @@ class ProjectileSkill(AttackSkill):
     
 class Hadoken(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=9, damage=8,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=10,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
         self._stunself = False
@@ -268,7 +268,7 @@ class Boomerang(ProjectileSkill):
 class Grenade(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=12, damage=20,
-                                 blockable=False, knockback=3, stun=2, 
+                                 blockable=False, knockback=3, stun=3, 
                                  skillName="grenade")
         
         self._stunself = False
@@ -276,7 +276,7 @@ class Grenade(ProjectileSkill):
         self.init_path()
     
     def init_path(self):
-         self._path = [[1,1], [2,1], [3,1], [4,1]]   
+         self._path = [[1,1], [2,1], [3,1]]   
          
     def _activateSkill(self, travelPath=None):
         if not travelPath:
