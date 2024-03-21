@@ -51,7 +51,7 @@ class Script:
         return self.primary, self.secondary
     
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        enemy._hp = 0
+        enemy._hp -= 1
         return NOMOVE
        
             
