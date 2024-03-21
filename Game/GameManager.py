@@ -55,7 +55,7 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
                 player2._airvelo = 0
                 
 # Plays out a single turn, doesn't check deaths
-def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
+def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles):
     # Initializing knockbacks: knock1 = knockback INFLICTED by player1 on player 2
     knock1 = knock2 = 0
     stun1 = stun2 = 0
@@ -106,7 +106,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
 
-    print(knock1, knock2)
+
     # Only determine knockback and stun after attacks hit
     if (knock1 or stun1) and not player2._superarmor:
         player2._xCoord += knock1
@@ -170,14 +170,14 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     
     # Checks if player does something to cancel a skill
     if player1._midStartup or player1._skill_state:
-        if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
+        if player1._inputs[-1][0] in ("move", "block"):
             player1._skill_state = False
             player1._midStartup = False
         else:
             act1 = player1._moves[-1]
             
     if player2._midStartup or player2._skill_state:
-        if player2._inputs[-1][0] in ("skill_cancel", "move", "block"):
+        if player2._inputs[-1][0] in ("move", "block"):
             player2._skill_state = False
             player2._midStartup = False
         else:
@@ -366,7 +366,7 @@ def startGame(path1, path2, submissionpath, roundNum):
     while game_running:
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
-            projectiles, stun1, stun2)
+            projectiles)
         # Ends game if a player dies or if time up
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1

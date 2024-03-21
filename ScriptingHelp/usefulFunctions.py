@@ -19,6 +19,9 @@ NOMOVE = "NoMove"
 def get_hp(player):
     return player.get_hp()
 
+def get_distance(player, enemy):
+    return abs(get_pos(player)[0] - get_pos(enemy)[0])
+
 def get_pos(player):
     return player.get_pos()
 
@@ -67,10 +70,10 @@ def get_secondary_skill(player):
 def get_projectile_type(proj):
     return proj.get_type()
 
-def get_priamry_cooldown(player):
+def get_primary_cooldown(player):
     return player.primary_on_cd(get_timer=True)
 
-def secondary_on_cooldown(player):
+def get_secondary_cooldown(player):
     return player.secondary_on_cd(get_timer=True)
     
 

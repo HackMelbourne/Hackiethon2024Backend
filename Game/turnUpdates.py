@@ -109,8 +109,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         projectileToJson(None, p2_dict, False)
         #check_json_updated("p2")
 
-    #print(projectiles)
-    print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
     # now check for existing projectiles
     for proj_index in range(len(projectiles)):
         proj_info = projectiles[proj_index]
@@ -145,7 +143,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 player1._skill_state = False
             if proj_knock2 or proj_stun2:
                 player2._skill_state = False
-            print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             continue
         # if exists, then travel
         proj_obj._travel()
@@ -161,7 +158,6 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             continue
         #print(f"Here at {proj_obj.get_pos()}")
         # if still existst then log
-        print(f"PROJ {proj_obj.get_pos()}")
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
             nextProj = projectiles[nextProjNum]
@@ -217,18 +213,12 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 # then unstun caster if the projectile skill has self stun
                 proj_obj._player._skill_state = False
                 proj_obj = None
-                print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             else:
                 projectileToJson(proj_obj, proj_json_dict, True)
-                #check_json_updated(name)
-            print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
-        #current_proj(projectiles)
         
     #after final calculation, remove all destroyed projectiles
     projectiles = [proj for proj in projectiles if proj]
     proj_obj = None
-        
-    print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
     return projectiles, knock1, stun1, knock2, stun2  
 
 def proj_collision_check(proj, player):
@@ -249,6 +239,7 @@ def proj_collision_check(proj, player):
     else:
         knockback = stun = 0
     return knockback, stun
+
 def current_proj(projectiles):
     print("Current projectiles: ")
     for proj in projectiles:
@@ -270,20 +261,7 @@ def updateBuffs(player):
             player._superarmor = False
         if player._jumpHeight > player._defaultJumpHeight:
             player._jumpHeight = player._defaultJumpHeight
-    '''   
-    if player._encumbered:
-        print(f"Duration: {player._encumberedDuration}")
-        if player._encumberedDuration > 0 :
-            player._encumberedDuration -= 1
-        else:
-            print("stop encumbered")
-            changeDamage(player, 0)
-            player._atkbuff = 0  
-            changeSpeed(player, 0)
-            player._speed = 1
-            player._encumbered = False
-    '''
-            
+  
 def check_death(player):
     if player.get_hp() <= 0:
         player._hp = 0

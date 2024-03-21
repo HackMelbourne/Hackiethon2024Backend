@@ -170,11 +170,6 @@ class Projectile:
                 return True
         return False
     
-    # unique to lasso, knockback is dynamic based on distance from player
-    def _lasso_range(self):
-        proj_x = self.get_pos()[0]
-        return -(abs(self._player._xCoord - proj_x) - 1)
-    
 class ProjectileSkill(AttackSkill):
     def __init__(self, player, startup, cooldown, damage, blockable, knockback,
                  stun, skillName):
@@ -201,7 +196,7 @@ class ProjectileSkill(AttackSkill):
     
 class Hadoken(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=9, damage=8,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
         self._stunself = False
@@ -234,47 +229,10 @@ class Hadoken(ProjectileSkill):
         self.init_path()
         return self._activateSkill(self._reversePath())
     
-# UNUSED
-@DeprecationWarning
-class Lasso(ProjectileSkill):
-    def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=3,
-                                 blockable=True, knockback=-2, stun=2, 
-                                 skillName="lasso")
-        self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
-        self._stunself = True
-        self._recovery = 0
-
-    def init_path(self):
-        self._path = [[1, 0], [2, 0], [3, 0], [4,0]]
-        
-    def _activateSkill(self, travelPath=None):
-        reverse=True
-        if not travelPath:
-            self.init_path()
-            travelPath = self._path
-            reverse = False
-        atk_info = super()._activateSkill()
-        if isinstance(atk_info, int):
-            return atk_info
-        
-        self.projectile = self.summonProjectile(path=travelPath, size=(1,1), 
-                                           trait=None, collision=True, timer=0,
-                                           colHp=2, reverse=reverse)
-        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
-                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
-                "projectile": self.projectile}]
-    
-    def path_range(self):
-        return self._path[-1][0] - self._path[0][0]
-        
-    def _revActivate(self):
-        self.init_path()
-        return self._activateSkill(self._reversePath())
     
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=14, damage=8,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._stunself = False
@@ -309,7 +267,7 @@ class Boomerang(ProjectileSkill):
         
 class Grenade(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=12,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=12, damage=20,
                                  blockable=False, knockback=3, stun=2, 
                                  skillName="grenade")
         
@@ -345,7 +303,7 @@ class Grenade(ProjectileSkill):
     
 class BearTrap(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=10,
                                  blockable=False, knockback=0, stun=3, 
                                  skillName="beartrap")
         
@@ -372,42 +330,6 @@ class BearTrap(ProjectileSkill):
                 "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
                 "projectile": projectile}]
         
-    def path_range(self):
-        return self._path[-1][0] - self._path[0][0]
-    
-    def _revActivate(self):
-        self.init_path()
-        return self._activateSkill(self._reversePath())
-
-#UNUSED    
-@DeprecationWarning
-class IceWall(ProjectileSkill):
-    def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=20, damage=10,
-                                 blockable=False, knockback=2, stun=0, 
-                                 skillName="icewall")
-        self._stunself = False
-        
-    def init_path(self):
-        self._path = [[1,0], [2,0], [3,0]]
-        
-    def _activateSkill(self, travelPath=None):
-        reverse=True
-        if not travelPath:
-            self.init_path()
-            travelPath = self._path
-            reverse = False
-        atk_info = super()._activateSkill()
-        if isinstance(atk_info, int):
-            return atk_info
-        
-        projectile = self.summonProjectile(path = travelPath, size=(1,3), 
-                                           trait="timer", 
-                                           collision=True, timer=10, colHp=3, reverse=reverse)
-        return [self._skillType,  {"damage":self._skillValue, "blockable": self._blockable, 
-                "knockback":self._knockback, "stun":self._stun,  "self_stun":self._stunself,
-                "projectile": projectile}]
-    
     def path_range(self):
         return self._path[-1][0] - self._path[0][0]
     

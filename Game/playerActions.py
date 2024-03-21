@@ -64,12 +64,12 @@ def fetchAttack(player, attackType):
         returnVal = player._lightAtk._activateSkill()
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._primarySkill._recovery
+            player._recovery += player._lightAtk._recovery
     elif attackType == "heavy":
         returnVal = player._heavyAtk._activateSkill()
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._primarySkill._recovery
+            player._recovery += player._heavyAtk._recovery
     return returnVal
 
 # Check if a normal attack combo was casted successfully
@@ -107,14 +107,13 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     # Checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
-    print(f"knockback is {knockback}")
     # Surehit is for projectiles since collision check is already done
     if (surehit or (target_x - player_x <= atk_range*player._direction) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # If target is blocking
         if(target._blocking and blockable):
             # Parry if block is frame perfect: the target blocks as attack comes out
-            if target._moves[-1][0] == "block" and (target.get_past_move(2)[0] != "block" or len(target._moves) == 1):
+            if target._moves[-1][0] == "block" and (target.get_past_move(2) != ("block","activate") or len(target._moves) == 1):
                 # Can only parry player attacks, not projectiles
                 if player._entityType == "player":
                     player._stun = PARRYSTUN
@@ -128,7 +127,6 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity = 0
-            print(knockback * player._direction, stun)
             return knockback * player._direction, stun
     return 0, 0
 
@@ -137,7 +135,6 @@ def attack(player,target, action):
     player._blocking = False
     player._block._regenShield() 
     attack = fetchAttack(player, action[0])
-    print(attack)
     if attack:
         if not (isinstance(attack, int)):
             # gets only the attack info, doesn't include "light"/"heavy"
@@ -145,11 +142,9 @@ def attack(player,target, action):
             player._midStartup = False
         
             # performs the actual attack using fetched attack info
-            print(player._id, check_atk_combo(player, action[0]))
             if check_atk_combo(player, action[0]):
                 # buffs damage and knockback for this hit
                 # damage buff
-                print("combo")
                 attack[0] = int(attack[0] * 1.5 + 1)
                 # knockback buff
                 attack[4] += 1
@@ -184,7 +179,6 @@ def fetchSkill(player, skillClass, reversed=False):
             player._recovery += player._primarySkill._recovery
             
     elif player._secondarySkill._skillType == skillClass:
-        print("made it hya")
         player._primarySkill._resetStartup()
         player._heavyAtk._resetStartup()
         player._lightAtk._resetStartup()
@@ -194,7 +188,6 @@ def fetchSkill(player, skillClass, reversed=False):
             returnVal = player._secondarySkill._revActivate()
         else:
             returnVal = player._secondarySkill._activateSkill()
-        print(returnVal)
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
@@ -427,21 +420,7 @@ def fetchProjectileSkill(player, projectileName, action):
             else:
                 player._moves.append(("NoMove", "cooldown"))
     return None
-
-
-def encumber(player):
-    # special state for player after super saiyan duration finishes
-    print("START ENCUMBER")
-    player._encumberedDuration = 5
-    player._encumbered = True
-    changeSpeed(player, 1/2)
          
-def skill_cancel(player, target, action):
-    player._skill_state = False
-    player._midStartup = False
-    player._moves.append(("skill_cancel", "skill_cancel"))
-    return True
-
 # null function
 def nullDef(player, target, action):
     return False
@@ -456,13 +435,11 @@ def nullProj(player, target, action):
 # For actions that do not deal damage and auras
 defense_actions = {"block": block, "move": move, "teleport": teleport, 
                    "super_saiyan": super_saiyan, "meditate": meditate,
-                   "skill_cancel":skill_cancel, "super_armor":super_armor,
-                   "jump_boost":jump_boost}
+                    "super_armor":super_armor, "jump_boost":jump_boost}
 
 # For actions that deal damage
 attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
-                  "uppercut": uppercut, "onepunch": one_punch
-                  }
+                  "uppercut": uppercut, "onepunch": one_punch}
 
 # For projectile actions : TODO remove lasso and icewall
 projectile_actions = {"hadoken":hadoken, "boomerang":boomerang,
