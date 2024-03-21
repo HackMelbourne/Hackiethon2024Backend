@@ -81,7 +81,11 @@ class Projectile:
             rev_path = []
             # if hit border, recalculate return path based on player's position on cast
             if hit_border:
-                self._path = self._path[:self._pathIndex]
+                if self._pathIndex == 0:
+                    # hits border on the first tick of travel
+                    self._path = [self._path[0]]
+                else:
+                    self._path = self._path[:self._pathIndex]
                 x_dist = abs(self._playerInitPos[0] - self._xCoord)
                 height = self._playerInitPos[1]
                 start_x = abs(self._path[-1][0])
