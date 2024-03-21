@@ -8,11 +8,6 @@ secondarySkills = [Hadoken, Boomerang, Grenade, BearTrap]
 aura_skills = [SuperArmorSkill, SuperSaiyanSkill, JumpBoostSkill]
 def validMove(moveset, player, enemy):
     valid_moves = [-1,0,1]
-    print(moveset)
-    #TODO prevent double jumps
-    print(moveset[0] not in valid_moves or moveset[1] not in valid_moves)
-    print((player._xCoord + player._direction * moveset[0]) < LEFTBORDER or 
-          (player._xCoord + player._direction * moveset[0]) > RIGHTBORDER)
     if moveset[0] not in valid_moves or moveset[1] not in valid_moves:
         return False
     # check if out of bound 
@@ -22,12 +17,6 @@ def validMove(moveset, player, enemy):
             return True
         else:
             return False
-    #UPDATE: invalid if next to each other and moving towards the other
-    '''
-    elif (abs(player._xCoord - enemy._xCoord) == moveset[0] and 
-          (player._yCoord + moveset[1]) == enemy._yCoord):
-        return False
-    '''
     return True
     
 
