@@ -12,8 +12,8 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = UppercutSkill
+SECONDARY_SKILL = SuperArmorSkill
 
 #constants, for easier move return
 # movements
@@ -47,8 +47,16 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        try:
-            return next(self.moves_iter)
-        except StopIteration:
-            return LIGHT
+        print(secondary_on_cooldown(player))
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
+        distance = get_distance(player, enemy)
+        if distance == 1:
+            if not primary_on_cooldown(player):
+                return PRIMARY
+            else:
+                return HEAVY
+            
+        return FORWARD
         

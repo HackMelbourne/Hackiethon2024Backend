@@ -106,7 +106,7 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
                             knock1, stun1, knock2, stun2, player1, player2,
                             p1_json_dict, p2_json_dict)
 
-    print(knock1, knock2)
+
     # Only determine knockback and stun after attacks hit
     if (knock1 or stun1) and not player2._superarmor:
         player2._xCoord += knock1
@@ -170,14 +170,14 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     
     # Checks if player does something to cancel a skill
     if player1._midStartup or player1._skill_state:
-        if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
+        if player1._inputs[-1][0] in ("move", "block"):
             player1._skill_state = False
             player1._midStartup = False
         else:
             act1 = player1._moves[-1]
             
     if player2._midStartup or player2._skill_state:
-        if player2._inputs[-1][0] in ("skill_cancel", "move", "block"):
+        if player2._inputs[-1][0] in ("move", "block"):
             player2._skill_state = False
             player2._midStartup = False
         else:
