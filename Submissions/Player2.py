@@ -9,7 +9,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = DashAttackSkill
-SECONDARY_SKILL = SuperSaiyanSkill
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
 #movements
@@ -35,7 +35,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = LIGHT, LIGHT,LIGHT
+        self.moves = FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD,  SECONDARY
         self.moves_iter = iter(self.moves)
         self.doScripted = True
 
@@ -51,6 +51,7 @@ class Script:
             return next(self.moves_iter)
         except StopIteration:
             return NOMOVE
+  
         if self.doScripted:
             try:
                 nxt = next(self.moves_iter)
