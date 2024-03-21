@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
+PRIMARY_SKILL = Meditate
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -47,4 +47,30 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        
+        ## Rough plan for first bot, basically move away regain health if lower 
+        ## and attack with hadoken from a distance
+
+        if get_landed(player):
+            if self.get_x_distance(player, enemy) == 1:
+                
+                return 
+
+        ## for the second bot, will primarily focus on blocking icewalling and healing... 
+
         pass
+        
+
+    
+
+
+    def get_x_distance(self, player, enemy):
+        return abs(get_pos(player)[0] - get_pos(enemy)[0]) 
+    
+    
+    def check_dodge_proj(self, player, enemy, projobj):
+        if ((get_pos(player)[0] < get_pos(projobj)[0] < get_pos(enemy)[0]) or
+            (get_pos(player)[0] > get_pos(projobj)[0] > get_pos(enemy)[0])):
+            # projectile is in the way of the player to enemy
+            return get_pos(player)[1] == get_pos(projobj)[1]
+        return False
