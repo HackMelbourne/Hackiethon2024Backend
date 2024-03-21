@@ -17,7 +17,6 @@ SUBMISSIONPATH = "Submissions"
 PATH1 = "MaxRangeHadokenBot"
 PATH2 = "MeleeBot"
 
-
 # Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
