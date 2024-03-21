@@ -5,7 +5,7 @@ DIST_FROM_MID = 3
 BUFFERTURNS = 1
 HP = 50
 #game settings
-timeLimit = 6
+timeLimit = 1
 movesPerSecond = 4
 #direction constants
 GORIGHT = 1

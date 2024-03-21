@@ -74,7 +74,7 @@ def fetchAttack(player, attackType):
 
 # Check if a normal attack combo was casted successfully
 def check_atk_combo(player, attack):
-    if len(player._moves) < 3:
+    if len(player._inputs) < 3:
         return False
     if attack == "light":
         # go to previous move before heavy startup
@@ -107,8 +107,9 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     # Checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
+    print(f"knockback is {knockback}")
     # Surehit is for projectiles since collision check is already done
-    if (surehit or (abs(player_x-target_x) <= atk_range) and 
+    if (surehit or (target_x - player_x <= atk_range*player._direction) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # If target is blocking
         if(target._blocking and blockable):
@@ -127,6 +128,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
                 damage = 0
             target._hp -= damage
             target._velocity = 0
+            print(knockback * player._direction, stun)
             return knockback * player._direction, stun
     return 0, 0
 
@@ -135,6 +137,7 @@ def attack(player,target, action):
     player._blocking = False
     player._block._regenShield() 
     attack = fetchAttack(player, action[0])
+    print(attack)
     if attack:
         if not (isinstance(attack, int)):
             # gets only the attack info, doesn't include "light"/"heavy"
@@ -142,20 +145,16 @@ def attack(player,target, action):
             player._midStartup = False
         
             # performs the actual attack using fetched attack info
+            print(player._id, check_atk_combo(player, action[0]))
             if check_atk_combo(player, action[0]):
                 # buffs damage and knockback for this hit
                 # damage buff
                 print("combo")
                 attack[0] = int(attack[0] * 1.5 + 1)
                 # knockback buff
-                attack[4] += 2
-                
+                attack[4] += 1
+            
             player._moves.append((action[0], "activate"))
-            #TODO check this, repeated code with fetchAttack
-            if action[0] == "light":
-                player._recovery = player._lightAtk._recovery
-            else:
-                player._recovery = player._heavyAtk._recovery
             return attackHit(player, target, *attack)
         elif attack == -1:
             player._midStartup = True
@@ -466,5 +465,5 @@ attack_actions = {"light": attack, "heavy":attack, "dash_attack": dash_atk,
                   }
 
 # For projectile actions : TODO remove lasso and icewall
-projectile_actions = {"hadoken":hadoken, "lasso":lasso, "boomerang":boomerang,
-                      "grenade":grenade, "beartrap":beartrap, "icewall":icewall}
+projectile_actions = {"hadoken":hadoken, "boomerang":boomerang,
+                      "grenade":grenade, "beartrap":beartrap}

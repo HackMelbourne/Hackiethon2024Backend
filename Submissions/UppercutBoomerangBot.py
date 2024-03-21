@@ -12,11 +12,11 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = UppercutSkill
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
-# movements
+#movements
 JUMP = ("move", (0,1))
 FORWARD = ("move", (1,0))
 BACK = ("move", (-1,0))
@@ -33,22 +33,32 @@ SECONDARY = get_skill(SECONDARY_SKILL)
 
 # no move, aka no input
 NOMOVE = "NoMove"
-
+# for testing
+moves = SECONDARY,
+moves_iter = iter(moves)
 
 class Script:
+    # perfectly spaces hadokens
+
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = LIGHT,
-        self.moves_iter = iter(self.moves)
+        self.go_left = True
+        self.proj_end = 0
+        self.avoid_proj = False
         
     def init_player_skills(self):
         return self.primary, self.secondary
     
-    #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        try:
-            return next(self.moves_iter)
-        except StopIteration:
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        if get_pos(player)[1] != 0:
             return LIGHT
+        return JUMP_FORWARD
         
+       
+            
+
+def get_distance(player1, player2):
+    return abs(get_pos(player1)[0] - get_pos(player2)[0])

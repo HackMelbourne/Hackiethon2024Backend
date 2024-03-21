@@ -1,6 +1,7 @@
 import itertools
 from Game.Skills import AttackSkill
 from Game.gameSettings import LEFTBORDER, RIGHTBORDER
+
 class Projectile:
     # auto increment projectile id whenever a new projectile is summoned
     id = itertools.count()
@@ -204,6 +205,8 @@ class Hadoken(ProjectileSkill):
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
         self._stunself = False
+        self.init_path()
+        
     def init_path(self):
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6,0], [7,0]]
         
@@ -231,7 +234,8 @@ class Hadoken(ProjectileSkill):
         self.init_path()
         return self._activateSkill(self._reversePath())
     
-# TODO while lasso projecile is up, caster cannot move
+# UNUSED
+@DeprecationWarning
 class Lasso(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=3,
@@ -270,12 +274,11 @@ class Lasso(ProjectileSkill):
     
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._stunself = False
-        self._recovery = 1
-
+        self.init_path()
     
     def init_path(self):
         self._path = [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0]]
@@ -312,6 +315,7 @@ class Grenade(ProjectileSkill):
         
         self._stunself = False
         self._recovery = 0
+        self.init_path()
     
     def init_path(self):
          self._path = [[1,1], [2,1], [3,1], [4,1]]   
@@ -346,6 +350,7 @@ class BearTrap(ProjectileSkill):
                                  skillName="beartrap")
         
         self._stunself = False
+        self.init_path()
         
     def init_path(self):
         self._path = [[1,0]]
@@ -373,7 +378,9 @@ class BearTrap(ProjectileSkill):
     def _revActivate(self):
         self.init_path()
         return self._activateSkill(self._reversePath())
-        
+
+#UNUSED    
+@DeprecationWarning
 class IceWall(ProjectileSkill):
     def __init__(self, player):
         ProjectileSkill.__init__(self, player, startup=0, cooldown=20, damage=10,
