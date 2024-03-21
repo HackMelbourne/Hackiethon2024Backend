@@ -50,7 +50,7 @@ class Script:
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
 
-        if distance == 1:
+        if distance < 3:
             return LIGHT
         
         return FORWARD
