@@ -175,7 +175,7 @@ class Meditate(Skill):
 class TeleportSkill(Skill):
     def __init__(self, player=None):
         # skillValue here means teleport distance
-        super().__init__(skillType= "teleport", startup= 0, cooldown= 6, skillValue= 6)
+        super().__init__(skillType= "teleport", startup= 0, cooldown= 10, skillValue= 6)
 
     def _activateSkill(self):
         return self._useSkill()
