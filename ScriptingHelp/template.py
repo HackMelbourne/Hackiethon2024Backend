@@ -4,14 +4,11 @@ from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
 
-# primary skill can be defensive or offensive
-# secondary skills involve summoning a projectile
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
-# SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
+# SECONDARY CAN BE : Hadoken, Grenade, Boomerang, Bear Trap
 
-# currently unsure how to enforce this...
-#TODO FOR USER: Set primary and secondary skill here
+# TODO FOR PARTICIPANT: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
@@ -37,16 +34,22 @@ NOMOVE = "NoMove"
 moves = SECONDARY,
 moves_iter = iter(moves)
 
+# TODO FOR PARTICIPANT: WRITE YOUR WINNING BOT
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
         
+    # DO NOT TOUCH
     def init_player_skills(self):
         return self.primary, self.secondary
     
-    #MAIN FUNCTION that returns a single move to the game manager
+    # MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
 
-        return NOMOVE
+        if distance == 1:
+            return LIGHT
+        
+        return FORWARD
         
