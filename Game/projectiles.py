@@ -196,7 +196,7 @@ class ProjectileSkill(AttackSkill):
     
 class Hadoken(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=8, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=9, damage=8,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="hadoken")
         self._stunself = False
@@ -232,7 +232,7 @@ class Hadoken(ProjectileSkill):
     
 class Boomerang(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=10, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=14, damage=8,
                                  blockable=True, knockback=2, stun=2, 
                                  skillName="boomerang")
         self._stunself = False
@@ -267,7 +267,7 @@ class Boomerang(ProjectileSkill):
         
 class Grenade(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=12,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=12, damage=20,
                                  blockable=False, knockback=3, stun=2, 
                                  skillName="grenade")
         
@@ -303,7 +303,7 @@ class Grenade(ProjectileSkill):
     
 class BearTrap(ProjectileSkill):
     def __init__(self, player):
-        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=5,
+        ProjectileSkill.__init__(self, player, startup=0, cooldown=15, damage=10,
                                  blockable=False, knockback=0, stun=3, 
                                  skillName="beartrap")
         

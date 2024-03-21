@@ -55,7 +55,7 @@ def check_collision(player1, player2, knock1, knock2, checkMidair = False, stopV
                 player2._airvelo = 0
                 
 # Plays out a single turn, doesn't check deaths
-def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles, stun1, stun2):
+def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json_dict, projectiles):
     # Initializing knockbacks: knock1 = knockback INFLICTED by player1 on player 2
     knock1 = knock2 = 0
     stun1 = stun2 = 0
@@ -139,8 +139,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
 def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
     
     # Initializes player scripts as player controller objects
-    player1 = Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
-    player2 = Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+    player1 = Player_Controller(leftstart,0,HP,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = Player_Controller(rightstart,0,HP,GOLEFT, *p2_script.init_player_skills(), 2)
     # Ensure that valid primary and secondary skills are set
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))
@@ -366,7 +366,7 @@ def startGame(path1, path2, submissionpath, roundNum):
     while game_running:
         projectiles, stun1, stun2, p1_dead, p2_dead = execute_one_turn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
-            projectiles, stun1, stun2)
+            projectiles)
         # Ends game if a player dies or if time up
         game_running = (not(p1_dead or p2_dead) and (tick < max_tick))
         tick += 1

@@ -139,13 +139,13 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=1, cooldown=7, damage=4, xRange=5, 
+        super().__init__(startup=1, cooldown=7, damage=6, xRange=5, 
                          vertical=0, blockable=False, knockback=1, stun=0)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=5, damage=8, xRange = 1, 
+        super().__init__(startup=0, cooldown=5, damage=10, xRange = 1, 
                          vertical=2, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
 
@@ -167,7 +167,7 @@ class BuffSkill(Skill):
     
 class Meditate(Skill):
     def __init__(self, player=None):
-        super().__init__(skillType="meditate", startup=0, cooldown=20, skillValue=10)
+        super().__init__(skillType="meditate", startup=0, cooldown=20, skillValue=20)
     
     def _activateSkill(self):
         return self._useSkill()
@@ -189,12 +189,12 @@ class SuperSaiyanSkill(BuffSkill):
         
 class SuperArmorSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
+        super().__init__(startup=0, cooldown=40, buffValue=2, duration=20)
         self._skillType = "super_armor"
             
 class JumpBoostSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=20, buffValue=2, duration=20)
+        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
         self._skillType = "jump_boost"
     
     
