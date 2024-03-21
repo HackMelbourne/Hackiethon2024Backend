@@ -62,7 +62,7 @@ class Script:
             if not secondary_on_cooldown(player):
                 return SECONDARY
 
-        ## if the enemy is close then teleport away
+        ## if the enemy is close and going to attack then teleport away
         if self.get_x_distance(player, enemy) <= 1:
             if not primary_on_cooldown(player):
                 return PRIMARY
@@ -80,9 +80,8 @@ class Script:
         if self.get_x_distance(player, enemy) <= 2:
             return BACK
 
-
-
-
+        ## if gets through all of them, then just block lol
+        return BLOCK
 
     def get_x_distance(self, player, enemy):
         return abs(get_pos(player)[0] - get_pos(enemy)[0]) 
