@@ -163,7 +163,7 @@ def attack(player,target, action):
 # helper function for all skills
 # return cooldown/startup if on cooldown/startup
 # else return skill type and related attributes
-def fetchSkill(player, skillClass, reversed=False):
+def fetchSkill(player, skillClass):
     returnVal = -2
     # if using a skill correctly, reset the startup of every other action 
     if player._primarySkill._skillType == skillClass:
@@ -184,10 +184,7 @@ def fetchSkill(player, skillClass, reversed=False):
         player._lightAtk._resetStartup()
         player._block._resetStartup()
         player._move._resetStartup()
-        if reversed == True:
-            returnVal = player._secondarySkill._revActivate()
-        else:
-            returnVal = player._secondarySkill._activateSkill()
+        returnVal = player._secondarySkill._activateSkill()
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
@@ -384,10 +381,6 @@ def one_punch(player, target, action):
         
 def hadoken(player, target, action):
     return fetchProjectileSkill(player, "hadoken", action)
-        
-def lasso(player, target, action):
-    player._skill_state = True
-    return fetchProjectileSkill(player, "lasso", action)
 
 def boomerang(player, target, action):
     return fetchProjectileSkill(player, "boomerang", action)
@@ -398,14 +391,10 @@ def grenade(player, target, action):
 def beartrap(player, target, action):
     return fetchProjectileSkill(player, "beartrap", action)
 
-def icewall(player, target, action):
-    return fetchProjectileSkill(player, "icewall", action)
 
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
-        print("made it here")
-        skillInfo = fetchSkill(player, projectileName, action[1])
-        print(f"SKillinfo is: {skillInfo}")
+        skillInfo = fetchSkill(player, projectileName)
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]

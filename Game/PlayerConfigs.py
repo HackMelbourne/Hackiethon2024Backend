@@ -102,7 +102,6 @@ class Player_Controller:
         except:
             return 0
     
-    # todo make this work with projectile range   
     def secondary_range(self):
         try:
             second_range = self._secondarySkill._xRange

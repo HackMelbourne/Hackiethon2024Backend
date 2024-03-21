@@ -13,7 +13,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = Lasso
+SECONDARY_SKILL = Grenade
 
 #constants, for easier move return
 #movements
