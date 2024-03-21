@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 {"p1": "Player1", "p2": "Player2", "winner": null, "roundNum": 0}
+=======
+{"p1": "AirLightBot", "p2": "MaxRangeHadokenBot", "winner": "AirLightBot", "roundNum": 0}
+>>>>>>> Stashed changes

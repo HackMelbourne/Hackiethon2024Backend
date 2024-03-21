@@ -3,9 +3,13 @@ LEFTBORDER = 0
 RIGHTBORDER = 15
 DIST_FROM_MID = 0.5 if (RIGHTBORDER-LEFTBORDER)%2 else 1
 BUFFERTURNS = 1
-HP = 50
+HP = 100
 #game settings
+<<<<<<< Updated upstream
 timeLimit = 1
+=======
+timeLimit = 30
+>>>>>>> Stashed changes
 movesPerSecond = 4
 #direction constants
 GORIGHT = 1
