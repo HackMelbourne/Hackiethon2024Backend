@@ -48,20 +48,44 @@ class Script:
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         
-        ## Rough plan for first bot, basically move away regain health if lower 
-        ## and attack with hadoken from a distance
+        ## Rough plan for first bot, attack from a distance with hadoken... 
+        ## basically move away and regain health if lower than 50 
 
+        ## if the enemy is going attack
         if get_landed(player):
             if self.get_x_distance(player, enemy) == 1:
-                
-                return 
+                return BLOCK
 
-        ## for the second bot, will primarily focus on blocking icewalling and healing... 
+        ## if you can attack the enemy with hakoden, then attack 
+        if self.get_x_distance(player, enemy) >= 1:
+            if not secondary_on_cooldown(player):
+                return SECONDARY
 
-        pass
+        ## code for regaining health... if you are less than 50 hp... and the enemy is not close, then heal, 
+        ## if the enemy is close then... 
+        if get_hp(player) < 50: 
+
+            ## enemy is pretty far away and low health
+            if self.get_x_distance(player, enemy) >= 1:
+                if not primary_on_cooldown(player):
+                    return PRIMARY
+
+                #move backwards away from the enemy if can't meditate 
+                else: 
+                    return BACK
+
+            ## have to Block (dont wanna dodge) 
+            else: 
+                return BLOCK
+
+        ## code for projectiles... (thanks Ash) if oncoming then block em 
+        if (len(enemy_projectiles) and abs(get_proj_pos(enemy_projectiles[0])[0] - get_pos(player)[0]) < 3): #incoming projectile
+            return BLOCK
         
+        ## if you are close to the enemy... 
+        if self.get_x_distance(player, enemy) <= 2:
+            return BACK
 
-    
 
 
     def get_x_distance(self, player, enemy):

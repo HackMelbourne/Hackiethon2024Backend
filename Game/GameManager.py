@@ -15,7 +15,7 @@ from Game.PlayerConfigs import Player_Controller
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
 PATH1 = "Player1"
-PATH2 = "Player2"
+PATH2 = "AATBot1"
 
 # Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
