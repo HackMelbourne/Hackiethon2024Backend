@@ -3,10 +3,10 @@ LEFTBORDER = 0
 RIGHTBORDER = 15
 DIST_FROM_MID = 3
 BUFFERTURNS = 1
-HP = 50
+HP = 100
 #game settings
-timeLimit = 1
-movesPerSecond = 4
+timeLimit = 60
+movesPerSecond = 2
 #direction constants
 GORIGHT = 1
 GOLEFT = -1

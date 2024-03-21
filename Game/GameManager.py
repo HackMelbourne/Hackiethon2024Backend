@@ -17,6 +17,7 @@ SUBMISSIONPATH = "Submissions"
 PATH1 = "MaxRangeHadokenBot"
 PATH2 = "MeleeBot"
 
+
 # Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
     submissionFiles = Path(subpath)
@@ -139,8 +140,8 @@ def execute_one_turn(player1, player2, p1_script, p2_script, p1_json_dict, p2_js
 def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
     
     # Initializes player scripts as player controller objects
-    player1 = Player_Controller(leftstart,0,50,GORIGHT, *p1_script.init_player_skills(), 1)
-    player2 = Player_Controller(rightstart,0,50,GOLEFT, *p2_script.init_player_skills(), 2)
+    player1 = Player_Controller(leftstart,0,HP,GORIGHT, *p1_script.init_player_skills(), 1)
+    player2 = Player_Controller(rightstart,0,HP,GOLEFT, *p2_script.init_player_skills(), 2)
     # Ensure that valid primary and secondary skills are set
     assert(check_valid_skills(*p1_script.init_player_skills()))
     assert(check_valid_skills(*p2_script.init_player_skills()))
