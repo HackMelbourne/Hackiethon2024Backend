@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
+PRIMARY_SKILL = OnePunchSkill
 SECONDARY_SKILL = SuperArmorSkill
 
 #constants, for easier move return
@@ -47,7 +47,7 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        print(secondary_on_cooldown(player))
+        
         if not secondary_on_cooldown(player):
             return SECONDARY
         

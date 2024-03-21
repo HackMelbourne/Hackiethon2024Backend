@@ -146,7 +146,7 @@ class DashAttackSkill(AttackSkill):
 class UppercutSkill(AttackSkill):
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=5, damage=10, xRange = 1, 
-                         vertical=2, blockable=True, knockback=2, stun=2)
+                         vertical=1, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
 
 class OnePunchSkill(AttackSkill):
