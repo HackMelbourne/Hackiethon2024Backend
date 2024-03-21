@@ -14,13 +14,9 @@ from Game.PlayerConfigs import Player_Controller
 
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
-<<<<<<< Updated upstream
-PATH1 = "Player1"
-PATH2 = "Player2"
-=======
+
 PATH1 = "AirLightBot"
 PATH2 = "MaxRangeHadokenBot"
->>>>>>> Stashed changes
 
 # Get scripts from bot files and return as script objects
 def get_player_files(path1, path2, subpath):
