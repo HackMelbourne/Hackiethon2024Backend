@@ -58,7 +58,6 @@ class Skill:
                 self._maxStartup = int(self._maxStartup / reductionMult)
                 self._startupReducMult = reductionMult
             self._currentStartup = self._maxStartup
-        print(f"New: {self._currentStartup, self._maxStartup}")
             
     def _resetMaxStartup(self):
         self._maxStartup = self._initMaxStartup
@@ -139,19 +138,20 @@ class BlockSkill(Skill):
 
 class DashAttackSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=1, cooldown=7, damage=4, xRange=5, 
+        super().__init__(startup=1, cooldown=7, damage=7, xRange=5, 
                          vertical=0, blockable=False, knockback=1, stun=0)
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
+    
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=5, damage=8, xRange = 1, 
-                         vertical=2, blockable=True, knockback=2, stun=2)
+        super().__init__(startup=0, cooldown=5, damage=7, xRange = 1, 
+                         vertical=1, blockable=True, knockback=2, stun=2)
         self._skillType = "uppercut"
 
 class OnePunchSkill(AttackSkill):
     def __init__(self, player=None):
-        super().__init__(startup=1, cooldown=8, damage=20, xRange=1,
+        super().__init__(startup=1, cooldown=10, damage=20, xRange=1,
                          vertical=0, blockable=False, knockback=4, stun=4)
 
         self._skillType = "onepunch"
@@ -167,7 +167,7 @@ class BuffSkill(Skill):
     
 class Meditate(Skill):
     def __init__(self, player=None):
-        super().__init__(skillType="meditate", startup=0, cooldown=20, skillValue=10)
+        super().__init__(skillType="meditate", startup=0, cooldown=20, skillValue=20)
     
     def _activateSkill(self):
         return self._useSkill()
@@ -189,12 +189,12 @@ class SuperSaiyanSkill(BuffSkill):
         
 class SuperArmorSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
+        super().__init__(startup=0, cooldown=40, buffValue=2, duration=20)
         self._skillType = "super_armor"
             
 class JumpBoostSkill(BuffSkill):
     def __init__(self, player=None):
-        super().__init__(startup=0, cooldown=20, buffValue=2, duration=20)
+        super().__init__(startup=0, cooldown=30, buffValue=2, duration=20)
         self._skillType = "jump_boost"
     
     

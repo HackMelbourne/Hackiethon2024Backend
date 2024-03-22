@@ -2,10 +2,10 @@ from Game.playerActions import attackHit, changeDamage
 from Game.gameSettings import *
 GRAVITY = 1
 MAX_JUMP_HEIGHT = 2
-def proj_knockback(proj, player):
+def projKnockback(proj, player):
     knockback = 1
     # checking physics for projectiles that can hit from behind
-    if proj._type == "grenade" or proj._type == "icewall":
+    if proj._type == "grenade":
         proj._direction = 1
         if player._xCoord < proj._xCoord:
             knockback = -1
@@ -18,23 +18,22 @@ def proj_knockback(proj, player):
 
 # Reduces cooldown for all actions per turn
 def updateCooldown(player):
-    player._lightAtk._reduceCd(1)
-    player._heavyAtk._reduceCd(1)
-    player._primarySkill._reduceCd(1)
-    player._secondarySkill._reduceCd(1)
+    player._light_atk._reduceCd(1)
+    player._heavy_atk._reduceCd(1)
+    player._primary_skill._reduceCd(1)
+    player._secondary_skill._reduceCd(1)
     player._move._reduceCd(1)
     
 # Updates current position of player if they are midair or started jumping
 def updateMidair(player):
     # Check if player should be falling
-    print(f"Player {player._id}, jump: {player._jumpHeight}, airvelo: {player._airvelo}")
     if not player._falling:
-        player._falling = (player._yCoord >= player._jumpHeight * player._speed)
+        player._falling = (player._yCoord >= player._jump_height * player._speed)
     # Not yet at apex of jump
     if player._midair:
         if player._falling: 
             # Specifically to check for diagonal jumps, ensure jump arc
-            check_point = player._jumpHeight
+            check_point = player._jump_height
             if ((player.get_past_move(check_point)[1] not in ((0,1), (1,1), (-1,1))) or
                                                     player._airvelo == 0):
                 player._yCoord -= GRAVITY
@@ -51,8 +50,6 @@ def updateMidair(player):
     if not player._midair:
         player._velocity = 0
         player._airvelo = 0
-    
-    print(f"Player {player._id}, jump: {player._jumpHeight}, airvelo: {player._airvelo}")
 
 def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['hp'].append(player._hp)
@@ -76,7 +73,6 @@ def playerToJson(player, jsonDict, fill=False, start=False, checkHurt=False):
     jsonDict['stun'].append(player._stun)
     jsonDict['midair'].append(player._midair)
     jsonDict['falling'].append(player._falling)
-    #print(player._moves)
     
 def proj_json_record(jsonDict, projectile, travelling):
     if travelling and projectile:
@@ -109,9 +105,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         projectileToJson(None, p2_dict, False)
         #check_json_updated("p2")
 
-    #print(projectiles)
-    print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
-    # now check for existing projectiles
+    # Iterate over existing projectiles
     for proj_index in range(len(projectiles)):
         proj_info = projectiles[proj_index]
         if proj_info == None:
@@ -123,20 +117,20 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
         if proj_obj._player._id == 1:
             proj_json_dict = p1_dict
             enemy_proj_dict = p2_dict
-        else:
+        else: # player id == 2
             proj_json_dict = p2_dict
             enemy_proj_dict = p1_dict
+            
         
-        #print(f"Current: {proj_obj._player._id}")
-        # a bit finicky, but this part checks if anything moves into projectile before travelling
-        proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
-        proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
+        # Checks if the enemy player moves into the projectile before travel
+        proj_knock2, proj_stun2 = projCollisionCheck(proj_info, player1)
+        proj_knock1, proj_stun1 = projCollisionCheck(proj_info, player2)
         knock1 += proj_knock1
         stun1 = max(stun1, proj_stun1)
         knock2 += proj_knock2
         stun2 = max(stun2, proj_stun2)
         if proj_knock1 or proj_stun1 or proj_knock2 or proj_stun2:
-            # player got hit, so remove projectile
+            # Player got hit, so remove projectile
             projectiles[proj_index] = None # to set destroyed projectiles
             projectileToJson(proj_obj, proj_json_dict, True, midtickhit=True)
             proj_obj = None
@@ -145,11 +139,13 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 player1._skill_state = False
             if proj_knock2 or proj_stun2:
                 player2._skill_state = False
-            print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             continue
-        # if exists, then travel
+        
+        
+        # If exists, then travel
         proj_obj._travel()
-        # first check if the projectile already travelled its range or offscreen
+        
+        # First check if the projectile already travelled its range or offscreen
         if (proj_obj._size == (0,0) or 
             (proj_info["self_stun"] and proj_obj._player._skill_state == False)):
             # remove projectile from array
@@ -159,9 +155,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             proj_obj._player._skill_state = False
             proj_obj = None
             continue
-        #print(f"Here at {proj_obj.get_pos()}")
-        # if still existst then log
-        print(f"PROJ {proj_obj.get_pos()}")
+        
         # check for projectiles colliding with each other
         for nextProjNum in range(len(projectiles)):
             nextProj = projectiles[nextProjNum]
@@ -169,9 +163,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 nextproj_obj = nextProj["projectile"]
                 if (nextproj_obj._id != proj_obj._id and 
                     proj_obj._checkProjCollision(nextproj_obj)):
-                        print("collision damage")
+                        # Projectiles take collision damage
                         proj_obj.take_col_dmg(nextproj_obj._collisionHp)
                         nextproj_obj.take_col_dmg(proj_obj._collisionHp)
+                        # Projectiles which take enough collision damage get destroyed
                         if proj_obj._size == (0,0):
                             projectiles[proj_index] = None
                             projectileToJson(proj_obj, proj_json_dict, False)
@@ -182,23 +177,22 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                             projectileToJson(nextproj_obj, enemy_proj_dict, False)
                             nextproj_obj._player._skill_state = False
                             nextproj_obj = None
-                        # at least one projectile will be destroyed
+                        # At least one projectile will be destroyed
                         break
         
-        # check if this projectile still exists
+        # Check if this projectile still exists
         if projectiles[proj_index]:
             # collision checks and attack checks
-            proj_knock2, proj_stun2 = proj_collision_check(proj_info, player1)
-            proj_knock1, proj_stun1 = proj_collision_check(proj_info, player2)
+            proj_knock2, proj_stun2 = projCollisionCheck(proj_info, player1)
+            proj_knock1, proj_stun1 = projCollisionCheck(proj_info, player2)
             # if attack and projectile hits target at same time, use
             # total knockback and highest stun
             
-            # this is if the projectile explodes
-            # all projectiles for sure have a stun on hit
+            # This is if the projectile explodes
             if proj_obj._trait == "explode" or proj_stun1 or proj_stun2:
                 proj_obj._size = (0,0)
             
-            # recalculate knockbacks and stuns
+            # Recalculate knockbacks and stuns
             knock1 += proj_knock1
             if not stun1:
                 stun1 = proj_stun1
@@ -206,7 +200,7 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
             if not stun2:
                 stun2 = proj_stun2
 
-            # then pop the projectile if it hit or expires, else continue travel
+            # Then pop the projectile if it hit or expires, else continue travel
             if proj_obj._size == (0,0):
                 if proj_knock1 or proj_knock2 or proj_stun1 or proj_stun2:
                     projectileToJson(proj_obj, proj_json_dict, False, midtickhit=True)
@@ -214,29 +208,20 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                     projectileToJson(proj_obj, proj_json_dict, False)
                 #check_json_updated(name)
                 projectiles[proj_index] = None
-                # then unstun caster if the projectile skill has self stun
+                # then unstun caster if the projectile skill has self stun -- Unused
                 proj_obj._player._skill_state = False
                 proj_obj = None
-                print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
             else:
                 projectileToJson(proj_obj, proj_json_dict, True)
-                #check_json_updated(name)
-            print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
-        #current_proj(projectiles)
         
     #after final calculation, remove all destroyed projectiles
     projectiles = [proj for proj in projectiles if proj]
     proj_obj = None
-        
-    print(len(p1_dict['projXCoord']),len(p2_dict['projYCoord']))
     return projectiles, knock1, stun1, knock2, stun2  
 
-def proj_collision_check(proj, player):
+def projCollisionCheck(proj, player):
     proj_obj = proj["projectile"]
-    if proj_obj._type == "lasso":
-        knockback = proj_obj._lasso_range()
-    else:
-        knockback = proj["knockback"] * proj_knockback(proj_obj, player)
+    knockback = proj["knockback"] * projKnockback(proj_obj, player)
     if proj_obj._checkCollision(player):
         knockback, stun = attackHit(proj_obj, player,
                                 proj["damage"],
@@ -249,6 +234,7 @@ def proj_collision_check(proj, player):
     else:
         knockback = stun = 0
     return knockback, stun
+
 def current_proj(projectiles):
     print("Current projectiles: ")
     for proj in projectiles:
@@ -256,9 +242,9 @@ def current_proj(projectiles):
             print(proj["projectile"]._player._id) 
         
 def updateBuffs(player):
-    if player._currentBuffDuration > 0:
-        player._currentBuffDuration -= 1
-    elif player._currentBuffDuration == 0:
+    if player._curr_buff_duration > 0:
+        player._curr_buff_duration -= 1
+    elif player._curr_buff_duration == 0:
         # check if any buffs active, if they are, remove them
         #if player._atkbuff or (player._speed != 1) :
             #encumber(player)
@@ -268,33 +254,20 @@ def updateBuffs(player):
         if player._defense > 1:
             player._defense = 1
             player._superarmor = False
-        if player._jumpHeight > player._defaultJumpHeight:
-            player._jumpHeight = player._defaultJumpHeight
-    '''   
-    if player._encumbered:
-        print(f"Duration: {player._encumberedDuration}")
-        if player._encumberedDuration > 0 :
-            player._encumberedDuration -= 1
-        else:
-            print("stop encumbered")
-            changeDamage(player, 0)
-            player._atkbuff = 0  
-            changeSpeed(player, 0)
-            player._speed = 1
-            player._encumbered = False
-    '''
-            
-def check_death(player):
+        if player._jump_height > player._default_jump_height:
+            player._jump_height = player._default_jump_height
+  
+def checkDeath(player):
     if player.get_hp() <= 0:
         player._hp = 0
         return True
     return False
 
-def update_stun(player):
+def updateStun(player):
     if player._stun > 0:
         player._stun -= 1
         
-def update_recovery(player):
+def updateRecovery(player):
     if player._recovery > 0:
         player._recovery -= 1
         

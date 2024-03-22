@@ -8,7 +8,7 @@ from ScriptingHelp.usefulFunctions import *
 
 #TODO FOR USER: Set primary and secondary skill here
 PRIMARY_SKILL = DashAttackSkill
-SECONDARY_SKILL = IceWall
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
 #movements

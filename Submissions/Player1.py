@@ -12,8 +12,8 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Grenade
+PRIMARY_SKILL = OnePunchSkill
+SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
 # movements
@@ -39,8 +39,9 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = SECONDARY,
+        self.moves = BACK, BACK, BACK, BACK, BACK, BACK, BACK, JUMP
         self.moves_iter = iter(self.moves)
+        
         
     def init_player_skills(self):
         return self.primary, self.secondary
@@ -51,4 +52,15 @@ class Script:
             return next(self.moves_iter)
         except StopIteration:
             return NOMOVE
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
+        distance = get_distance(player, enemy)
+        if distance == 1:
+            if not primary_on_cooldown(player):
+                return PRIMARY
+            else:
+                return HEAVY
+            
+        return FORWARD
         
