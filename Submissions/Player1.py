@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = OnePunchSkill
+PRIMARY_SKILL = DashAttackSkill
 SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
@@ -39,7 +39,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = JUMP_FORWARD,
+        self.moves = PRIMARY,
         self.moves_iter = iter(self.moves)
         
         
@@ -48,7 +48,6 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return LIGHT
         try:
             return next(self.moves_iter)
         except StopIteration:

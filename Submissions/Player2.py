@@ -35,7 +35,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = FORWARD,JUMP,
+        self.moves = FORWARD,LIGHT,
         self.moves_iter = iter(self.moves)
         self.doScripted = True
 
@@ -45,7 +45,7 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        return LIGHT
+
         # PRIMARY_SKILL = OnePunchSkill
         # SECONDARY_SKILL = Grenade
         try:

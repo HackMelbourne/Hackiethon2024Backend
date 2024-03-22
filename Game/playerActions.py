@@ -107,8 +107,10 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
     # Checks if target is within the horizontal and vertical attack range
     player_x, player_y = player.get_pos()
     target_x, target_y = target.get_pos()
+    hurt_positions = range(player_x, player_x + (atk_range+1)*player._direction, player._direction)
+    print(player_x, [x for x in hurt_positions])
     # Surehit is for projectiles since collision check is already done
-    if (surehit or (abs(target_x - player_x) <= atk_range) and 
+    if (surehit or (target_x in hurt_positions) and 
         (abs(target_y - player_y) <= vertical) and (target_y >= player_y)):
         # If target is blocking
         if(target._blocking and blockable):
