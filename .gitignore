@@ -3,13 +3,15 @@
 *.pyc
 *.pyc
 *.pyc
-jsonfiles\p1.json
-jsonfiles\p2.json
 **/pytest_cache
 .testmondata
 **/.pytest_cache
+<<<<<<< HEAD
 <<<<<<< HEAD
 jsonfiles/Round_0
 =======
 jsonfiles
 >>>>>>> origin/ashTestBots
+=======
+jsonfiles/Round_*
+>>>>>>> main
