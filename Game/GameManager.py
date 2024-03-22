@@ -23,7 +23,6 @@ def getPlayerFiles(path1, path2, subpath):
     submission_files = Path(subpath)
     p1module = submission_files / (path1 + ".py")
     p2module = submission_files / (path2 + ".py")
-    p = submission_files.glob("*")
     if p1module.is_file() and p2module.is_file():
         # Ensures path works on mac and windows
         subpath = subpath.replace('\\', '.')

@@ -8,8 +8,4 @@ jsonfiles\p2.json
 **/pytest_cache
 .testmondata
 **/.pytest_cache
-<<<<<<< HEAD
-jsonfiles/Round_0
-=======
 jsonfiles
->>>>>>> origin/ashTestBots

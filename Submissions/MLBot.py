@@ -3,7 +3,7 @@ from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
-from gameSettings import HP
+from Game.gameSettings import HP
 from random import random
 
 
@@ -53,7 +53,6 @@ class Script:
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
-        print(get_last_move(player))
 
         if get_last_move(player) == "onepunch" and self.enemy_health == get_hp(enemy):
             self.onepunch_chance = max(0, self.onepunch_chance - 0.3)

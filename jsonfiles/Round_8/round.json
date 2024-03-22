@@ -1,9 +1,1 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-{"p1": "Player4", "p2": "MLBot", "winner": "MLBot", "roundNum": 8}
-=======
-{"p1": "Player4", "p2": "Player5", "winner": "Player5", "roundNum": 8}
->>>>>>> update0.1
-=======
-{"p1": "Player4", "p2": "Player5", "winner": "Player5", "roundNum": 8}
->>>>>>> 63a1c2a46a2fbe12f7b3cfb09976d749dce0e30c
+{"p1": "finalpromoai1", "p2": "GamblerBot", "winner": "GamblerBot", "roundNum": 8}
