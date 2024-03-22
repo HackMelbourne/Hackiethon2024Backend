@@ -15,8 +15,8 @@ from Game.PlayerConfigs import Player_Controller
 
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
-PATH1 = "MaxRangeHadokenBot"
-PATH2 = "MeleeBot"
+PATH1 = "Player1"
+PATH2 = "Player2"
 
 # Get scripts from bot files and return as script objects
 def getPlayerFiles(path1, path2, subpath):
@@ -213,7 +213,6 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
         cached_move_2 = defense_actions.get(act2[0], nullDef)(player2, player1, act2)
         if cached_move_2:
             act2 = None
-
     # Prevent players that are directly facing each other from moving into each other
     if isinstance(cached_move_1, list) and isinstance(cached_move_2, list):
         if (check_move_collision(player1, player2, cached_move_1, cached_move_2) 
@@ -227,13 +226,13 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     # Prevent horizontal movement if it would result in moving into a still player
     # Diagonal movements are allowed, since midair collision checks occur after
     if isinstance(cached_move_1, list):
-        if player1._xCoord + cached_move_1[0] == player2._xCoord and cached_move_2 == [0,0] and not cached_move_1[1]:
+        if player1._xCoord + cached_move_1[0] == player2._xCoord and cached_move_2 in ([0,0], None) and not cached_move_1[1]:
             cached_move_1[0] = 0
         player1._xCoord += cached_move_1[0]
         player1._yCoord += cached_move_1[1]
         player1._moves[-1] = ("move", (cached_move_1[0]*player1._direction, cached_move_1[1]))
     if isinstance(cached_move_2, list):
-        if player2._xCoord + cached_move_2[0] == player1._xCoord and cached_move_1 == [0,0] and not cached_move_1[1]:
+        if player2._xCoord + cached_move_2[0] == player1._xCoord and cached_move_1 in ([0,0], None) and not cached_move_2[1]:
             cached_move_2[0] = 0
         player2._xCoord += cached_move_2[0]
         player2._yCoord += cached_move_2[1]

@@ -35,7 +35,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = FORWARD, FORWARD, FORWARD, FORWARD, FORWARD, FORWARD,  SECONDARY
+        self.moves = FORWARD,JUMP,
         self.moves_iter = iter(self.moves)
         self.doScripted = True
 
