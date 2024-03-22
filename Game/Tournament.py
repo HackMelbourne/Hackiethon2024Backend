@@ -47,12 +47,14 @@ def findWinner(node):
 
     if node.player:
         return node.player
+    print(f"RoundNum: {roundNum}")
     printBracket(node)
     print("\n")
     left_winner = findWinner(node.left)
     right_winner = findWinner(node.right)
 
     retval = startGame(left_winner, right_winner, "Submissions", roundNum)
+    print(retval)
     roundNum += 1
     return retval
 

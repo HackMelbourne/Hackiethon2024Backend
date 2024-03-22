@@ -13,7 +13,7 @@ def move(player, enemy, action):
     if isinstance(moveAction, int):
         # weird, but is on cooldown or startup
         if moveAction == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             # cooldown
@@ -26,7 +26,7 @@ def move(player, enemy, action):
     # Don't actually move until reach outside function
     cached_move = [0,0]
     # Can only move if not midair
-    if validMove(moveAction, player, enemy) and not player._midair:
+    if validMove(moveAction, player) and not player._midair:
         # has vertical logic
         if moveAction[1]:
             player._midair = True
@@ -36,8 +36,8 @@ def move(player, enemy, action):
                 # Calculate midair horizontal velocity based on speed and direction
                 player._velocity = player._direction * moveAction[0] * player._speed
                 cached_move[0] += player._velocity
-            player._jumpHeight *= player._speed
-            player._airvelo = player._jumpHeight
+            player._jump_height *= player._speed
+            player._airvelo = player._jump_height
         else:
             # No vertical logic, simple horizontal movement 
             cached_move[0] += player._direction * moveAction[0] * player._speed   
@@ -61,15 +61,15 @@ def block(player, target, action):
 def fetchAttack(player, attackType):
     returnVal = None
     if attackType == "light":
-        returnVal = player._lightAtk._activateSkill()
+        returnVal = player._light_atk._activateSkill()
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._lightAtk._recovery
+            player._recovery += player._light_atk._recovery
     elif attackType == "heavy":
-        returnVal = player._heavyAtk._activateSkill()
+        returnVal = player._heavy_atk._activateSkill()
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._heavyAtk._recovery
+            player._recovery += player._heavy_atk._recovery
     return returnVal
 
 # Check if a normal attack combo was casted successfully
@@ -115,7 +115,7 @@ def attackHit(player, target, damage, atk_range, vertical, blockable, knockback,
             # Parry if block is frame perfect: the target blocks as attack comes out
             if target._moves[-1][0] == "block" and (target.get_past_move(2) != ("block","activate") or len(target._moves) == 1):
                 # Can only parry player attacks, not projectiles
-                if player._entityType == "player":
+                if player._entity_type == "player":
                     player._stun = PARRYSTUN
             elif target._blocking:
                 # Target is stunned if their shield breaks from damage taken
@@ -139,7 +139,7 @@ def attack(player,target, action):
         if not (isinstance(attack, int)):
             # gets only the attack info, doesn't include "light"/"heavy"
             attack = list(attack[1:])
-            player._midStartup = False
+            player._mid_startup = False
         
             # performs the actual attack using fetched attack info
             if check_atk_combo(player, action[0]):
@@ -152,7 +152,7 @@ def attack(player,target, action):
             player._moves.append((action[0], "activate"))
             return attackHit(player, target, *attack)
         elif attack == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
@@ -163,35 +163,32 @@ def attack(player,target, action):
 # helper function for all skills
 # return cooldown/startup if on cooldown/startup
 # else return skill type and related attributes
-def fetchSkill(player, skillClass, reversed=False):
+def fetchSkill(player, skillClass):
     returnVal = -2
     # if using a skill correctly, reset the startup of every other action 
-    if player._primarySkill._skillType == skillClass:
-        player._secondarySkill._resetStartup()
-        player._heavyAtk._resetStartup()
-        player._lightAtk._resetStartup()
+    if player._primary_skill._skillType == skillClass:
+        player._secondary_skill._resetStartup()
+        player._heavy_atk._resetStartup()
+        player._light_atk._resetStartup()
         player._block._resetStartup()
         player._move._resetStartup()
-        returnVal = player._primarySkill._activateSkill()
+        returnVal = player._primary_skill._activateSkill()
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._primarySkill._recovery
+            player._recovery += player._primary_skill._recovery
             
-    elif player._secondarySkill._skillType == skillClass:
-        player._primarySkill._resetStartup()
-        player._heavyAtk._resetStartup()
-        player._lightAtk._resetStartup()
+    elif player._secondary_skill._skillType == skillClass:
+        player._primary_skill._resetStartup()
+        player._heavy_atk._resetStartup()
+        player._light_atk._resetStartup()
         player._block._resetStartup()
         player._move._resetStartup()
-        if reversed == True:
-            returnVal = player._secondarySkill._revActivate()
-        else:
-            returnVal = player._secondarySkill._activateSkill()
+        returnVal = player._secondary_skill._activateSkill()
         
         if not isinstance(returnVal, int):
             # casted skill successfully, so put into recovery
-            player._recovery += player._secondarySkill._recovery
+            player._recovery += player._secondary_skill._recovery
         
     if returnVal == -2:
         raise Exception("Player does not have this skill")
@@ -199,13 +196,13 @@ def fetchSkill(player, skillClass, reversed=False):
     
 # for super saiyan, increases damage dealt
 def changeDamage(player, buffValue):
-    if player._primarySkill._skillType in (attack_actions | projectile_actions):
-        player._primarySkill._damageBuff(buffValue)
-    if player._secondarySkill._skillType in (attack_actions | projectile_actions):
-        player._secondarySkill._damageBuff(buffValue)
+    if player._primary_skill._skillType in (attack_actions | projectile_actions):
+        player._primary_skill._damageBuff(buffValue)
+    if player._secondary_skill._skillType in (attack_actions | projectile_actions):
+        player._secondary_skill._damageBuff(buffValue)
     
-    player._lightAtk._damageBuff(buffValue)
-    player._heavyAtk._damageBuff(buffValue)
+    player._light_atk._damageBuff(buffValue)
+    player._heavy_atk._damageBuff(buffValue)
     player._atkbuff += buffValue
 
 # dashes towards target, deals damage along the way
@@ -215,13 +212,13 @@ def dash_atk(player, target, action):
     # if skill on cooldown or in startup
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
-    player._midStartup = False
+    player._mid_startup = False
     
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
@@ -239,13 +236,13 @@ def uppercut(player, target, action):
     # if skill on cooldown or in startup
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
-    player._midStartup = False
+    player._mid_startup = False
     # so now, skillInfo = damage, 
     skillInfo = skillInfo[1:]
     player._moves.append((action[0], "activate"))
@@ -258,13 +255,13 @@ def teleport(player, target, action):
     skillInfo = fetchSkill(player, "teleport")
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return True
     
-    player._midStartup = False
+    player._mid_startup = False
 
     distance = skillInfo[1]
     # default teleport is backwards
@@ -284,20 +281,20 @@ def super_saiyan(player, target, action):
 
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return True
     
-    player._midStartup = False
+    player._mid_startup = False
     
     atkBuff = skillInfo[1][0]
     duration = skillInfo[1][1]
     player._moves.append((action[0], "activate"))
     # turned off for now since startup and recovery so wack with super saiyan
     changeDamage(player, atkBuff)
-    player._currentBuffDuration = duration
+    player._curr_buff_duration = duration
     return True
     
 # heals player for given amount of hp
@@ -306,13 +303,13 @@ def meditate(player, target, action):
 
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return True
     
-    player._midStartup = False
+    player._mid_startup = False
     
     healVal = skillInfo[1]
     player._moves.append((action[0], "activate"))
@@ -325,20 +322,20 @@ def super_armor(player, target, action):
 
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return True
     
-    player._midStartup = False
+    player._mid_startup = False
     
     defBuff = skillInfo[1][0]
     duration = skillInfo[1][1]
     player._moves.append((action[0], "activate"))
     # turned off for now since startup and recovery so wack with super saiyan
     player._defense += defBuff
-    player._currentBuffDuration = duration
+    player._curr_buff_duration = duration
     player._superarmor = True
     return True
 
@@ -347,19 +344,19 @@ def jump_boost(player, target, action):
 
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return True
     
-    player._midStartup = False
+    player._mid_startup = False
     
-    player._jumpHeight = skillInfo[1][0]
+    player._jump_height = skillInfo[1][0]
     duration = skillInfo[1][1]
     player._moves.append((action[0], "activate"))
     # turned off for now since startup and recovery so wack with super saiyan
-    player._currentBuffDuration = duration
+    player._curr_buff_duration = duration
     return True
     
 # powerful punch that takes time to charge up
@@ -369,13 +366,13 @@ def one_punch(player, target, action):
 
     if isinstance(skillInfo, int):
         if skillInfo == -1:
-            player._midStartup = True
+            player._mid_startup = True
             player._moves.append((action[0], "startup"))
         else:
             player._moves.append(("NoMove", "cooldown"))
         return 0, 0
     
-    player._midStartup = False
+    player._mid_startup = False
     
     skillInfo = skillInfo[1:]
     player._moves.append((action[0], "activate"))
@@ -384,10 +381,6 @@ def one_punch(player, target, action):
         
 def hadoken(player, target, action):
     return fetchProjectileSkill(player, "hadoken", action)
-        
-def lasso(player, target, action):
-    player._skill_state = True
-    return fetchProjectileSkill(player, "lasso", action)
 
 def boomerang(player, target, action):
     return fetchProjectileSkill(player, "boomerang", action)
@@ -398,24 +391,19 @@ def grenade(player, target, action):
 def beartrap(player, target, action):
     return fetchProjectileSkill(player, "beartrap", action)
 
-def icewall(player, target, action):
-    return fetchProjectileSkill(player, "icewall", action)
 
 def fetchProjectileSkill(player, projectileName, action):
     if (action[0] == projectileName):
-        print("made it here")
-        skillInfo = fetchSkill(player, projectileName, action[1])
-        print(f"SKillinfo is: {skillInfo}")
+        skillInfo = fetchSkill(player, projectileName)
         if not isinstance(skillInfo, int):
             # returns dictionary containing projectile info
             skillInfo = skillInfo[-1]
             player._moves.append((action[0], "activate"))
-            player._midStartup = False
-            print(skillInfo["projectile"]._path)
+            player._mid_startup = False
             return skillInfo
         else:
             if skillInfo == -1:
-                player._midStartup = True
+                player._mid_startup = True
                 player._moves.append((action[0], "startup"))
             else:
                 player._moves.append(("NoMove", "cooldown"))

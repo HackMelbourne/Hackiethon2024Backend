@@ -6,13 +6,8 @@ from Game.projectiles import *
 primarySkills = [OnePunchSkill, UppercutSkill, DashAttackSkill, Meditate, TeleportSkill]
 secondarySkills = [Hadoken, Boomerang, Grenade, BearTrap]
 aura_skills = [SuperArmorSkill, SuperSaiyanSkill, JumpBoostSkill]
-def validMove(moveset, player, enemy):
+def validMove(moveset, player):
     valid_moves = [-1,0,1]
-    print(moveset)
-    #TODO prevent double jumps
-    print(moveset[0] not in valid_moves or moveset[1] not in valid_moves)
-    print((player._xCoord + player._direction * moveset[0]) < LEFTBORDER or 
-          (player._xCoord + player._direction * moveset[0]) > RIGHTBORDER)
     if moveset[0] not in valid_moves or moveset[1] not in valid_moves:
         return False
     # check if out of bound 
@@ -22,12 +17,6 @@ def validMove(moveset, player, enemy):
             return True
         else:
             return False
-    #UPDATE: invalid if next to each other and moving towards the other
-    '''
-    elif (abs(player._xCoord - enemy._xCoord) == moveset[0] and 
-          (player._yCoord + moveset[1]) == enemy._yCoord):
-        return False
-    '''
     return True
     
 
@@ -79,7 +68,7 @@ def playerInfo(player, playerName, action):
     print(f"{playerName} POS: {player._xCoord, player._yCoord}, {player._hp}, midair: {player._midair}, blocking: {player._blocking, player._block._shieldHp}, stun: {player._stun}, facing: {player._direction}, airvelo:{player._velocity}")
     print(f"             SPEED: {player._speed}, ATKBUFF: {player._atkbuff}, DURATION: {player._currentBuffDuration}")
     print(f"INPUT ACTION: {action}")
-    print(f"ACTUAL ACTION: {player._moves[player._moveNum - 1]}")
+    print(f"ACTUAL ACTION: {player._moves[player._move_num - 1]}")
     
 def check_valid_skills(primskill, secoskill):
     print(primskill in primarySkills)
