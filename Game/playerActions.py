@@ -226,8 +226,8 @@ def dash_atk(player, target, action):
     player._moves.append((action[0], "activate"))
 
     knockback, stun = attackHit(player, target, *skillInfo)
-    player._xCoord += player._direction * skillInfo[1]
-    correctPos(player)
+    #player._xCoord += player._direction * skillInfo[1]
+    #correctPos(player)
     return knockback, stun
 
 def uppercut(player, target, action):
