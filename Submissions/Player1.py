@@ -48,6 +48,7 @@ class Script:
     
     #MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        return LIGHT
         try:
             return next(self.moves_iter)
         except StopIteration:
