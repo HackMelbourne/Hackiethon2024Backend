@@ -2,16 +2,15 @@
 from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
+from Game.playerActions import defense_actions, attack_actions, projectile_actions
+from gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART, PARRYSTUN
 
-# primary skill can be defensive or offensive
-# secondary skills involve summoning a projectile
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
-# SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
+# SECONDARY CAN BE : Hadoken, Grenade, Boomerang, Bear Trap
 
-# currently unsure how to enforce this...
-#TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
+# TODO FOR PARTICIPANT: Set primary and secondary skill here
+PRIMARY_SKILL = TeleportSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -29,30 +28,37 @@ BLOCK = ("block",)
 
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
+CANCEL = ("skill_cancel", )
 
 # no move, aka no input
 NOMOVE = "NoMove"
-CANCEL = ('skill_cancel',)
 # for testing
 moves = SECONDARY,
 moves_iter = iter(moves)
 
+# TODO FOR PARTICIPANT: WRITE YOUR WINNING BOT
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.hasWalked = False
-        self.hasUppercutted = False
         
+    # DO NOT TOUCH
     def init_player_skills(self):
         return self.primary, self.secondary
     
-    #MAIN FUNCTION that returns a single move to the game manager
+    # MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        if not self.hasWalked:
-            self.hasWalked = True
-            return FORWARD 
-        if not self.hasUppercutted:
-            self.hasUppercutted = True
-            return PRIMARY
-        return NOMOVE     
+<<<<<<< HEAD:Submissions/CheaterBot.py
+        enemy._hp -= 1
+        return NOMOVE
+       
+            
+=======
+        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+>>>>>>> main:Submissions/Bot1.py
+
+        if distance < 3:
+            return LIGHT
+        
+        return FORWARD
+        

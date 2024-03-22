@@ -15,8 +15,8 @@ from Game.PlayerConfigs import Player_Controller
 
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
-PATH1 = "MaxRangeHadokenBot"
-PATH2 = "MeleeBot"
+PATH1 = "Bot1"
+PATH2 = "Bot2"
 
 # Get scripts from bot files and return as script objects
 def getPlayerFiles(path1, path2, subpath):

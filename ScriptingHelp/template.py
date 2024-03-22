@@ -28,7 +28,6 @@ BLOCK = ("block",)
 
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
-CANCEL = ("skill_cancel", )
 
 # no move, aka no input
 NOMOVE = "NoMove"
