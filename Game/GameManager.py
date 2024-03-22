@@ -401,4 +401,4 @@ def startGame(path1, path2, submissionpath, roundNum):
     
 # Allows to run directly from GameManager to simulate single rounds
 if __name__ == "__main__":
-    startGame(PATH1, PATH2, SUBMISSIONPATH, 0)
+    startGame(PATH1, PATH2, SUBMISSIONPATH, 1)
