@@ -3,9 +3,7 @@
 *.pyc
 *.pyc
 *.pyc
-jsonfiles\p1.json
-jsonfiles\p2.json
 **/pytest_cache
 .testmondata
 **/.pytest_cache
-jsonfiles
+jsonfiles/Round_*
