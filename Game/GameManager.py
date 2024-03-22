@@ -258,6 +258,17 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
             projectiles.append(proj_obj)
         resetBlock(player2)
 
+    # move players if the attack caused them to move - dash attack
+    if isinstance(act1, tuple) and act1[0] == "dash_attack" and (knock1 or stun1):
+        #dash attack successful
+        dash_range = player1.primary_range()
+        player1._xCoord += player1._direction * dash_range
+    
+    if isinstance(act2, tuple) and act2[0] == "dash_attack" and (knock2 or stun2):
+        #dash attack successful
+        dash_range = player2.primary_range()
+        player2._xCoord += player2._direction * dash_range
+        
     # Correct positioning again just in case
     correctPos(player1)
     correctPos(player2)
