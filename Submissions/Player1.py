@@ -12,7 +12,7 @@ from Game.playerActions import defense_actions, attack_actions, projectile_actio
 
 # currently unsure how to enforce this...
 #TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = DashAttackSkill
+PRIMARY_SKILL = UppercutSkill
 SECONDARY_SKILL = Boomerang
 
 #constants, for easier move return
@@ -39,7 +39,7 @@ class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.moves = PRIMARY,
+        self.moves = FORWARD, PRIMARY,
         self.moves_iter = iter(self.moves)
         
         
