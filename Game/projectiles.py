@@ -15,7 +15,7 @@ class Projectile:
         self._size = list(size)
         self._type = type
         self._timer = timer
-        self._entityType = "projectile"
+        self._entity_type = "projectile"
         self._collisionHp = collisionHp
         self._playerInitPos = player.get_pos()
         
@@ -88,6 +88,7 @@ class Projectile:
                     self._path = self._path[:self._pathIndex]
                 x_dist = abs(self._playerInitPos[0] - self._xCoord)
                 height = self._playerInitPos[1]
+                
                 start_x = abs(self._path[-1][0])
                 proj_direction = self._direction
                 for i in range(1, x_dist):

@@ -58,7 +58,6 @@ class Skill:
                 self._maxStartup = int(self._maxStartup / reductionMult)
                 self._startupReducMult = reductionMult
             self._currentStartup = self._maxStartup
-        print(f"New: {self._currentStartup, self._maxStartup}")
             
     def _resetMaxStartup(self):
         self._maxStartup = self._initMaxStartup
@@ -144,6 +143,7 @@ class DashAttackSkill(AttackSkill):
         self._skillType = "dash_attack"
 
 class UppercutSkill(AttackSkill):
+    
     def __init__(self, player=None):
         super().__init__(startup=0, cooldown=5, damage=7, xRange = 1, 
                          vertical=1, blockable=True, knockback=2, stun=2)
