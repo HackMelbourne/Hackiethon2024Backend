@@ -2,21 +2,13 @@
 JSONFILL = True # set to True for midtick info, like hurt etc
 LEFTBORDER = 0
 RIGHTBORDER = 15
-<<<<<<< HEAD
 DIST_FROM_MID = 3
 BUFFERTURNS = 1
 HP = 100
 #game settings
 timeLimit = 30
 movesPerSecond = 2
-=======
-DIST_FROM_MID = 1.5 if (RIGHTBORDER-LEFTBORDER)%2 else 1
-BUFFERTURNS = 1
-HP = 100
-#game settings
-TIME_LIMIT = 30
-MOVES_PER_SECOND = 4
->>>>>>> origin/ashTestBots
+
 #direction constants
 GORIGHT = 1
 GOLEFT = -1
