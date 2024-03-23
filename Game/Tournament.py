@@ -58,7 +58,9 @@ def findWinner(node):
     roundNum += 1
     return retval
 
-def simulateTournament(players_list):
+def simulateTournament(players_list, randomize = False):
+    if randomize:
+        random.shuffle(players_list)
     root = buildBracket(players_list)
     print("Initial Bracket:")
     # a bunch of nones are cuz the winners arent listed
@@ -69,4 +71,7 @@ def simulateTournament(players_list):
     printBracket(root)
 
 
-simulateTournament(clean_player)
+repeat_simulations = 10
+for i in range(repeat_simulations):
+    simulateTournament(clean_player, randomize=True)
+    roundNum = 1

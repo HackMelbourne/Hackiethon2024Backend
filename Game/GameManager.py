@@ -150,7 +150,6 @@ def resetBlock(player):
 # Carries out player actions, return any resulting after effects to main loop  
 def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     knock1 = knock2 = 0
-
     # Empty move if player is currently stunned or doing recovery ticks
     if player1._stun or player1._recovery:
         act1 = ("NoMove", "NoMove")
@@ -161,19 +160,18 @@ def performActions(player1, player2, act1, act2, stun1, stun2, projectiles):
     
     # Checks if player does something to cancel a skill
     if player1._mid_startup or player1._skill_state:
-        if player1._inputs[-1][0] in ("move", "block"):
+        if player1._inputs[-1][0] in ("skill_cancel", "move", "block"):
             player1._skill_state = False
             player1._mid_startup = False
         else:
             act1 = player1._moves[-1]
             
     if player2._mid_startup or player2._skill_state:
-        if player2._inputs[-1][0] in ("move", "block"):
+        if player2._inputs[-1][0] in ("skill_cancel", "move", "block"):
             player2._skill_state = False
             player2._mid_startup = False
         else:
             act2 = player2._moves[-1]
-        
     # Check if no valid move is input, or if the player is recovering 
     # If so, set act to None to prevent further checks
     if act1[0] not in (attack_actions.keys() | defense_actions.keys() | projectile_actions.keys()):
