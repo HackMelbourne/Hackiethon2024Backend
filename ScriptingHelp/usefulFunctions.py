@@ -16,6 +16,21 @@ NOMOVE = "NoMove"
 
 
 # helpful functions
+
+def comp_moves(move1, move2):
+    if (move1[0] == move2[0]):
+        if move1[0]  == "move":
+            return move1[1] == move2[1]
+        if len(move1) > 1 and len(move2) > 1:
+            return move1[1] == move2[1]
+        if len(move1) == 1 and len(move2) > 1:
+            return move2[1] != "startup"
+        if len(move1) > 1 and len(move2) == 1:
+            return move1[1] != "startup"
+        if len(move1) == 1 and len(move2) == 1:
+            return True
+        
+        
 def get_hp(player):
     return player.get_hp()
 
