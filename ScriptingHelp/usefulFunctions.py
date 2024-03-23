@@ -19,6 +19,8 @@ CANCEL = ("skill_cancel",)
 # helpful functions
 
 def compare_moves(move1, move2):
+    if move1 == move2:
+        return True
     if (move1[0] == move2[0]):
         if move1[0]  == "move":
             return move1[1] == move2[1]
