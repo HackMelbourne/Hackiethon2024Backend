@@ -164,8 +164,10 @@ def projectile_move(projectiles, knock1, stun1, knock2, stun2, player1, player2,
                 if (nextproj_obj._id != proj_obj._id and 
                     proj_obj._checkProjCollision(nextproj_obj)):
                         # Projectiles take collision damage
-                        proj_obj.take_col_dmg(nextproj_obj._collisionHp)
-                        nextproj_obj.take_col_dmg(proj_obj._collisionHp)
+                        php = proj_obj._collisionHp
+                        nphp = nextproj_obj._collisionHp
+                        proj_obj.take_col_dmg(nphp)
+                        nextproj_obj.take_col_dmg(php)
                         # Projectiles which take enough collision damage get destroyed
                         if proj_obj._size == (0,0):
                             projectiles[proj_index] = None
