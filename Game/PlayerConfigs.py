@@ -75,7 +75,7 @@ class Player_Controller:
            as (string, any type)
         '''
         if len(self._moves) > 0:
-            return self._moves[-1][0]
+            return self._moves[-1]
         return None
     
     def primary_on_cd(self, get_timer):
