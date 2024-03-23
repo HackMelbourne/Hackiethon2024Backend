@@ -75,7 +75,10 @@ class Player_Controller:
            as (string, any type)
         '''
         if len(self._moves) > 0:
-            return self._moves[-1]
+            if self._moves[-1][0] == "move":
+                return self._moves[-1]
+            else:
+                return (self._moves[-1][0],)
         return None
     
     def primary_on_cd(self, get_timer):
@@ -111,7 +114,10 @@ class Player_Controller:
         
     def get_past_move(self, turns):
         if turns <= len(self._moves):
-            return (self._moves[-turns])
+            if self._moves[-turns][0] == "move":
+                return self._moves[-turns]
+            else:
+                return (self._moves[-turns][0],)
         else:
             return None
         
