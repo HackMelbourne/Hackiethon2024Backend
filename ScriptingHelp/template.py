@@ -3,7 +3,7 @@ from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
-from gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART, PARRYSTUN
+from Game.gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART, PARRYSTUN
 
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
@@ -22,9 +22,10 @@ JUMP_FORWARD = ("move", (1,1))
 JUMP_BACKWARD = ("move", (-1, 1))
 
 # attacks and block
-LIGHT = ("light",)
-HEAVY = ("heavy",)
-BLOCK = ("block",)
+LIGHT = ("light","activate")
+HEAVY = ("heavy","activate")
+BLOCK = ("block","activate")
+
 
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
