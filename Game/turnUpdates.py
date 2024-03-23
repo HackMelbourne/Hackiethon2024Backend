@@ -34,7 +34,7 @@ def updateMidair(player):
         if player._falling: 
             # Specifically to check for diagonal jumps, ensure jump arc
             check_point = player._jump_height
-            if ((len(player.get_past_move(check_point)) > 1 and player.get_past_move(check_point)[1] not in ((0,1), (1,1), (-1,1))) or
+            if ((player.get_past_move(check_point)[1] not in ((0,1), (1,1), (-1,1))) or
                                                     player._airvelo == 0):
                 player._yCoord -= GRAVITY
         else:

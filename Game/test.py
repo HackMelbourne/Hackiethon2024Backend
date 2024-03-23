@@ -35,6 +35,8 @@ def correctPos(player):
         player._xCoord = LEFTBORDER
     elif player._xCoord > RIGHTBORDER:
         player._xCoord = RIGHTBORDER
+    if player._yCoord < 0:
+        player._yCoord = 0
     return None
 
 def correctOverlap(p1, p2, knock1, knock2):

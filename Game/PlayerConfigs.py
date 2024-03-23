@@ -50,7 +50,7 @@ class Player_Controller:
         if self._move_num < len(self._inputs) and self._inputs[self._move_num]:
             return self._inputs[self._move_num]
         else:   
-            return ("NoMove")
+            return ("NoMove", None)
            
     def get_pos(self):
         '''Returns player position -> (x, y) as (int, int)'''
@@ -75,10 +75,7 @@ class Player_Controller:
            as (string, any type)
         '''
         if len(self._moves) > 0:
-            if self._moves[-1][0] == "move":
-                return self._moves[-1]
-            else:
-                return (self._moves[-1][0],)
+            return self._moves[-1][0]
         return None
     
     def primary_on_cd(self, get_timer):
@@ -114,10 +111,7 @@ class Player_Controller:
         
     def get_past_move(self, turns):
         if turns <= len(self._moves):
-            if self._moves[-turns][0] == "move":
-                return self._moves[-turns]
-            else:
-                return (self._moves[-turns][0],)
+            return self._moves[-turns]
         else:
             return None
         
