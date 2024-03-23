@@ -24,7 +24,7 @@ def compare_moves(move1, move2):
             return move1[1] == move2[1]
         # both are moves get from get__move
         if len(move1) > 1 and len(move2) > 1:
-            return move1[1] == move2[1]
+            return move1[1] in ("activate", None) and move2[1] in ("activate", None)
         # move 1 is a move from  bot code to be compared
         if len(move1) == 1 and len(move2) > 1:
             return move2[1] != "startup"
