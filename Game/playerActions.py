@@ -198,6 +198,8 @@ def fetchSkill(player, skillClass):
 # for super saiyan, increases damage dealt
 def changeDamage(player, buffValue):
     if player._primary_skill._skillType in (attack_actions | projectile_actions):
+        if player._primary_skill._skillType == "onepunch":
+            buffValue = 1.2
         player._primary_skill._damageBuff(buffValue)
     if player._secondary_skill._skillType in (attack_actions | projectile_actions):
         player._secondary_skill._damageBuff(buffValue)
