@@ -45,15 +45,28 @@ class Script:
     # DO NOT TOUCH
     def init_player_skills(self):
         return self.primary, self.secondary
-    
+
     # MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-        if not secondary_on_cooldown(player):
+        # calculate distance between enemy and player
+        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+        enemy_primary = get_primary_skill(enemy)
+        enemy_secondary = get_secondary_skill(enemy)
+
+        if distance == 1 and not primary_on_cooldown(player):
+            return PRIMARY
+        elif distance == 1 and primary_on_cooldown(player):
+            return LIGHT
+
+        if distance > 1 and distance <= 7 and not secondary_on_cooldown(player):
             return SECONDARY
         
-        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
-        if distance < 3:
-            return LIGHT
-        
+        if distance == 1 and primary_on_cooldown(player):
+            # if enemy has any skill that attacks within one distance
+            if enemy_primary == UppercutSkill and not primary_on_cooldown(enemy):
+                return BLOCK
+            elif enemy_primary == OnePunchSkill and not primary_on_cooldown(enemy):
+                return JUMP_BACKWARD
+            
+
         return FORWARD
-        
