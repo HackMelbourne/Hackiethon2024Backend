@@ -50,7 +50,7 @@ class Script:
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
 
-        if (distance < 1) and not primary_on_cooldown(player):
+        if (distance == 1) and not primary_on_cooldown(player):
             return PRIMARY
             
         if get_hp(player)/2 and not secondary_on_cooldown(player):
