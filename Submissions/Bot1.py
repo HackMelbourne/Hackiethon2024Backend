@@ -11,7 +11,7 @@ from Game.gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART
 
 # TODO FOR PARTICIPANT: Set primary and secondary skill here
 PRIMARY_SKILL = TeleportSkill
-SECONDARY_SKILL = Hadoken
+SECONDARY_SKILL = Grenade
 
 #constants, for easier move return
 #movements
@@ -51,7 +51,16 @@ class Script:
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
 
         if distance < 3:
-            return LIGHT
+            return JUMP
+        
+        if not secondary_on_cooldown(player):
+            return SECONDARY
+        
+        if not primary_on_cooldown(player):
+            return PRIMARY
+
+        if primary_on_cooldown(enemy) and not primary_on_cooldown(player):
+            return PRIMARY 
         
         return FORWARD
         
