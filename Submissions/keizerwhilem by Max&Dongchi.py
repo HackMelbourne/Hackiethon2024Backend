@@ -207,16 +207,17 @@ class Script:
             if enemySecondary == "hadoken":
                 for key in enemyProjectilePositions:
                     positionValues = enemyProjectilePositions[key]
-                    if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
-                        if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] +1 :#if its in the players vertical range
-                            if right(player,enemy):                   #if we facing the front (left)
-                                if positionValues[tic-1][0] <= get_pos(player)[0] + 2:
-                                    del enemyProjectilePositions[key]
-                                    return JUMP
-                            else:                           #if we facing the back (right)
-                                if positionValues[tic-1][0] >= get_pos(player)[0] - 2 and positionValues[tic-1][0] != 0:
-                                    del enemyProjectilePositions[key]
-                                    return JUMP    
+                    if len(positionValues) <= 130:
+                        if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
+                            if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] +1 :#if its in the players vertical range
+                                if right(player,enemy):                   #if we facing the front (left)
+                                    if positionValues[tic-1][0] <= get_pos(player)[0] + 2:
+                                        del enemyProjectilePositions[key]
+                                        return JUMP
+                                else:                           #if we facing the back (right)
+                                    if positionValues[tic-1][0] >= get_pos(player)[0] - 2 and positionValues[tic-1][0] != 0:
+                                        del enemyProjectilePositions[key]
+                                        return JUMP    
                                 
             elif enemySecondary == "beartrap":
                 for key in enemyProjectilePositions:
