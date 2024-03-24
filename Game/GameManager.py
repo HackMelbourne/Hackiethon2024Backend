@@ -22,8 +22,8 @@ leesin = "LeeSin by Dedward"
 
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
-PATH1 = ""
-PATH2 = zeus
+PATH1 = "Smash Bot by Meidelline Surya"
+PATH2 = "东方树叶绿茶 by sex_nine"
 
 # Get scripts from bot files and return as script objects
 def getPlayerFiles(path1, path2, subpath):
@@ -420,4 +420,4 @@ def startGame(path1, path2, submissionpath, roundNum):
     
 # Allows to run directly from GameManager to simulate single rounds
 if __name__ == "__main__":
-    startGame(PATH1, PATH2, SUBMISSIONPATH, 1)
+    startGame(PATH1, PATH2, SUBMISSIONPATH, 4)

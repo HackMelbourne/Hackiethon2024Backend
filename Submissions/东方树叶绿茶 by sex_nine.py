@@ -13,10 +13,10 @@ if PROD:
     print = noop
     sys.modules["ext.Game"] = __import__("Game")
 
-from ext.Game.PlayerConfigs import Player_Controller
-from ext.Game.Skills import Meditate, get_skill
-from ext.Game.projectiles import Grenade, Projectile
-from ext.Game.gameSettings import HP, LEFTBORDER, TIME_LIMIT, MOVES_PER_SECOND, RIGHTBORDER
+from Game.PlayerConfigs import Player_Controller
+from Game.Skills import Meditate, get_skill
+from Game.projectiles import Grenade, Projectile
+from Game.gameSettings import HP, LEFTBORDER, TIME_LIMIT, MOVES_PER_SECOND, RIGHTBORDER
 
 TOTAL_TICKS = TIME_LIMIT * MOVES_PER_SECOND
 LAST_TICK = TOTAL_TICKS  # for some reason, get_move is called 121 times, must be an off-by-one error in the game lmfao
