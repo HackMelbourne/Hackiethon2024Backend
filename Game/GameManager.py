@@ -13,10 +13,17 @@ from Game.projectiles import *
 from Game.turnUpdates import *
 from Game.PlayerConfigs import Player_Controller
 
+zeus = "zeusDelta by QuantumPioneer"
+demon = "DEMONMODE Bot by Team B"
+
+lazy = "supersaiyanbot by LazyTeam"
+leesin = "LeeSin by Dedward"
+
+
 # Manually choose bot files to test
 SUBMISSIONPATH = "Submissions"
-PATH1 = "Player1"
-PATH2 = "Player2"
+PATH1 = zeus
+PATH2 = lazy
 
 # Get scripts from bot files and return as script objects
 def getPlayerFiles(path1, path2, subpath):
@@ -413,4 +420,4 @@ def startGame(path1, path2, submissionpath, roundNum):
     
 # Allows to run directly from GameManager to simulate single rounds
 if __name__ == "__main__":
-    startGame(PATH1, PATH2, SUBMISSIONPATH, 0)
+    startGame(PATH1, PATH2, SUBMISSIONPATH, f"{PATH1, PATH2}")
