@@ -401,14 +401,15 @@ def startGame(path1, path2, submissionpath, roundNum):
     else:
         print('Tie!')
     
-    # create round info json dictionary
-    round_info = {'p1': path1, 'p2':path2, 'winner':winner, 'roundNum':roundNum}
-    round_results_json.write_text(json.dumps(round_info))
+
     
     # choose random player to win if tie
     if not winner:
         winner = random.choice([path1, path2])
-    return winner
+        
+    # create round info json dictionary
+    round_info = {'p1': path1, 'p2':path2, 'winner':winner, 'roundNum':roundNum}
+    round_results_json.write_text(json.dumps(round_info))
     
 # Allows to run directly from GameManager to simulate single rounds
 if __name__ == "__main__":
