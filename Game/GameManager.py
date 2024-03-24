@@ -61,7 +61,6 @@ def executeOneTurn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json
     updateMidair(player2)
     checkCollision(player1, player2, knock1, knock2)
 
-
     # Check for existing projectiles belonging to each player
     p1_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 1]
     p2_projectiles = [proj["projectile"] for proj in projectiles if proj["projectile"]._player._id == 2]
@@ -133,7 +132,6 @@ def executeOneTurn(player1, player2, p1_script, p2_script, p1_json_dict, p2_json
     return projectiles, p1_dead, p2_dead
 
 def setupGame(p1_script, p2_script, leftstart=LEFTSTART, rightstart=RIGHTSTART):
-    
     # Initializes player scripts as player controller objects
     player1 = Player_Controller(leftstart,0,HP,GORIGHT, *p1_script.init_player_skills(), 1)
     player2 = Player_Controller(rightstart,0,HP,GOLEFT, *p2_script.init_player_skills(), 2)
@@ -358,6 +356,7 @@ def startGame(path1, path2, submissionpath, roundNum):
         
     # Loops through turns
     while game_running:
+        #print(f"{path1} vs {path2}")
         projectiles, p1_dead, p2_dead = executeOneTurn(player1, 
             player2, p1_script, p2_script, p1_json_dict, p2_json_dict, 
             projectiles)

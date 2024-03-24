@@ -71,7 +71,7 @@ def simulateTournament(players_list, randomize = False):
     printBracket(root)
 
 
-repeat_simulations = 10
+repeat_simulations = 1
 for i in range(repeat_simulations):
     simulateTournament(clean_player, randomize=True)
     roundNum = 1

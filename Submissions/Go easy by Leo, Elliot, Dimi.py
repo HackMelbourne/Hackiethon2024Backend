@@ -3,17 +3,15 @@ from Game.Skills import *
 from Game.projectiles import *
 from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
+from Game.gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART, PARRYSTUN
 
-# primary skill can be defensive or offensive
-# secondary skills involve summoning a projectile
 
 # PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
-# SECONDARY CAN BE : Hadoken, Grenade, Lasso, Boomerang, Ice Wall, Bear Trap
+# SECONDARY CAN BE : Hadoken, Grenade, Boomerang, Bear Trap
 
-# currently unsure how to enforce this...
-#TODO FOR USER: Set primary and secondary skill here
-PRIMARY_SKILL = UppercutSkill
-SECONDARY_SKILL = SuperArmorSkill
+# TODO FOR PARTICIPANT: Set primary and secondary skill here
+PRIMARY_SKILL = DashAttackSkill
+SECONDARY_SKILL = SuperSaiyanSkill
 
 #constants, for easier move return
 #movements
@@ -30,6 +28,7 @@ BLOCK = ("block",)
 
 PRIMARY = get_skill(PRIMARY_SKILL)
 SECONDARY = get_skill(SECONDARY_SKILL)
+CANCEL = ("skill_cancel", )
 
 # no move, aka no input
 NOMOVE = "NoMove"
@@ -37,33 +36,43 @@ NOMOVE = "NoMove"
 moves = SECONDARY,
 moves_iter = iter(moves)
 
+# TODO FOR PARTICIPANT: WRITE YOUR WINNING BOT
 class Script:
-    # perfectly spaces hadokens
-
     def __init__(self):
         self.primary = PRIMARY_SKILL
         self.secondary = SECONDARY_SKILL
-        self.go_left = True
-        self.proj_end = 0
-        self.avoid_proj = False
+        self.counter = 0
         
+    # DO NOT TOUCH
     def init_player_skills(self):
         return self.primary, self.secondary
     
+    # MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
+        distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
+
         if not secondary_on_cooldown(player):
-            return SECONDARY
-        
-        distance = get_distance(player, enemy)
-        if distance == 1:
-            if not primary_on_cooldown(player):
+            if distance >=5:
+                return FORWARD
+            else:
+                return SECONDARY
+        elif get_past_move(player,1) == PRIMARY and distance == 1:
+            return heavy_combo(player, enemy)
+
+        elif not primary_on_cooldown(player) and distance <= prim_range(player):
                 return PRIMARY
+        elif primary_on_cooldown(player) and not heavy_on_cooldown(player) and distance <= 1:
+            if distance >=2:
+                return FORWARD
             else:
                 return HEAVY
-            
-        return FORWARD
-       
-            
+        
+        else:
+            return JUMP_FORWARD
+        
 
-def get_distance(player1, player2):
-    return abs(get_pos(player1)[0] - get_pos(player2)[0])
+        
+        
+        
+        
+        
