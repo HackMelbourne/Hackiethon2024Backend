@@ -207,34 +207,37 @@ class Script:
             if enemySecondary == "hadoken":
                 for key in enemyProjectilePositions:
                     positionValues = enemyProjectilePositions[key]
-                    if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
-                        if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] +1 :#if its in the players vertical range
-                            if right(player,enemy):                   #if we facing the front (left)
-                                if positionValues[tic-1][0] <= get_pos(player)[0] + 2:
-                                    del enemyProjectilePositions[key]
-                                    return JUMP
-                            else:                           #if we facing the back (right)
-                                if positionValues[tic-1][0] >= get_pos(player)[0] - 2 and positionValues[tic-1][0] != 0:
-                                    del enemyProjectilePositions[key]
-                                    return JUMP    
+                    if len(positionValues) <= tic:
+                        if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
+                            if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] +1 :#if its in the players vertical range
+                                if right(player,enemy):                   #if we facing the front (left)
+                                    if positionValues[tic-1][0] <= get_pos(player)[0] + 2:
+                                        del enemyProjectilePositions[key]
+                                        return JUMP
+                                else:                           #if we facing the back (right)
+                                    if positionValues[tic-1][0] >= get_pos(player)[0] - 2 and positionValues[tic-1][0] != 0:
+                                        del enemyProjectilePositions[key]
+                                        return JUMP    
                                 
             elif enemySecondary == "beartrap":
                 for key in enemyProjectilePositions:
                     positionValues = enemyProjectilePositions[key]
-                    if positionValues[tic]:     #if the beartrap is alive currently
-                        if get_pos(player)[0] == positionValues[tic][0]:
-                            currentMoveSet = fleeBackwardsMoveSet
-                            currentMoveCondtions =fleeBackwardsMoveConditions
-                            print("fleeing")
+                    if len(positionValues) <= tic:
+                        if positionValues[tic]:     #if the beartrap is alive currently
+                            if get_pos(player)[0] == positionValues[tic][0]:
+                                currentMoveSet = fleeBackwardsMoveSet
+                                currentMoveCondtions =fleeBackwardsMoveConditions
+                                print("fleeing")
 
             elif enemySecondary == "boomerang":
                 for key in enemyProjectilePositions:
                     positionValues = enemyProjectilePositions[key]
-                    if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
-                        if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] + 1 :#if its in the players vertical range
-                            if positionValues[tic-1][0] == get_pos(player)[0] + 2 or positionValues[tic-1][0] == get_pos(player)[0] - 2:
-                                del enemyProjectilePositions[key]
-                                return dodge_or_block(player,enemy)
+                    if len(positionValues) <= tic:
+                        if positionValues[tic-1]:   #if the thing has actualy got a position value (it is travelling)
+                            if positionValues[tic-1][1] == get_pos(player)[1] or positionValues[tic-1][1] == get_pos(player)[1] + 1 :#if its in the players vertical range
+                                if positionValues[tic-1][0] == get_pos(player)[0] + 2 or positionValues[tic-1][0] == get_pos(player)[0] - 2:
+                                    del enemyProjectilePositions[key]
+                                    return dodge_or_block(player,enemy)
                         
 
             elif get_last_move(enemy) == ("grenade","activate"):       #if a grenade is thrown we literally just run away. 
